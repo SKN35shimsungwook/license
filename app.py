@@ -1355,11 +1355,15 @@ def view_coach():
             if key_input:
                 ss.manual_gemini_key = key_input
                 if save_local:
-                    ai_coach.save_key_locally("GEMINI_API_KEY", key_input)
+                    ss.coach_key_save_failed = not ai_coach.save_key_locally("GEMINI_API_KEY", key_input)
                 st.rerun()
             else:
                 st.error("키를 입력해주세요.")
         return
+
+    if ss.pop("coach_key_save_failed", False):
+        st.info("이 환경(예: Streamlit Cloud)은 파일 저장이 안 돼서, 이번 세션 동안만 키가 유지돼요. "
+                 "계속 쓰려면 배포 대시보드의 Secrets 설정에 키를 등록해두세요.")
 
     if ss.coach_active_qid is not None:
         _render_coach_chat_page(client)

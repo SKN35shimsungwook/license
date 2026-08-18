@@ -11,23 +11,29 @@ _SECRETS_PATH = os.path.join(os.path.dirname(__file__), ".streamlit", "secrets.t
 
 
 def save_key_locally(key_name, value):
-    """로컬 .streamlit/secrets.toml에 키=값을 저장(기존 값 있으면 갱신). 배포 환경에서는 호출하지 않는다."""
-    lines = []
-    found = False
-    if os.path.exists(_SECRETS_PATH):
-        with open(_SECRETS_PATH, encoding="utf-8") as f:
-            for line in f:
-                stripped = line.strip()
-                if stripped.startswith(f"{key_name} ") or stripped.startswith(f"{key_name}="):
-                    lines.append(f'{key_name} = "{value}"\n')
-                    found = True
-                else:
-                    lines.append(line)
-    if not found:
-        lines.append(f'{key_name} = "{value}"\n')
-    os.makedirs(os.path.dirname(_SECRETS_PATH), exist_ok=True)
-    with open(_SECRETS_PATH, "w", encoding="utf-8") as f:
-        f.writelines(lines)
+    """로컬 .streamlit/secrets.toml에 키=값을 저장(기존 값 있으면 갱신).
+    Streamlit Cloud 등 소스 폴더가 읽기 전용인 배포 환경에서는 쓰기가 실패할 수 있으므로,
+    그런 경우 조용히 실패하고 False를 반환한다(호출부는 세션 상태로 계속 동작시킨다)."""
+    try:
+        lines = []
+        found = False
+        if os.path.exists(_SECRETS_PATH):
+            with open(_SECRETS_PATH, encoding="utf-8") as f:
+                for line in f:
+                    stripped = line.strip()
+                    if stripped.startswith(f"{key_name} ") or stripped.startswith(f"{key_name}="):
+                        lines.append(f'{key_name} = "{value}"\n')
+                        found = True
+                    else:
+                        lines.append(line)
+        if not found:
+            lines.append(f'{key_name} = "{value}"\n')
+        os.makedirs(os.path.dirname(_SECRETS_PATH), exist_ok=True)
+        with open(_SECRETS_PATH, "w", encoding="utf-8") as f:
+            f.writelines(lines)
+        return True
+    except OSError:
+        return False
 
 # 정확도가 중요한 작업(변형 문제 생성)은 Flash, 비용이 더 중요한 작업(대화/학습계획)은 Flash-Lite.
 # 같은 API 키로 모델 이름만 바꿔서 호출하면 되므로 키를 추가로 발급받을 필요는 없다.
