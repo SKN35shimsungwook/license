@@ -51,8 +51,9 @@ st.markdown("""
 # ---------- 로그인 게이트 (배포 후 무단 접근으로 인한 API 비용 방지) ----------
 # Streamlit Cloud의 Secrets에 APP_PASSWORD 또는 APP_PATTERN을 설정하면 활성화된다.
 # 로컬에서 secrets.toml에 둘 다 값이 없으면(=미설정) 게이트 없이 그냥 통과한다.
-# APP_PATTERN은 5x5 표(1~25번 칸)를 순서대로 누르는 방식으로, "3,8,13,18,23" 처럼
-# 콤마로 구분된 칸 번호 순서로 지정한다.
+# APP_PATTERN은 PATTERN_GRID_SIZE x PATTERN_GRID_SIZE 표(1번~칸수 번)를 순서대로
+# 누르는 방식으로, "1,5,9" 처럼 콤마로 구분된 칸 번호 순서로 지정한다.
+PATTERN_GRID_SIZE = 3
 ss = st.session_state
 ss.setdefault("authed", False)
 try:
@@ -90,10 +91,10 @@ if (_app_password or _app_pattern) and not ss.authed:
     else:
         st.caption("표의 칸을 정해진 순서대로 눌러주세요.")
         clicked = None
-        for r in range(5):
-            row_cols = st.columns(5)
-            for c in range(5):
-                cell_no = r * 5 + c + 1
+        for r in range(PATTERN_GRID_SIZE):
+            row_cols = st.columns(PATTERN_GRID_SIZE)
+            for c in range(PATTERN_GRID_SIZE):
+                cell_no = r * PATTERN_GRID_SIZE + c + 1
                 if cell_no in ss.pattern_seq:
                     label = str(ss.pattern_seq.index(cell_no) + 1)
                 else:
