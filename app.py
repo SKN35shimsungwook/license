@@ -351,12 +351,10 @@ def _render_grids_grid_svg(spec):
     return f'<svg width="{width}" height="{height}" viewBox="0 0 {width} {height}" xmlns="http://www.w3.org/2000/svg">{"".join(groups)}</svg>'
 
 
-def _digraph_parts(spec, cx, cy, radius, r, marker_id, loop_offset=None, loop_r=None):
+def _digraph_parts(spec, cx, cy, radius, r, marker_id, loop_r=None):
     import math
-    if loop_offset is None:
-        loop_offset = max(20, radius * 0.4)
     if loop_r is None:
-        loop_r = max(10, r * 0.8)
+        loop_r = max(8, r * 0.6)
     edges = [tuple(e.split(">")) for e in spec.split(",") if e]
     nodes = []
     for a, b in edges:
@@ -376,14 +374,21 @@ def _digraph_parts(spec, cx, cy, radius, r, marker_id, loop_offset=None, loop_r=
     ]
     for a, b in edges:
         if a == b:
+            # 노드 원둘레에 딱 붙어서 시작/끝나는 작은 루프(원 밖으로 살짝 튀어나온 손잡이 모양).
+            # 자기 자신을 가리키는 화살표라는 게 한눈에 보이도록 노드에서 떨어뜨리지 않는다.
             x, y = pos[a]
             dx, dy = x - cx, y - cy
             dist = (dx ** 2 + dy ** 2) ** 0.5 or 1
-            ox, oy = dx / dist, dy / dist
-            lx, ly = x + ox * loop_offset, y + oy * loop_offset
+            ox, oy = dx / dist, dy / dist  # 패널 중심에서 바깥쪽(노드 쪽) 방향
+            tx_, ty_ = -oy, ox  # 접선 방향
+            p1x, p1y = x + tx_ * r * 0.55 + ox * r * 0.7, y + ty_ * r * 0.55 + oy * r * 0.7
+            p2x, p2y = x - tx_ * r * 0.55 + ox * r * 0.7, y - ty_ * r * 0.55 + oy * r * 0.7
+            reach = r + loop_r * 2.3
+            c1x, c1y = x + tx_ * loop_r * 1.4 + ox * reach, y + ty_ * loop_r * 1.4 + oy * reach
+            c2x, c2y = x - tx_ * loop_r * 1.4 + ox * reach, y - ty_ * loop_r * 1.4 + oy * reach
             parts.append(
-                f'<circle cx="{lx}" cy="{ly}" r="{loop_r}" fill="none" stroke="#3E5C9A" '
-                f'stroke-width="2" marker-end="url(#{marker_id})"/>'
+                f'<path d="M{p1x},{p1y} C{c1x},{c1y} {c2x},{c2y} {p2x},{p2y}" fill="none" '
+                f'stroke="#3E5C9A" stroke-width="2" marker-end="url(#{marker_id})"/>'
             )
             continue
         x1, y1 = pos[a]
@@ -412,29 +417,31 @@ def _digraph_parts(spec, cx, cy, radius, r, marker_id, loop_offset=None, loop_r=
 
 
 def _render_digraph_svg(spec):
-    radius, r, loop_offset, loop_r = 90, 20, 35, 15
-    top_margin = radius + loop_offset + loop_r + 15
+    radius, r, loop_r = 90, 20, 14
+    loop_reach = r + loop_r * 2.3
+    top_margin = radius + loop_reach + 15
     cx, cy = 150, top_margin
-    parts = _digraph_parts(spec, cx, cy, radius, r, "arrow", loop_offset, loop_r)
-    width, height = cx * 2, cy + radius + loop_offset + loop_r + 15
+    parts = _digraph_parts(spec, cx, cy, radius, r, "arrow", loop_r)
+    width, height = cx * 2, cy + radius + loop_reach + 15
     return f'<svg width="{width}" height="{height}" viewBox="0 0 {width} {height}" xmlns="http://www.w3.org/2000/svg">{"".join(parts)}</svg>'
 
 
 def _render_digraphs_grid_svg(spec):
     """선택지 여러 개가 각각 다른 방향그래프인 문제용. spec은 '|'로 구분된 edge-list 목록."""
     specs = spec.split("|")
-    radius, r, loop_offset, loop_r = 40, 15, 24, 11
+    radius, r, loop_r = 42, 16, 11
+    loop_reach = r + loop_r * 2.3
     label_h = 24
     panel_w = 190
-    panel_h = int(label_h + radius + loop_offset + loop_r + radius + loop_offset + loop_r + 10)
+    panel_h = int(label_h + radius + loop_reach + radius + loop_reach + 10)
     cols = min(4, len(specs))
     rows = (len(specs) + cols - 1) // cols
-    cx, cy = panel_w / 2, label_h + radius + loop_offset + loop_r
+    cx, cy = panel_w / 2, label_h + radius + loop_reach
     groups = []
     for i, s in enumerate(specs):
         col, row = i % cols, i // cols
         tx, ty = col * panel_w, row * panel_h
-        parts = _digraph_parts(s, cx, cy, radius, r, f"arrow{i}", loop_offset, loop_r)
+        parts = _digraph_parts(s, cx, cy, radius, r, f"arrow{i}", loop_r)
         label = "①②③④⑤⑥"[i] if i < 6 else str(i + 1)
         groups.append(
             f'<g transform="translate({tx},{ty})">'
