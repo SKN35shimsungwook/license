@@ -89,9 +89,10 @@ def pick_cbt_exam_pool(questions, cbt_ids, exam_cfg):
 
 
 def pick_cbt_round_pool(questions, cbt_ids, round_name):
-    """회차별 기출 모의고사: 무작위 조합이 아니라 실제 그 회차에 출제된 문제 그대로, 원래 순서로 반환."""
+    """회차별 기출 모의고사: 무작위 조합이 아니라 실제 그 회차에 출제된 문제 그대로, 원래 순서로 반환.
+    과목 블록(1~20/21~40/41~60)이 원본과 같도록 과목 우선으로 정렬한다(과목 내부는 id 순)."""
     ids = [qid for qid in cbt_ids if questions[qid].get("round") == round_name]
-    ids.sort(key=lambda qid: questions[qid]["id"])
+    ids.sort(key=lambda qid: (questions[qid]["subject"], questions[qid]["id"]))
     return ids
 
 
