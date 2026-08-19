@@ -92,7 +92,12 @@
 94,ipe_industrial,2,2023_2,다음 Java 코드가 실행되었을 때의 결과는? int a[][] = new int[2][3]; System.out.print(a.length);,2,3,5,6,1,2차원 배열 int a[2][3]의 a.length는 '행(row)의 개수'인 2를 반환합니다(a[0].length가 열의 개수 3).,25,cbt,2023_2,0,
 95,ipe_industrial,2,2023_3,다음 Java 코드가 실행되었을 때의 결과는? int a[][] = new int[2][3]; System.out.print(a.length);,2,3,5,6,1,2차원 배열 int a[2][3]의 a.length는 '행(row)의 개수'인 2를 반환합니다(a[0].length가 열의 개수 3).,25,cbt,2023_3,0,
 96,ipe_industrial,2,2025_1,다음 Java 코드가 실행되었을 때의 결과는? int a[][] = new int[2][3]; System.out.print(a.length);,2,3,5,6,1,2차원 배열 int a[2][3]의 a.length는 '행(row)의 개수'인 2를 반환합니다(a[0].length가 열의 개수 3).,25,cbt,2025_1,0,
-97,ipe_industrial,2,2026_1,다음 Java 코드가 실행되었을 때의 결과는? int a[ ][ ] = new int[2][3]; System.out.print(a.length);,2,3,5,6,1,2차원 배열 int a[2][3]의 a.length는 '행(row)의 개수'인 2를 반환합니다(a[0].length가 열의 개수 3).,25,cbt,2026_1,0,
+97,ipe_industrial,2,2026_1,"다음 Java 코드가 실행되었을 때의 결과는?
+
+```java
+int a[][] = new int[2][3];
+System.out.print(a.length);
+```",2,3,5,6,1,2차원 배열 int a[2][3]의 a.length는 '행(row)의 개수'인 2를 반환합니다(a[0].length가 열의 개수 3).,25,cbt,2026_1,0,
 98,ipe_industrial,2,2022_1,Python에서 사용되는 서식 문자열과 그 의미가 올바르게 연결되지 않은 것은?,%d - 정수형 10진수,%x - 정수형 8진수,%f - 실수,%s - 문자열,2,%x는 정수형을 8진수가 아니라 16진수로 출력하는 서식 문자입니다(8진수는 %o).,26,cbt,2022_1,0,
 99,ipe_industrial,2,2023_3,Python에서 사용되는 서식 문자열과 그 의미가 올바르게 연결되지 않은 것은?,%d - 정수형 10진수,%x - 정수형 8진수,%f - 실수,%s - 문자열,2,%x는 정수형을 8진수가 아니라 16진수로 출력하는 서식 문자입니다(8진수는 %o).,26,cbt,2023_3,0,
 100,ipe_industrial,2,2025_2,Python에서 사용되는 서식 문자열과 그 의미가 올바르게 연결되지 않은 것은?,%d - 정수형 10진수,%x - 정수형 8진수,%f – 실수,%s – 문자열,2,%x는 정수형을 8진수가 아니라 16진수로 출력하는 서식 문자입니다(8진수는 %o).,26,cbt,2025_2,0,
@@ -118,7 +123,19 @@
 122,ipe_industrial,2,2023_1,"다음 C언어 프로그램이 실행되었을 때의 결과는? #include <stdio.h> void func(int* p) { *p = *p - 5; } main() { int a = 13; func(&a); printf(""%d"", a); }",-5,3,8,13,3,포인터로 매개변수를 전달했으므로(&a) 함수 내부에서 원본 a의 값이 실제로 변경됩니다. 13-5=8이 출력됩니다.,35,cbt,2023_1,0,
 123,ipe_industrial,2,2023_2,"다음 C언어 프로그램이 실행되었을 때의 결과는? #include <stdio.h> void func(int* p) { *p = *p - 5; } main() { int a = 13; func(&a); printf(""%d"", a); }",-5,3,8,13,3,포인터로 매개변수를 전달했으므로(&a) 함수 내부에서 원본 a의 값이 실제로 변경됩니다. 13-5=8이 출력됩니다.,35,cbt,2023_2,0,
 124,ipe_industrial,2,2024_3,"다음 C언어 프로그램이 실행되었을 때의 결과는? #include <stdio.h> void func(int* p) { *p = *p - 5; } main() { int a = 13; func(&a); printf(""%d"", a); }",-5,3,8,13,3,포인터로 매개변수를 전달했으므로(&a) 함수 내부에서 원본 a의 값이 실제로 변경됩니다. 13-5=8이 출력됩니다.,35,cbt,2024_3,0,
-125,ipe_industrial,2,2026_1,"다음 C언어 프로그램이 실행되었을 때의 결과는? #include <stdio.h> void func(int* p) { *p = *p - 5; } main( ) { int a = 13; func(&a); printf(“%d”, a); }",-5,3,8,13,3,포인터로 매개변수를 전달했으므로(&a) 함수 내부에서 원본 a의 값이 실제로 변경됩니다. 13-5=8이 출력됩니다.,35,cbt,2026_1,0,
+125,ipe_industrial,2,2026_1,"다음 C언어 프로그램이 실행되었을 때의 결과는?
+
+```c
+#include <stdio.h>
+void func(int* p) {
+    *p = *p - 5;
+}
+main() {
+    int a = 13;
+    func(&a);
+    printf(""%d"", a);
+}
+```",-5,3,8,13,3,포인터로 매개변수를 전달했으므로(&a) 함수 내부에서 원본 a의 값이 실제로 변경됩니다. 13-5=8이 출력됩니다.,35,cbt,2026_1,0,
 126,ipe_industrial,2,2022_1,추상 클래스에 대한 설명으로 옳은 것은?,구상 클래스 또는 구현 클래스라고도 불린다.,개별적인 인스턴스 생성이 가능하다.,구현하려는 기능들의 공통점만을 모아 놓은 것이다.,객체 생성을 위한 속성과 메소드의 구체적인 설계도이다.,3,"추상 클래스는 구체 클래스들이 구현할 기능의 공통점만 모아 놓은 것으로, 그 자체로는 인스턴스를 생성할 수 없습니다.",36,cbt,2022_1,0,
 127,ipe_industrial,2,2023_2,추상 클래스에 대한 설명으로 옳은 것은?,구상 클래스 또는 구현 클래스라고도 불린다.,개별적인 인스턴스 생성이 가능하다.,구현하려는 기능들의 공통점만을 모아 놓은 것이다.,객체 생성을 위한 속성과 메소드의 구체적인 설계도이다.,3,"추상 클래스는 구체 클래스들이 구현할 기능의 공통점만 모아 놓은 것으로, 그 자체로는 인스턴스를 생성할 수 없습니다.",36,cbt,2023_2,0,
 128,ipe_industrial,2,2023_3,추상 클래스에 대한 설명으로 옳은 것은?,구상 클래스 또는 구현 클래스라고도 불린다.,개별적인 인스턴스 생성이 가능하다.,구현하려는 기능들의 공통점만을 모아 놓은 것이다.,객체 생성을 위한 속성과 메소드의 구체적인 설계도이다.,3,"추상 클래스는 구체 클래스들이 구현할 기능의 공통점만 모아 놓은 것으로, 그 자체로는 인스턴스를 생성할 수 없습니다.",36,cbt,2023_3,0,
@@ -261,7 +278,29 @@
 266,ipe_industrial,2,2023_2,다음과 같이 HTML 문서를 작성했을 때 노란색 배경을 갖는 셀의 위치는? <html> <style> tr:nth-child(even) { background-color:yellow; } </style> <body> <table> <thead> <tr> <th></th> </tr> </thead> <tfoot> <tr> <td></td> </tr> </tfoot> <tbody> <tr> <td></td> </tr> <tr> <td></td> </tr> </tbody> </table> </body> </html>,1행,2행,3행,4행,3,"nth-child는 '같은 부모를 둔 형제 요소' 사이에서의 순번을 봅니다. thead의 tr은 thead의 유일한 자식(1번째), tfoot의 tr도 tfoot의 유일한 자식(1번째)이라 둘 다 홀수 번째라 대상이 아닙니다. tbody 안의 두 tr은 tbody의 1, 2번째 자식이므로 그중 2번째 tr만 짝수 번째로 노란 배경이 적용됩니다. 화면에는 브라우저가 tfoot을 항상 맨 아래로 재배치해 보여주므로, 실제 표시 순서는 thead행(1행)-tbody 1번째 행(2행)-tbody 2번째 행(3행)-tfoot행(4행)이 되어, 노란 배경이 적용되는 tbody 2번째 행은 화면상 3행이 됩니다.",84,cbt,2023_2,0,
 267,ipe_industrial,2,2024_1,다음과 같이 HTML 문서를 작성했을 때 노란색 배경을 갖는 셀의 위치는? <html> <style> tr:nth-child(even) { background-color:yellow; } </style> <body> <table> <thead> <tr> <th></th> </tr> </thead> <tfoot> <tr> <td></td> </tr> </tfoot> <tbody> <tr> <td></td> </tr> <tr> <td></td> </tr> </tbody> </table> </body> </html>,1행,2행,3행,4행,3,"nth-child는 '같은 부모를 둔 형제 요소' 사이에서의 순번을 봅니다. thead의 tr은 thead의 유일한 자식(1번째), tfoot의 tr도 tfoot의 유일한 자식(1번째)이라 둘 다 홀수 번째라 대상이 아닙니다. tbody 안의 두 tr은 tbody의 1, 2번째 자식이므로 그중 2번째 tr만 짝수 번째로 노란 배경이 적용됩니다. 화면에는 브라우저가 tfoot을 항상 맨 아래로 재배치해 보여주므로, 실제 표시 순서는 thead행(1행)-tbody 1번째 행(2행)-tbody 2번째 행(3행)-tfoot행(4행)이 되어, 노란 배경이 적용되는 tbody 2번째 행은 화면상 3행이 됩니다.",84,cbt,2024_1,0,
 268,ipe_industrial,2,2025_1,다음과 같이 HTML 문서를 작성했을 때 노란색 배경을 갖는 셀의 위치는? <html> <style> tr:nth-child(even) { background-color:yellow; } </style> <body> <table> <thead> <tr> <th></th> </tr> </thead> <tfoot> <tr> <td></td> </tr> </tfoot> <tbody> <tr> <td></td> </tr> <tr> <td></td> </tr> </tbody> </table> </body> </html>,1행,2행,3행,4행,3,"nth-child는 '같은 부모를 둔 형제 요소' 사이에서의 순번을 봅니다. thead의 tr은 thead의 유일한 자식(1번째), tfoot의 tr도 tfoot의 유일한 자식(1번째)이라 둘 다 홀수 번째라 대상이 아닙니다. tbody 안의 두 tr은 tbody의 1, 2번째 자식이므로 그중 2번째 tr만 짝수 번째로 노란 배경이 적용됩니다. 화면에는 브라우저가 tfoot을 항상 맨 아래로 재배치해 보여주므로, 실제 표시 순서는 thead행(1행)-tbody 1번째 행(2행)-tbody 2번째 행(3행)-tfoot행(4행)이 되어, 노란 배경이 적용되는 tbody 2번째 행은 화면상 3행이 됩니다.",84,cbt,2025_1,0,
-269,ipe_industrial,2,2026_1,다음과 같이 HTML 문서를 작성했을 때 노란색 배경을 갖는 셀의 위치는? <html> <style> tr:nth-child(even) { background-color:yellow; } </style> <body> <table> <thead> <tr> <th></th> </tr> </thead> <tfoot> <tr> <td></td> </tr> </tfoot> <tbody> <tr> <td></td> </tr> <tr> <td></td> </tr> </tbody> </table> </body> </html>,1행,2행,3행,4행,3,"nth-child는 '같은 부모를 둔 형제 요소' 사이에서의 순번을 봅니다. thead의 tr은 thead의 유일한 자식(1번째), tfoot의 tr도 tfoot의 유일한 자식(1번째)이라 둘 다 홀수 번째라 대상이 아닙니다. tbody 안의 두 tr은 tbody의 1, 2번째 자식이므로 그중 2번째 tr만 짝수 번째로 노란 배경이 적용됩니다. 화면에는 브라우저가 tfoot을 항상 맨 아래로 재배치해 보여주므로, 실제 표시 순서는 thead행(1행)-tbody 1번째 행(2행)-tbody 2번째 행(3행)-tfoot행(4행)이 되어, 노란 배경이 적용되는 tbody 2번째 행은 화면상 3행이 됩니다.",84,cbt,2026_1,0,
+269,ipe_industrial,2,2026_1,"다음과 같이 HTML 문서를 작성했을 때 노란색 배경을 갖는 셀의 위치는?
+
+```html
+<html>
+<style>
+tr:nth-child(even) { background-color: yellow; }
+</style>
+<body>
+<table>
+<thead>
+<tr><th></th></tr>
+</thead>
+<tfoot>
+<tr><td></td></tr>
+</tfoot>
+<tbody>
+<tr><td></td></tr>
+<tr><td></td></tr>
+</tbody>
+</table>
+</body>
+</html>
+```",1행,2행,3행,4행,3,"nth-child는 '같은 부모를 둔 형제 요소' 사이에서의 순번을 봅니다. thead의 tr은 thead의 유일한 자식(1번째), tfoot의 tr도 tfoot의 유일한 자식(1번째)이라 둘 다 홀수 번째라 대상이 아닙니다. tbody 안의 두 tr은 tbody의 1, 2번째 자식이므로 그중 2번째 tr만 짝수 번째로 노란 배경이 적용됩니다. 화면에는 브라우저가 tfoot을 항상 맨 아래로 재배치해 보여주므로, 실제 표시 순서는 thead행(1행)-tbody 1번째 행(2행)-tbody 2번째 행(3행)-tfoot행(4행)이 되어, 노란 배경이 적용되는 tbody 2번째 행은 화면상 3행이 됩니다.",84,cbt,2026_1,0,
 270,ipe_industrial,2,2022_2,객체지향 개념에서 이미 정의되어 있는 상위 클래스(슈퍼 클래스 혹은 부모 클래스)의 메소드를 비롯한 모든 속성을 하위 클래스가 물려 받는 것을 무엇이라고 하는가?,Abstraction,Method,Inheritance,Message,3,상속(Inheritance)은 상위 클래스의 속성과 메소드를 하위 클래스가 물려받는 개념입니다.,85,cbt,2022_2,0,
 271,ipe_industrial,2,2022_2,HTML이 호출될 때 자바스크립트를 이용하여 안내 문구를 전달하고 싶은 경우 사용할 수 있는 메소드는?,alert,prompt,input,scan,1,alert()는 사용자에게 안내 문구(메시지)만 전달하는 자바스크립트 대화상자 메소드입니다.,86,cbt,2022_2,0,
 272,ipe_industrial,2,2023_1,HTML이 호출될 때 자바스크립트를 이용하여 안내 문구를 전달하고 싶은 경우 사용할 수 있는 메소드는?,alert,prompt,input,scan,1,alert()는 사용자에게 안내 문구(메시지)만 전달하는 자바스크립트 대화상자 메소드입니다.,86,cbt,2023_1,0,
@@ -438,7 +477,18 @@
 422,ipe_industrial,2,2022_3,Java의 라이브러리 중 객체 단위 입력을 위한 기능 및 프로토콜을 제공하는 클래스는?,ObjectInputStream,DataInputStream,FileInputStream,IOException,1,ObjectInputStream은 객체 단위로 입력을 처리하는 Java 입출력 클래스입니다.,137,cbt,2022_3,0,
 423,ipe_industrial,2,2022_3,"다음 C언어 코드에서 괄호에 들어갈 알맞은 예약어는? #include <stdio.h> int func(int i, int j) { int sum = i + j; (      ) sum; } main( ) { int r = func(3, 5); }",print,input,continue,return,4,함수가 계산 결과 sum을 호출한 곳으로 반환하기 위해서는 return 문이 필요합니다.,138,cbt,2022_3,0,
 424,ipe_industrial,2,2023_3,"다음 C 언어 코드에서 괄호에 들어갈 알맞은 예약어는? #include <stdio.h> int func(int i, int j) { int sum = i + j; (      ) sum; } main( ) { int r = func(3, 5); }",print,input,continue,return,4,함수가 계산 결과 sum을 호출한 곳으로 반환하기 위해서는 return 문이 필요합니다.,138,cbt,2023_3,0,
-425,ipe_industrial,2,2026_1,"다음 C언어 코드에서 괄호에 들어갈 알맞은 예약어는? #include <stdio.h> int func(int i, int j) { int sum = i + j; (      ) sum; } main( ) { int r = func(3, 5); }",print,input,continue,return,4,함수가 계산 결과 sum을 호출한 곳으로 반환하기 위해서는 return 문이 필요합니다.,138,cbt,2026_1,0,
+425,ipe_industrial,2,2026_1,"다음 C언어 코드에서 괄호에 들어갈 알맞은 예약어는?
+
+```c
+#include <stdio.h>
+int func(int i, int j) {
+    int sum = i + j;
+    (      ) sum;
+}
+main() {
+    int r = func(3, 5);
+}
+```",print,input,continue,return,4,함수가 계산 결과 sum을 호출한 곳으로 반환하기 위해서는 return 문이 필요합니다.,138,cbt,2026_1,0,
 426,ipe_industrial,2,2022_3,"다음 C언어 코드에서 괄호에 들어갈 알맞은 코드는? #include <stdio.h> struct st { int x; int y; }; int calc(int i, int j) { return i - j; } main( ) { struct st r; r.x = 20000; r.y = 7000; printf(""%d"", (        )); }","st(x, y)","calc(x, y)","st(r.x, r.y)","calc(r.x, r.y)",4,"구조체 멤버 r.x, r.y 값을 인수로 calc 함수를 호출하는 calc(r.x, r.y)가 올바른 함수 호출 코드입니다.",139,cbt,2022_3,0,
 427,ipe_industrial,2,2022_3,JavaScript에서 화면에 숫자 100을 출력하는 명령문으로 올바른 것은?,write(100),document.write(100),print(100),console.print(100),2,document.write(100)은 JavaScript에서 화면(문서)에 값을 출력하는 표준 메소드입니다.,140,cbt,2022_3,0,
 428,ipe_industrial,2,2022_3,"다음은 1000까지의 7의 배수를 모두 합하는 JavaScript 코드이다. 괄호(㉠, ㉡)에 들어갈 알맞은 예약어는? …생략… <script> var r = 0, i = 0; (  ㉠  ) { i = i + 1; if (i%7 == 0) { r = r + i; } } (  ㉡  ) (i < 1000); console.log(r); </script> …생략…","㉠-do, ㉡-while","㉠-do, ㉡-loop","㉠-while, ㉡-do","㉠-loop, ㉡-do",1,"do{...}while(조건); 구문은 본문을 먼저 한 번 실행한 뒤 조건을 검사하며, 조건이 참인 동안 반복합니다.",141,cbt,2022_3,0,
@@ -777,13 +827,38 @@
 756,ipe_industrial,1,2026_1,"다음에서 설명하고 있는 관계(Relationships)는? ㆍ하나의 사물이 다른 사물에 비해 더 일반적인지 구체적 인지를 표현한다. ㆍ일반적인 개념을 상위(부모), 보다 구체적인 개념을 하 위(자식)라고 부르며, 구체적인 사물에서 일반적인 사물 쪽으로 속이 빈 화살표를 연결하여 표현한다.",일반화,포함,연관,집합,1,"일반화(Generalization) 관계는 하위(자식, 구체적) 개념에서 상위(부모, 일반적) 개념으로 속이 빈 화살표를 연결해 표현하는 UML 관계입니다.",333,cbt,2026_1,0,
 757,ipe_industrial,1,2026_1,UNIX의 쉘(Shell)에 대한 설명으로 옳지 않은 것은?,"C, Bourne, Korn Shell 등이 있다.",시스템과 사용자 간의 인터페이스를 담당한다.,명령어 해석기이다.,UNIX의 보안 관리를 수행한다.,4,쉘(Shell)은 사용자와 시스템 간 인터페이스를 담당하는 명령어 해석기입니다. 보안 관리는 커널(Kernel)의 역할이며 쉘의 기능이 아닙니다.,334,cbt,2026_1,0,
 758,ipe_industrial,2,2026_1,C언어에서 문자열의 길이를 구하는 함수는?,strcmp( ),atoi( ),strtof( ),strlen( ),4,strlen()은 C언어에서 문자열의 길이를 구하는 표준 라이브러리 함수입니다.,335,cbt,2026_1,0,
-760,ipe_industrial,2,2026_1,"다음 JavaScript 프로그램이 실행되었을 때, 실행 결과는? <script> var i = 0, sum = 0; while (i <= 5) { sum += i; i++; } document.write(sum); </script>",25,20,15,10,3,"i=0부터 5까지(0,1,2,3,4,5) sum에 더하므로 0+1+2+3+4+5=15가 출력됩니다.",337,cbt,2026_1,0,
+760,ipe_industrial,2,2026_1,"다음 JavaScript 프로그램이 실행되었을 때, 실행 결과는?
+
+```html
+<script>
+var i = 0, sum = 0;
+while (i <= 5) {
+    sum += i;
+    i++;
+}
+document.write(sum);
+</script>
+```",25,20,15,10,3,"i=0부터 5까지(0,1,2,3,4,5) sum에 더하므로 0+1+2+3+4+5=15가 출력됩니다.",337,cbt,2026_1,0,
 761,ipe_industrial,2,2026_1,Python의 이스케이프 문자에 대한 설명으로 옳지 않은 것은?,커서를 왼쪽으로 한 칸 이동시키는 이스케이프 문자는 ‘\b’이 다.,가로로 일정 간격 띄우는 이스케이프 문자는 ‘\a’이다.,Carriage Return을 수행하는 이스케이프 문자는 ‘\r’이다.,커서를 다음 줄로 이동시키는 이스케이프 문자는 ‘ \n’이다.,2,가로 간격을 띄우는 이스케이프 문자는 탭을 의미하는 '\t'입니다. '\a'는 경고음(벨) 문자입니다.,338,cbt,2026_1,0,
 762,ipe_industrial,2,2026_1,응집도가 가장 낮은 것은?,기능적 응집도,시간적 응집도,절차적 응집도,우연적 응집도,4,"응집도는 기능적이 가장 강하고, 우연적(Coincidental) 응집도가 가장 약합니다.",339,cbt,2026_1,0,
 763,ipe_industrial,2,2026_1,파이썬의 변수 작성 규칙 설명으로 옳지 않은 것은?,첫 자리에 숫자를 사용할 수 없다.,"영문 대문자/소문자, 숫자, 밑줄( _ )의 사용이 가능하다.",변수 이름의 중간에 공백을 사용할 수 있다.,이미 사용되고 있는 예약어는 사용할 수 없다.,3,Python 변수명에는 공백을 사용할 수 없습니다. 공백이 있으면 서로 다른 토큰으로 분리되어 오류가 발생합니다.,340,cbt,2026_1,0,
 764,ipe_industrial,2,2026_1,"다음 중 JAVA에서 참(true), 거짓(false)과 같이 논리값을 저장하는 자료형은?",String,byte,bool,boolean,4,boolean은 Java에서 true/false 논리값을 저장하는 자료형입니다.,341,cbt,2026_1,0,
 765,ipe_industrial,2,2026_1,Python에서 문자열이나 배열의 중간에 위치하는 값 일부만을 가져올 때 사용하는 함수는?,slice( ),split( ),join( ),range( ),1,slice()는 문자열이나 배열의 중간 일부 구간만 잘라서 가져올 때 사용하는 기능(함수/메소드)입니다.,342,cbt,2026_1,0,
-766,ipe_industrial,2,2026_1,"다음 C언어 프로그램이 실행되었을 때, 실행 결과는? main( ) { int ary[3]; int* p = ary; int tmp = 0; *(ary) = 10; *(ary + 1) = 12; ary[2] = ary[0] + ary[1]; for (int i = 0; i < 3; i++) tmp = tmp + ary[i]; printf(""%d"", tmp + *(ary + 2)); }",22,44,66,88,3,"ary[0]=10, ary[1]=12, ary[2]=10+12=22로 설정됩니다. tmp는 ary 전체 합 10+12+22=44이고, 여기에 *(ary+2)=ary[2]=22를 더하면 44+22=66이 출력됩니다.",343,cbt,2026_1,0,
+766,ipe_industrial,2,2026_1,"다음 C언어 프로그램이 실행되었을 때, 실행 결과는?
+
+```c
+main() {
+    int ary[3];
+    int* p = ary;
+    int tmp = 0;
+    *(ary) = 10;
+    *(ary + 1) = 12;
+    ary[2] = ary[0] + ary[1];
+    for (int i = 0; i < 3; i++)
+        tmp = tmp + ary[i];
+    printf(""%d"", tmp + *(ary + 2));
+}
+```",22,44,66,88,3,"ary[0]=10, ary[1]=12, ary[2]=10+12=22로 설정됩니다. tmp는 ary 전체 합 10+12+22=44이고, 여기에 *(ary+2)=ary[2]=22를 더하면 44+22=66이 출력됩니다.",343,cbt,2026_1,0,
 767,ipe_industrial,3,2026_1,릴레이션의 특징으로 거리가 먼 것은?,모든 튜플은 서로 다른 값을 갖는다.,모든 속성 값은 원자 값이다.,튜플 사이에는 순서가 없다.,"각 속성은 유일한 이름을 가지며, 속성의 순서는 큰 의미가 있다.",4,릴레이션의 속성 순서는 실질적으로 큰 의미를 갖지 않습니다(속성은 이름으로 구분되며 순서에 의존하지 않음). '속성의 순서는 큰 의미가 있다'는 설명이 릴레이션의 특성과 다릅니다.,344,cbt,2026_1,0,
 768,ipe_industrial,3,2026_1,"릴레이션 R의 튜플의 개수가 4, 릴레이션 S의 튜플의 개수가 6일때, 두 릴레이션을 카티션 프로덕트(Cartesian Product)한 결과 릴레이 션의 카디널리티는?",10,15,24,30,3,카티션 프로덕트의 카디널리티는 두 릴레이션 카디널리티의 곱입니다. 4×6=24.,345,cbt,2026_1,0,
 769,ipe_industrial,3,2026_1,"다음 트리를 전위 순회(Preorder Traversal)한 결과는?
@@ -1285,6 +1360,7 @@ SELECT DISTINCT S-AGE FROM STUDENT WHERE S-AGE > 10;","50, 40","50, 5","3, 2","3
 SELECT 지역, SUM(포인트) AS 총포인트 FROM R1 GROUP BY 지역;",총포인트: 12300 (그룹화 없이 전체 합계 하나만),"총포인트: 4200, 1600, 3700, 2800 (지역 컬럼 없이 값만)","지역, SUM(포인트): 서울 4200 / 인천 1600 / 광주 3700 / 부산 2800 (별칭 미적용)","지역, 총포인트: 서울 4200 / 인천 1600 / 광주 3700 / 부산 2800",4,"지역별로 포인트를 합산하면 서울(2300+1900)=4200, 인천=1600, 광주=3700, 부산=2800이며, SQL에 AS 총포인트로 별칭을 지정했으므로 결과 컬럼명도 총포인트로 나와야 한다.",775,cbt,2025_2,1,
 1209,ipe_industrial,2,2026_1,"HTML에서 다음의 코드를 실행했을 때의 결과로 옳은 것은?
 
+```html
 <html>
 <frameset cols=""50%, 50%"">
   <frameset rows=""50%, 50%"">
@@ -1293,11 +1369,12 @@ SELECT 지역, SUM(포인트) AS 총포인트 FROM R1 GROUP BY 지역;",총포�
   </frameset>
   <frame src=""c.html"">
 </frameset>
-</html>",상단 a.html(전체) + 하단 b.html|c.html(좌우분할),상단 a.html|b.html(좌우분할) + 하단 c.html(전체),"좌측 a.html(전체, 세로) + 우측 b.html(위)/c.html(아래)","좌측 a.html(위)/b.html(아래) + 우측 c.html(전체, 세로)",4,"cols=""50%,50%""로 좌우 2분할, 첫 번째(왼쪽) 칸에 rows=""50%,50%""인 중첩 frameset이 들어있어 a.html(위)/b.html(아래)로 나뉘고, 두 번째(오른쪽) 칸은 c.html 하나가 전체를 차지한다.",776,cbt,2026_1,1,"grid:0,0,1,1,a.html;0,1,1,1,b.html;1,0,1,2,c.html"
+</html>
+```",상단 a.html(전체) + 하단 b.html|c.html(좌우분할),상단 a.html|b.html(좌우분할) + 하단 c.html(전체),"좌측 a.html(전체, 세로) + 우측 b.html(위)/c.html(아래)","좌측 a.html(위)/b.html(아래) + 우측 c.html(전체, 세로)",4,"cols=""50%,50%""로 좌우 2분할, 첫 번째(왼쪽) 칸에 rows=""50%,50%""인 중첩 frameset이 들어있어 a.html(위)/b.html(아래)로 나뉘고, 두 번째(오른쪽) 칸은 c.html 하나가 전체를 차지한다.",776,cbt,2026_1,1,"grid:0,0,1,1,a.html;0,1,1,1,b.html;1,0,1,2,c.html"
 1210,ipe_industrial,3,2026_1,"다음 인접 행렬(Adjacency Matrix)에 대응되는 그래프(Graph)를 그렸을 때, 옳은 것은?
 
 |   | A | B | C |
 |---|---|---|---|
 | A | 0 | 1 | 0 |
 | B | 0 | 0 | 1 |
-| C | 1 | 1 | 0 |","A→A(자기 자신), A→B, B→C, C→B, C→A","A→B, B→C, C→A (C→B 없음)","A→A(자기 자신), A→B, B→C, C→B, C→C(자기 자신)","A→B, B→C, C→A, C→B",4,"행렬의 1은 '행→열' 방향 간선을 의미한다: A행 B열=1(A→B), B행 C열=1(B→C), C행 A열=1(C→A), C행 B열=1(C→B). 대각선은 모두 0이므로 자기 자신을 향하는 간선(자기 루프)은 없다. 이 4개 간선만 정확히 있는 것은 ④번이다.",777,cbt,2026_1,1,
+| C | 1 | 1 | 0 |","자기루프 A→A 포함, C→A 있음",C→B 간선 없음(3개 간선),"자기루프 A→A, C→C 포함","A→B, B→C, C→A, C→B (자기루프 없음)",4,"행렬의 1은 '행→열' 방향 간선을 의미한다: A행 B열=1(A→B), B행 C열=1(B→C), C행 A열=1(C→A), C행 B열=1(C→B). 대각선은 모두 0이므로 자기 자신을 향하는 간선(자기 루프)은 없다. 이 4개 간선만 정확히 있는 것은 ④번이다.",777,cbt,2026_1,1,"digraphs:A>A,A>B,B>C,C>B,C>A|A>B,B>C,C>A|A>A,A>B,B>C,C>B,C>C|A>B,B>C,C>A,C>B"
