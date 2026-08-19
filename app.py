@@ -113,6 +113,11 @@ ss.setdefault("coach_variant_result", None)
 ss.setdefault("coach_variant_wrong_counts", {})
 ss.setdefault("coach_strategy", "")
 
+ss.setdefault("wrong_subject_filter", None)
+ss.setdefault("tagstats_subject_filter", None)
+ss.setdefault("bm_subject_filter", None)
+ss.setdefault("coach_repeat_subject_filter", None)
+
 if "_pending_nav" in ss:
     ss["nav"] = ss.pop("_pending_nav")
 if "_pending_exam" in ss:
@@ -214,6 +219,26 @@ def predicted_exam_result(exam_cfg, subj_stats_raw):
         "fail_subjects": fail_subjects,
         "overall_pass": overall_pass,
     }
+
+
+def subject_picker_gate(state_key, counts_by_subject):
+    """과목별 개수를 큰 버튼으로 보여주고 하나를 고르게 하는 공통 게이트.
+    아직 과목이 선택되지 않았으면 버튼 화면을 그리고 None을 반환한다(호출부는 그대로 return해야 함).
+    선택된 과목이 있으면 '◀ 과목 다시 선택' 버튼을 그리고 그 과목(int)을 반환한다."""
+    picked = ss.get(state_key)
+    if picked is None:
+        st.caption("과목을 선택하면 그 과목 문제만 모아서 볼 수 있어요.")
+        for subj in ALL_SUBJECTS:
+            n = counts_by_subject.get(subj, 0)
+            if st.button(f"{subject_label(subj)} — {n}개", key=f"{state_key}_pick_{subj}",
+                         disabled=(n == 0), width="stretch"):
+                ss[state_key] = subj
+                st.rerun()
+        return None
+    if st.button("◀ 과목 다시 선택", key=f"{state_key}_back"):
+        ss[state_key] = None
+        st.rerun()
+    return picked
 
 
 # =====================================================================
@@ -1154,6 +1179,17 @@ def view_wrong():
         st.success("복습이 필요한 오답이 없어요. 계속 이렇게 풀어보세요!")
         return
 
+    counts = {}
+    for qid in need + done:
+        q = QUESTIONS.get(qid)
+        if q:
+            counts[q["subject"]] = counts.get(q["subject"], 0) + 1
+    subj = subject_picker_gate("wrong_subject_filter", counts)
+    if subj is None:
+        return
+    need = [qid for qid in need if QUESTIONS[qid]["subject"] == subj]
+    done = [qid for qid in done if QUESTIONS.get(qid, {}).get("subject") == subj]
+
     if need:
         if st.button(f"복습 필요 {len(need)}개 다시 풀기"):
             start_focus_session(need, "오답노트")
@@ -1162,7 +1198,7 @@ def view_wrong():
         groups = logic.group_ids_by_tag(QUESTIONS, need)
         checked_ids = []
         for (subject, tag), ids in groups.items():
-            st.markdown(f'<div class="group-title">{subject_label(subject)} · {tag_display(tag)}</div>', unsafe_allow_html=True)
+            st.markdown(f'<div class="group-title">{tag_display(tag)}</div>', unsafe_allow_html=True)
             for qid in ids:
                 q = QUESTIONS[qid]
                 choices = [q["choice1"], q["choice2"], q["choice3"], q["choice4"]]
@@ -1223,6 +1259,15 @@ def view_tagstats():
     if not stats:
         st.info("아직 오답 데이터가 없어요.")
         return
+
+    counts = {}
+    for d in stats:
+        counts[d["subject"]] = counts.get(d["subject"], 0) + 1
+    subj = subject_picker_gate("tagstats_subject_filter", counts)
+    if subj is None:
+        return
+    stats = [d for d in stats if d["subject"] == subj]
+
     per_q = db.get_per_question_stats(con, ss.user, ss.exam)
     hidden = db.get_hidden_note_ids(con, ss.user)
     for d in stats[:20]:
@@ -1230,7 +1275,7 @@ def view_tagstats():
         wrong_qids = [qid for qid in sorted(d["qids"])
                       if per_q.get(qid, {}).get("wrong", 0) > 0 and qid not in hidden]
         with st.container(border=True):
-            st.write(f"**{subject_label(d['subject'])} · {tag_display(d['tag'])}**")
+            st.write(f"**{tag_display(d['tag'])}**")
             st.caption(f"오답 {d['wrong']}/{d['seen']}회 ({rate}%) · 통계는 삭제해도 유지돼요")
             if st.button("이 개념 집중 풀기", key=f"tagstat_focus_{d['subject']}_{d['tag']}"):
                 start_focus_session(sorted(d["qids"]), "자주 틀리는 개념")
@@ -1270,13 +1315,24 @@ def view_bookmarks():
     if not ids:
         st.info("아직 즐겨찾기한 문제가 없어요. 퀴즈 풀이 중 ☆ 즐겨찾기 버튼으로 추가할 수 있어요.")
         return
+
+    counts = {}
+    for qid in ids:
+        q = QUESTIONS.get(qid)
+        if q:
+            counts[q["subject"]] = counts.get(q["subject"], 0) + 1
+    subj = subject_picker_gate("bm_subject_filter", counts)
+    if subj is None:
+        return
+    ids = [qid for qid in ids if QUESTIONS.get(qid, {}).get("subject") == subj]
+
     if st.button(f"즐겨찾기 {len(ids)}개 풀어보기"):
         start_focus_session(ids, "즐겨찾기")
         goto("퀴즈")
     groups = logic.group_ids_by_tag(QUESTIONS, ids)
     checked_ids = []
     for (subject, tag), qids in groups.items():
-        st.markdown(f'<div class="group-title">{subject_label(subject)} · {tag_display(tag)}</div>', unsafe_allow_html=True)
+        st.markdown(f'<div class="group-title">{tag_display(tag)}</div>', unsafe_allow_html=True)
         for qid in qids:
             q = QUESTIONS[qid]
             answer_text = [q["choice1"], q["choice2"], q["choice3"], q["choice4"]][q["answer"] - 1]
@@ -1520,6 +1576,14 @@ def view_coach():
     if not repeated:
         st.caption("아직 2번 이상 반복해서 틀린 문제가 없어요. 문제를 풀다 보면 여기에 나타나요.")
         return
+
+    counts = {}
+    for qid, s in repeated:
+        counts[QUESTIONS[qid]["subject"]] = counts.get(QUESTIONS[qid]["subject"], 0) + 1
+    subj = subject_picker_gate("coach_repeat_subject_filter", counts)
+    if subj is None:
+        return
+    repeated = [(qid, s) for qid, s in repeated if QUESTIONS[qid]["subject"] == subj]
 
     for qid, s in repeated[:15]:
         q = QUESTIONS[qid]
