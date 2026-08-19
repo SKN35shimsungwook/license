@@ -169,6 +169,9 @@ ss.setdefault("input_mode", "마우스")
 ss.setdefault("wrong_subject_filter", None)
 ss.setdefault("tagstats_subject_filter", None)
 ss.setdefault("bm_subject_filter", None)
+ss.setdefault("wrong_source_filter", None)
+ss.setdefault("tagstats_source_filter", None)
+ss.setdefault("bm_source_filter", None)
 ss.setdefault("coach_repeat_subject_filter", None)
 
 if "_pending_nav" in ss:
@@ -540,6 +543,28 @@ def subject_picker_gate(state_key, counts_by_subject):
                 st.rerun()
         return None
     if st.button("◀ 과목 다시 선택", key=f"{state_key}_back"):
+        ss[state_key] = None
+        st.rerun()
+    return picked
+
+
+SOURCE_FILTER_LABELS = {"concept": "퀴즈 (개념 문제)", "cbt": "CBT 문제 (기출)"}
+
+
+def source_picker_gate(state_key, counts_by_source):
+    """오답노트/자주 틀리는 개념/즐겨찾기에서 퀴즈(개념) 문제와 CBT 기출 문제가 뒤섞여
+    보이는 걸 막기 위한 게이트. subject_picker_gate와 같은 패턴(과목 선택보다 먼저 거친다)."""
+    picked = ss.get(state_key)
+    if picked is None:
+        st.caption("퀴즈에서 틀린 문제인지, CBT 모드에서 틀린 문제인지 먼저 골라주세요.")
+        for src in ("concept", "cbt"):
+            n = counts_by_source.get(src, 0)
+            if st.button(f"{SOURCE_FILTER_LABELS[src]} — {n}개", key=f"{state_key}_pick_{src}",
+                         disabled=(n == 0), width="stretch"):
+                ss[state_key] = src
+                st.rerun()
+        return None
+    if st.button("◀ 유형 다시 선택", key=f"{state_key}_back"):
         ss[state_key] = None
         st.rerun()
     return picked
@@ -1487,6 +1512,17 @@ def view_wrong():
         st.success("복습이 필요한 오답이 없어요. 계속 이렇게 풀어보세요!")
         return
 
+    src_counts = {}
+    for qid in need + done:
+        q = QUESTIONS.get(qid)
+        if q:
+            src_counts[q["source"]] = src_counts.get(q["source"], 0) + 1
+    source = source_picker_gate("wrong_source_filter", src_counts)
+    if source is None:
+        return
+    need = [qid for qid in need if QUESTIONS.get(qid, {}).get("source") == source]
+    done = [qid for qid in done if QUESTIONS.get(qid, {}).get("source") == source]
+
     counts = {}
     for qid in need + done:
         q = QUESTIONS.get(qid)
@@ -1564,9 +1600,21 @@ def view_wrong():
 # =====================================================================
 def view_tagstats():
     st.header("자주 틀리는 개념")
-    stats = db.get_tag_stats(con, ss.user, ss.exam)
-    if not stats:
+    all_stats = db.get_tag_stats(con, ss.user, ss.exam)
+    if not all_stats:
         st.info("아직 오답 데이터가 없어요.")
+        return
+
+    src_counts = {
+        "concept": len(db.get_tag_stats(con, ss.user, ss.exam, source="concept")),
+        "cbt": len(db.get_tag_stats(con, ss.user, ss.exam, source="cbt")),
+    }
+    source = source_picker_gate("tagstats_source_filter", src_counts)
+    if source is None:
+        return
+    stats = db.get_tag_stats(con, ss.user, ss.exam, source=source)
+    if not stats:
+        st.info("이 유형에는 아직 오답 데이터가 없어요.")
         return
 
     counts = {}
@@ -1625,6 +1673,16 @@ def view_bookmarks():
     if not ids:
         st.info("아직 즐겨찾기한 문제가 없어요. 퀴즈 풀이 중 ☆ 즐겨찾기 버튼으로 추가할 수 있어요.")
         return
+
+    src_counts = {}
+    for qid in ids:
+        q = QUESTIONS.get(qid)
+        if q:
+            src_counts[q["source"]] = src_counts.get(q["source"], 0) + 1
+    source = source_picker_gate("bm_source_filter", src_counts)
+    if source is None:
+        return
+    ids = [qid for qid in ids if QUESTIONS.get(qid, {}).get("source") == source]
 
     counts = {}
     for qid in ids:
