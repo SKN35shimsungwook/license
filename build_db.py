@@ -24,6 +24,7 @@ def _read_rows(path):
                 r["choice1"], r["choice2"], r["choice3"], r["choice4"],
                 int(r["answer"]), r["explanation"], int(r["core_id"]), r["source"],
                 r.get("round", "") or "",
+                1 if (r.get("ai_corrected", "") or "").strip() == "1" else 0,
             )
             for r in reader
         ]
@@ -52,14 +53,15 @@ def main():
             explanation TEXT NOT NULL,
             core_id INTEGER NOT NULL,
             source TEXT NOT NULL DEFAULT 'concept',
-            round TEXT NOT NULL DEFAULT ''
+            round TEXT NOT NULL DEFAULT '',
+            ai_corrected INTEGER NOT NULL DEFAULT 0
         )
     """)
 
     rows = _read_rows(CSV_PATH) + _read_rows(CBT_CSV_PATH)
     cur.executemany(
         "INSERT INTO questions (exam, subject, tag, question, choice1, choice2, choice3, choice4, "
-        "answer, explanation, core_id, source, round) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)",
+        "answer, explanation, core_id, source, round, ai_corrected) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
         rows,
     )
     cur.execute("CREATE INDEX IF NOT EXISTS idx_questions_exam ON questions(exam)")
