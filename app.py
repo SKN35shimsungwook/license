@@ -467,7 +467,10 @@ def _practice_render_navigator(pool):
 
 def _cbt_practice_pool_builder(variant, picked_subject, picked_round, picked_year, picked_count):
     if variant == "회차별 기출":
-        return logic.pick_cbt_round_pool(QUESTIONS, CBT_IDS, picked_round)
+        pool = logic.pick_cbt_round_pool(QUESTIONS, CBT_IDS, picked_round)
+        if picked_subject != "전체":
+            pool = [qid for qid in pool if QUESTIONS[qid]["subject"] == int(picked_subject)]
+        return pool
     subjects = ALL_SUBJECTS if picked_subject == "전체" else [int(picked_subject)]
     ids = CBT_IDS
     if picked_year != "전체":
@@ -486,6 +489,9 @@ def _cbt_practice():
                 st.info("회차별 기출 데이터가 아직 없어요.")
                 return
             picked_round = st.selectbox("회차 선택", rounds, key="cbt_practice_round_pick")
+            picked_subject = st.radio("과목", subject_choices(),
+                                       format_func=lambda s: "전체" if s == "전체" else subject_label(int(s)),
+                                       horizontal=True, key="cbt_practice_round_subject")
         else:
             picked_subject = st.radio("과목", subject_choices(),
                                        format_func=lambda s: "전체" if s == "전체" else subject_label(int(s)),
