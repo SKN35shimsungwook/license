@@ -5,6 +5,7 @@ import random
 import time
 
 import streamlit as st
+import streamlit.components.v1 as components
 
 import ai_coach
 import build_db
@@ -163,6 +164,8 @@ ss.setdefault("coach_variant_result", None)
 ss.setdefault("coach_variant_wrong_counts", {})
 ss.setdefault("coach_strategy", "")
 
+ss.setdefault("input_mode", "마우스")
+
 ss.setdefault("wrong_subject_filter", None)
 ss.setdefault("tagstats_subject_filter", None)
 ss.setdefault("bm_subject_filter", None)
@@ -199,6 +202,11 @@ with st.sidebar:
 
     ss.user = st.text_input("닉네임 (풀이 기록 저장용)", value=ss.user or "guest")
     st.radio("메뉴", NAV_ITEMS, key="nav")
+    st.radio(
+        "입력 방식", ["마우스", "키보드"], key="input_mode", horizontal=True,
+        help="키보드 모드: 숫자 1~4로 보기 선택, ←/→로 이전·다음 문제 이동. "
+             "스마트폰 등 터치 기기와 충돌하지 않도록 기본값은 마우스 모드예요.",
+    )
 
 exam_cfg = logic.EXAM_CONFIG[ss.exam]
 QUESTIONS = logic.build_questions_index(db.get_all_questions(con, ss.exam))
@@ -1906,6 +1914,90 @@ def view_coach():
             with c2:
                 _render_coach_variant(client, qid, q, choices, correct_text)
 
+
+# =====================================================================
+# 키보드 모드: 숫자 1~4로 보기 선택, ←/→로 이전·다음 문제 이동
+# (화면 중앙에 가장 가까운 문제에 적용 — 마우스 모드일 때는 리스너가 아무 동작도 하지 않아
+#  스마트폰 등 터치 기기에서 켜져 있어도 충돌하지 않는다)
+# =====================================================================
+def _inject_keyboard_shortcuts(enabled):
+    # A listener attached from inside this component's iframe onto window.parent.document
+    # is unreliable in Chrome (cross-realm addEventListener onto a sandboxed parent can
+    # silently fail to fire). So instead we inject a real <script> element into the PARENT
+    # document's own DOM — appendChild (unlike innerHTML) actually executes it — which makes
+    # the handler run natively in the parent's own realm, attached exactly once ever.
+    components.html(
+        """
+        <script>
+        (function() {
+            var doc = window.parent.document;
+            doc.__cbtKbdModeOn = """ + ("true" if enabled else "false") + """;
+            if (doc.__cbtKbdScriptInjected) return;
+            doc.__cbtKbdScriptInjected = true;
+            var s = doc.createElement('script');
+            s.textContent = [
+                '(function() {',
+                '    var choiceKey = {',
+                "        '1': 0, '2': 1, '3': 2, '4': 3,",
+                "        'Numpad1': 0, 'Numpad2': 1, 'Numpad3': 2, 'Numpad4': 3,",
+                '    };',
+                '    function findGroups() {',
+                '        return Array.from(document.querySelectorAll(\\'div[role="radiogroup"]\\'))',
+                "            .filter(function(g) { return g.getAttribute('aria-label') === '보기'; });",
+                '    }',
+                '    function closestToCenter(groups) {',
+                '        if (groups.length === 1) return groups[0];',
+                '        var vh = window.innerHeight;',
+                '        var best = groups[0], bestDist = Infinity;',
+                '        groups.forEach(function(g) {',
+                '            var r = g.getBoundingClientRect();',
+                '            if (r.bottom < 0 || r.top > vh) return;',
+                '            var dist = Math.abs((r.top + r.bottom) / 2 - vh / 2);',
+                '            if (dist < bestDist) { bestDist = dist; best = g; }',
+                '        });',
+                '        return best;',
+                '    }',
+                '    function findNavButton(word) {',
+                "        return Array.from(document.querySelectorAll('button'))",
+                '            .find(function(b) { return b.textContent.indexOf(word) !== -1 && !b.disabled; });',
+                '    }',
+                "    document.addEventListener('keydown', function(e) {",
+                '        if (!document.__cbtKbdModeOn) return;',
+                '        var active = document.activeElement;',
+                '        var isTypingField = active && (',
+                "            active.tagName === 'TEXTAREA' ||",
+                '            active.isContentEditable ||',
+                "            (active.tagName === 'INPUT' && ['radio', 'checkbox', 'button', 'submit'].indexOf((active.type || '').toLowerCase()) === -1)",
+                '        );',
+                '        if (isTypingField) return;',
+                "        if (e.key === 'ArrowRight' || e.key === 'ArrowLeft') {",
+                "            var btn = findNavButton(e.key === 'ArrowRight' ? '다음' : '이전');",
+                '            if (btn) { btn.click(); e.preventDefault(); }',
+                '            return;',
+                '        }',
+                '        var idx = choiceKey[e.key];',
+                '        if (idx === undefined) return;',
+                '        var groups = findGroups();',
+                '        if (groups.length === 0) return;',
+                '        var target = closestToCenter(groups);',
+                '        var inputs = target.querySelectorAll(\\'input[type="radio"]\\');',
+                '        if (inputs[idx]) {',
+                '            inputs[idx].click();',
+                '            inputs[idx].blur();',
+                '            e.preventDefault();',
+                '        }',
+                '    });',
+                '})();',
+            ].join('\\n');
+            doc.body.appendChild(s);
+        })();
+        </script>
+        """,
+        height=0,
+    )
+
+
+_inject_keyboard_shortcuts(ss.input_mode == "키보드")
 
 # =====================================================================
 # 메인 디스패치
