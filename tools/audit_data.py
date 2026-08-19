@@ -3,6 +3,7 @@
 import csv
 import os
 import re
+import unicodedata
 
 BASE = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 PATH = os.path.join(BASE, "data", "cbt_questions.csv")
@@ -76,6 +77,22 @@ for r in rows:
     text = r["question"]
     if IMAGE_DEP_RE.search(text) and VAGUE_EXP_RE.search(r.get("explanation", "")):
         issues.append(("IMAGE_DEPENDENT_VAGUE_EXPLANATION", r["id"], text[:60]))
+
+# 8) 사설영역(Private Use Area) 코드포인트/제어문자/치환문자 - PDF 폰트 글리프가
+#    깨진 채로 텍스트에 남아있으면 화면에 네모(tofu)로 보인다.
+def _is_bad_char(c):
+    cp = ord(c)
+    if 0xE000 <= cp <= 0xF8FF or 0xF0000 <= cp <= 0xFFFFD or 0x100000 <= cp <= 0x10FFFD:
+        return True
+    if unicodedata.category(c) == "Cc" and c not in ("\n", "\t"):
+        return True
+    return cp == 0xFFFD
+
+for r in rows:
+    for field in ["question", "choice1", "choice2", "choice3", "choice4", "explanation"]:
+        bad = [c for c in r.get(field, "") if _is_bad_char(c)]
+        if bad:
+            issues.append(("BAD_UNICODE_CHAR", r["id"], field, [hex(ord(c)) for c in bad]))
 
 with open(OUT, "w", encoding="utf-8") as f:
     f.write(f"total rows: {len(rows)}\n")
