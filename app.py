@@ -223,8 +223,12 @@ def source_badge_text(q):
     if q["source"] == "cbt":
         parts = q["tag"].split("_")
         if len(parts) == 2 and parts[0].isdigit() and parts[1].isdigit():
-            return f"📄 {parts[0]}년 {parts[1]}회 기출"
-        return f"📄 {q['tag']} 기출" if q["tag"] else "📄 기출문제"
+            base = f"📄 {parts[0]}년 {parts[1]}회 기출"
+        else:
+            base = f"📄 {q['tag']} 기출" if q["tag"] else "📄 기출문제"
+        if q.get("ai_corrected"):
+            return base + " · 🛠️ AI보정"
+        return base
     return "✏️ AI 신규문제"
 
 
