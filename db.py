@@ -100,15 +100,18 @@ def get_wrong_question_ids(con, user, exam):
     return need, done, stats
 
 
-def get_tag_stats(con, user, exam):
-    rows = con.execute(
-        """
+def get_tag_stats(con, user, exam, source=None):
+    """source: None(전체) / "concept"(퀴즈) / "cbt"(CBT 문제)로 집계 범위를 좁힐 수 있다."""
+    sql = """
         SELECT q.subject AS subject, q.tag AS tag, a.question_id AS qid, a.is_correct AS is_correct
         FROM attempts a JOIN questions q ON a.question_id = q.id
         WHERE a.user = ? AND q.exam = ?
-        """,
-        (user, exam),
-    ).fetchall()
+        """
+    params = [user, exam]
+    if source is not None:
+        sql += " AND q.source = ?"
+        params.append(source)
+    rows = con.execute(sql, params).fetchall()
     agg = {}
     for r in rows:
         key = (r["subject"], r["tag"])
