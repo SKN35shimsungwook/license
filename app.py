@@ -324,6 +324,91 @@ def _render_grid_svg(spec):
     return f'<svg width="{width}" height="{height}" viewBox="0 0 {width} {height}" xmlns="http://www.w3.org/2000/svg">{"".join(parts)}</svg>'
 
 
+def _digraph_parts(spec, cx, cy, radius, r, marker_id):
+    import math
+    edges = [tuple(e.split(">")) for e in spec.split(",") if e]
+    nodes = []
+    for a, b in edges:
+        if a not in nodes:
+            nodes.append(a)
+        if b not in nodes:
+            nodes.append(b)
+    n = max(1, len(nodes))
+    pos = {}
+    for i, node in enumerate(nodes):
+        angle = -math.pi / 2 + 2 * math.pi * i / n
+        pos[node] = (cx + radius * math.cos(angle), cy + radius * math.sin(angle))
+
+    parts = [
+        f'<defs><marker id="{marker_id}" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto">'
+        f'<path d="M0,0 L8,4 L0,8 Z" fill="#3E5C9A"/></marker></defs>'
+    ]
+    for a, b in edges:
+        if a == b:
+            x, y = pos[a]
+            dx, dy = x - cx, y - cy
+            dist = (dx ** 2 + dy ** 2) ** 0.5 or 1
+            ox, oy = dx / dist, dy / dist
+            lx, ly = x + ox * 40, y + oy * 40
+            parts.append(
+                f'<circle cx="{lx}" cy="{ly}" r="16" fill="none" stroke="#3E5C9A" '
+                f'stroke-width="2" marker-end="url(#{marker_id})"/>'
+            )
+            continue
+        x1, y1 = pos[a]
+        x2, y2 = pos[b]
+        mx, my = (x1 + x2) / 2, (y1 + y2) / 2
+        ddx, ddy = x2 - x1, y2 - y1
+        dist = (ddx ** 2 + ddy ** 2) ** 0.5 or 1
+        px, py = -ddy / dist, ddx / dist
+        bulge = 16
+        cxp, cyp = mx + px * bulge, my + py * bulge
+        ang1 = math.atan2(cyp - y1, cxp - x1)
+        sx1, sy1 = x1 + r * math.cos(ang1), y1 + r * math.sin(ang1)
+        ang2 = math.atan2(cyp - y2, cxp - x2)
+        sx2, sy2 = x2 + r * math.cos(ang2), y2 + r * math.sin(ang2)
+        parts.append(
+            f'<path d="M{sx1},{sy1} Q{cxp},{cyp} {sx2},{sy2}" fill="none" '
+            f'stroke="#3E5C9A" stroke-width="2" marker-end="url(#{marker_id})"/>'
+        )
+    for node, (x, y) in pos.items():
+        parts.append(f'<circle cx="{x}" cy="{y}" r="{r}" fill="white" stroke="#3E5C9A" stroke-width="2"/>')
+        parts.append(
+            f'<text x="{x}" y="{y + 5}" text-anchor="middle" font-size="14" '
+            f'font-family="sans-serif" fill="#1C2333">{node}</text>'
+        )
+    return parts
+
+
+def _render_digraph_svg(spec):
+    cx, cy, radius, r = 150, 130, 90, 20
+    parts = _digraph_parts(spec, cx, cy, radius, r, "arrow")
+    width, height = cx * 2, cy * 2 + 20
+    return f'<svg width="{width}" height="{height}" viewBox="0 0 {width} {height}" xmlns="http://www.w3.org/2000/svg">{"".join(parts)}</svg>'
+
+
+def _render_digraphs_grid_svg(spec):
+    """선택지 여러 개가 각각 다른 방향그래프인 문제용. spec은 '|'로 구분된 edge-list 목록."""
+    specs = spec.split("|")
+    panel_w, panel_h = 160, 150
+    cols = min(4, len(specs))
+    rows = (len(specs) + cols - 1) // cols
+    cx, cy, radius, r = panel_w / 2, panel_h / 2 + 6, 45, 14
+    groups = []
+    for i, s in enumerate(specs):
+        col, row = i % cols, i // cols
+        tx, ty = col * panel_w, row * panel_h
+        parts = _digraph_parts(s, cx, cy, radius, r, f"arrow{i}")
+        label = "①②③④⑤⑥"[i] if i < 6 else str(i + 1)
+        groups.append(
+            f'<g transform="translate({tx},{ty})">'
+            f'<text x="10" y="20" font-size="15" font-family="sans-serif" fill="#1C2333" font-weight="bold">{label}</text>'
+            f'{"".join(parts)}</g>'
+        )
+    width, height = panel_w * cols, panel_h * rows
+    return f'<svg width="{width}" height="{height}" viewBox="0 0 {width} {height}" xmlns="http://www.w3.org/2000/svg">{"".join(groups)}</svg>'
+
+
 def render_diagram(q):
     spec = (q.get("diagram") or "").strip()
     if not spec:
@@ -333,6 +418,10 @@ def render_diagram(q):
             svg = _render_tree_svg(spec[len("tree:"):])
         elif spec.startswith("grid:"):
             svg = _render_grid_svg(spec[len("grid:"):])
+        elif spec.startswith("digraph:"):
+            svg = _render_digraph_svg(spec[len("digraph:"):])
+        elif spec.startswith("digraphs:"):
+            svg = _render_digraphs_grid_svg(spec[len("digraphs:"):])
         else:
             return
         st.markdown(f'<div style="margin:6px 0 12px;">{svg}</div>', unsafe_allow_html=True)
