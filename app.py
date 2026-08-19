@@ -232,6 +232,114 @@ def source_badge_text(q):
     return "✏️ AI 신규문제"
 
 
+def _render_tree_svg(spec):
+    if "|labels:" in spec:
+        edge_part, label_part = spec.split("|labels:", 1)
+    else:
+        edge_part, label_part = spec, ""
+    labels = {}
+    for kv in label_part.split(","):
+        if "=" in kv:
+            k, v = kv.split("=", 1)
+            labels[k] = v
+    edges = [tuple(e.split(">")) for e in edge_part.split(",") if e]
+    children, all_nodes, child_set = {}, [], set()
+    for p, c in edges:
+        children.setdefault(p, []).append(c)
+        if p not in all_nodes:
+            all_nodes.append(p)
+        if c not in all_nodes:
+            all_nodes.append(c)
+        child_set.add(c)
+    root = next(n for n in all_nodes if n not in child_set)
+
+    positions = {}
+    counter = [0]
+
+    def layout(node, depth):
+        kids = children.get(node, [])
+        if not kids:
+            x = counter[0]
+            counter[0] += 1
+            positions[node] = (x, depth)
+            return x
+        xs = [layout(k, depth + 1) for k in kids]
+        x = sum(xs) / len(xs)
+        positions[node] = (x, depth)
+        return x
+
+    layout(root, 0)
+    n_leaves = max(1, counter[0])
+    max_depth = max(d for _, d in positions.values())
+    unit, r = 64, 17
+    width = n_leaves * unit
+    height = (max_depth + 1) * unit + 10
+
+    def px(pos):
+        x, y = pos
+        return (x * unit + unit / 2, y * unit + unit / 2 + 5)
+
+    parts = []
+    for p, kids in children.items():
+        x1, y1 = px(positions[p])
+        for c in kids:
+            x2, y2 = px(positions[c])
+            parts.append(f'<line x1="{x1}" y1="{y1}" x2="{x2}" y2="{y2}" stroke="#3E5C9A" stroke-width="2"/>')
+    for node, pos in positions.items():
+        x, y = px(pos)
+        label = labels.get(node, node)
+        parts.append(f'<circle cx="{x}" cy="{y}" r="{r}" fill="white" stroke="#3E5C9A" stroke-width="2"/>')
+        parts.append(
+            f'<text x="{x}" y="{y + 5}" text-anchor="middle" font-size="14" '
+            f'font-family="sans-serif" fill="#1C2333">{label}</text>'
+        )
+    return f'<svg width="{width}" height="{height}" viewBox="0 0 {width} {height}" xmlns="http://www.w3.org/2000/svg">{"".join(parts)}</svg>'
+
+
+def _render_grid_svg(spec):
+    cells = []
+    max_x = max_y = 0.0
+    for part in spec.split(";"):
+        if not part:
+            continue
+        vals = part.split(",")
+        x, y, w, h = (float(v) for v in vals[:4])
+        label = vals[4] if len(vals) > 4 else ""
+        cells.append((x, y, w, h, label))
+        max_x, max_y = max(max_x, x + w), max(max_y, y + h)
+    unit = 90
+    width, height = max_x * unit, max_y * unit
+    parts = []
+    for x, y, w, h, label in cells:
+        px_x, px_y, px_w, px_h = x * unit, y * unit, w * unit, h * unit
+        parts.append(
+            f'<rect x="{px_x}" y="{px_y}" width="{px_w}" height="{px_h}" '
+            f'fill="white" stroke="#3E5C9A" stroke-width="2"/>'
+        )
+        if label:
+            parts.append(
+                f'<text x="{px_x + px_w / 2}" y="{px_y + px_h / 2 + 5}" text-anchor="middle" '
+                f'font-size="13" font-family="sans-serif" fill="#1C2333">{label}</text>'
+            )
+    return f'<svg width="{width}" height="{height}" viewBox="0 0 {width} {height}" xmlns="http://www.w3.org/2000/svg">{"".join(parts)}</svg>'
+
+
+def render_diagram(q):
+    spec = (q.get("diagram") or "").strip()
+    if not spec:
+        return
+    try:
+        if spec.startswith("tree:"):
+            svg = _render_tree_svg(spec[len("tree:"):])
+        elif spec.startswith("grid:"):
+            svg = _render_grid_svg(spec[len("grid:"):])
+        else:
+            return
+        st.markdown(f'<div style="margin:6px 0 12px;">{svg}</div>', unsafe_allow_html=True)
+    except Exception:
+        pass
+
+
 def tag_display(tag):
     parts = tag.split("_")
     if len(parts) == 2 and parts[0].isdigit() and parts[1].isdigit():
@@ -429,6 +537,7 @@ def view_quiz():
     c_prog.caption(f"{ss.quiz_idx + 1} / {len(ss.quiz_pool)}")
     c_time.caption(f"⏱ {elapsed_str(ss.quiz_start_at)}")
     st.subheader(q["question"])
+    render_diagram(q)
 
     bookmark_toggle(qid)
 
@@ -620,6 +729,7 @@ def _cbt_practice():
             unsafe_allow_html=True,
         )
         st.write(q["question"])
+        render_diagram(q)
         bookmark_toggle(qid)
         labels = [f"{'①②③④'[j]} {c}" for j, c in enumerate(choices)]
         picked = st.radio("보기", labels, key=f"cbtp_radio_{qid}", index=None, label_visibility="collapsed")
@@ -785,6 +895,7 @@ def _run_cbt_exam(pool_builder, exam_key):
             unsafe_allow_html=True,
         )
         st.write(q["question"])
+        render_diagram(q)
         labels = [f"{'①②③④'[j]} {c}" for j, c in enumerate(choices)]
         st.radio("보기", labels, key=f"cbte_radio_{qid}", index=None, label_visibility="collapsed")
         st.divider()
@@ -1013,6 +1124,7 @@ def _view_card(subjects):
     )
     st.caption(f"{ss.card_idx + 1} / {len(ss.card_pool)}")
     st.subheader(q["question"])
+    render_diagram(q)
 
     if card_mode == "뒤집기":
         if not ss.card_flipped:
@@ -1263,6 +1375,7 @@ def view_wrong():
                 with cmain:
                     st.caption(source_badge_text(q))
                     st.write(q["question"])
+                    render_diagram(q)
                     labels = [f"{'①②③④'[i]} {c}" for i, c in enumerate(choices)]
                     picked = st.radio("보기", labels, key=f"wrongq_radio_{qid}", index=None, label_visibility="collapsed")
                     if st.button("확인", key=f"wrongq_check_{qid}", disabled=picked is None):
@@ -1348,6 +1461,7 @@ def view_tagstats():
                             checked_ids.append(qid)
                         with cmain:
                             st.write(q["question"])
+                            render_diagram(q)
                             st.caption(f"정답: {answer_text} · {source_badge_text(q)}")
                     cdel1, cdel2 = st.columns(2)
                     if cdel1.button(f"선택 삭제 ({len(checked_ids)})",
