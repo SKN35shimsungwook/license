@@ -51,9 +51,15 @@
 53,ipe_industrial,1,2024_3,사용자 인터페이스(User Interface)에 대한 설명으로 틀린 것은?,사용자와 시스템이 정보를 주고받는 상호 작용이 잘 이루어지 도록 하는 장치나 소프트웨어를 의미한다.,편리한 유지보수를 위해 개발자 중심으로 설계되어야 한다.,배우기가 용이하고 쉽게 사용할 수 있도록 만들어져야 한다.,사용자 요구사항이 UI에 반영될 수 있도록 구성해야 한다.,2,사용자 인터페이스는 개발자가 아닌 '사용자' 중심으로 설계되어야 합니다. 유지보수 편의보다 사용자의 이해와 편의를 우선해야 합니다.,13,cbt,2024_3,0,
 54,ipe_industrial,1,2025_2,사용자 인터페이스(User Interface)에 대한 설명으로 틀린 것은?,사용자와 시스템이 정보를 주고받는 상호작용이 잘 이루어지 도록 하는 장치나 소프트웨어를 의미한다.,편리한 유지보수를 위해 개발자 중심으로 설계되어야 한다.,배우기가 용이하고 쉽게 사용할 수 있도록 만들어져야 한다.,사용자 요구사항이 UI에 반영될 수 있도록 구성해야 한다.,2,사용자 인터페이스는 개발자가 아닌 '사용자' 중심으로 설계되어야 합니다. 유지보수 편의보다 사용자의 이해와 편의를 우선해야 합니다.,13,cbt,2025_2,0,
 55,ipe_industrial,1,2025_3,사용자 인터페이스(User Interface)에 대한 설명으로 틀린 것은?,사용자와 시스템이 정보를 주고받는 상호 작용이 잘 이루어지 도록 하는 장치나 소프트웨어를 의미한다.,편리한 유지보수를 위해 개발자 중심으로 설계되어야 한다.,배우기가 용이하고 쉽게 사용할 수 있도록 만들어져야 한다.,사용자 요구사항이 UI에 반영될 수 있도록 구성해야 한다.,2,사용자 인터페이스는 개발자가 아닌 '사용자' 중심으로 설계되어야 합니다. 유지보수 편의보다 사용자의 이해와 편의를 우선해야 합니다.,13,cbt,2025_3,0,
-56,ipe_industrial,1,2022_1,"디스크 대기 큐에 다음과 같은 순서(왼쪽부터 먼저 도착한 순서임) 로 트랙의 액세스 요청이 대기 중이다. 모든 트랙을 서비스하기 위하여 FCFS 스케줄링 기법이 사용되었을 때, 모두 몇 트랙의 헤드 이동이 생기는가?(단, 현재 헤드의 위치는 50 트랙이다.) 디스크 대기 큐 : 10, 40, 55, 35",50,85,105,110,3,"FCFS 디스크 스케줄링은 요청이 들어온 순서(10,40,55,35) 그대로 헤드를 이동시킵니다. 현재 위치 50에서 |50-10|+|10-40|+|40-55|+|55-35| = 40+30+15+20 = 105트랙입니다.",14,cbt,2022_1,0,
-57,ipe_industrial,1,2023_2,"디스크 대기 큐에 다음과 같은 순서(왼쪽부터 먼저 도착한 순서임)로 트랙의 액세스 요청이 대기 중이다. 모든 트랙을 서비스하기 위하여 FCFS 스케줄링 기법이 사용되었을 때, 모두 몇 트랙의 헤드 이동이 생기는가?(단, 현재 헤드의 위치는 50 트랙이다.) 디스크 대기 큐 : 10, 40, 55, 35",50,85,105,110,3,"FCFS 디스크 스케줄링은 요청이 들어온 순서(10,40,55,35) 그대로 헤드를 이동시킵니다. 현재 위치 50에서 |50-10|+|10-40|+|40-55|+|55-35| = 40+30+15+20 = 105트랙입니다.",14,cbt,2023_2,0,
-58,ipe_industrial,1,2024_2,"디스크 대기 큐에 다음과 같은 순서(왼쪽부터 먼저 도착한 순서임)로 트랙의 액세스 요청이 대기 중이다. 모든 트랙을 서비스하기 위하여 FCFS 스케줄링 기법이 사용되었을 때, 모두 몇 트랙의 헤드 이동이 생기는가? (단, 현재 헤드의 위치는 50 트랙이다.) 디스크 대기 큐 : 10, 40, 55, 35",50,85,105,110,3,"FCFS 디스크 스케줄링은 요청이 들어온 순서(10,40,55,35) 그대로 헤드를 이동시킵니다. 현재 위치 50에서 |50-10|+|10-40|+|40-55|+|55-35| = 40+30+15+20 = 105트랙입니다.",14,cbt,2024_2,0,
+56,ipe_industrial,1,2022_1,"디스크 대기 큐에 다음과 같은 순서(왼쪽부터 먼저 도착한 순서임)로 트랙의 액세스 요청이 대기 중이다. 모든 트랙을 서비스하기 위하여 FCFS 스케줄링 기법이 사용되었을 때, 모두 몇 트랙의 헤드 이동이 생기는가?(단, 현재 헤드의 위치는 50 트랙이다.)
+
+> 디스크 대기 큐 : 10, 40, 55, 35",50,85,105,110,3,"FCFS 디스크 스케줄링은 요청이 들어온 순서(10,40,55,35) 그대로 헤드를 이동시킵니다. 현재 위치 50에서 |50-10|+|10-40|+|40-55|+|55-35| = 40+30+15+20 = 105트랙입니다.",14,cbt,2022_1,0,
+57,ipe_industrial,1,2023_2,"디스크 대기 큐에 다음과 같은 순서(왼쪽부터 먼저 도착한 순서임)로 트랙의 액세스 요청이 대기 중이다. 모든 트랙을 서비스하기 위하여 FCFS 스케줄링 기법이 사용되었을 때, 모두 몇 트랙의 헤드 이동이 생기는가?(단, 현재 헤드의 위치는 50 트랙이다.)
+
+> 디스크 대기 큐 : 10, 40, 55, 35",50,85,105,110,3,"FCFS 디스크 스케줄링은 요청이 들어온 순서(10,40,55,35) 그대로 헤드를 이동시킵니다. 현재 위치 50에서 |50-10|+|10-40|+|40-55|+|55-35| = 40+30+15+20 = 105트랙입니다.",14,cbt,2023_2,0,
+58,ipe_industrial,1,2024_2,"디스크 대기 큐에 다음과 같은 순서(왼쪽부터 먼저 도착한 순서임)로 트랙의 액세스 요청이 대기 중이다. 모든 트랙을 서비스하기 위하여 FCFS 스케줄링 기법이 사용되었을 때, 모두 몇 트랙의 헤드 이동이 생기는가?(단, 현재 헤드의 위치는 50 트랙이다.)
+
+> 디스크 대기 큐 : 10, 40, 55, 35",50,85,105,110,3,"FCFS 디스크 스케줄링은 요청이 들어온 순서(10,40,55,35) 그대로 헤드를 이동시킵니다. 현재 위치 50에서 |50-10|+|10-40|+|40-55|+|55-35| = 40+30+15+20 = 105트랙입니다.",14,cbt,2024_2,0,
 59,ipe_industrial,1,2026_1,"디스크 대기 큐에 다음과 같은 순서(왼쪽부터 먼저 도착한 순서임)로 트랙의 액세스 요청이 대기 중이다. 모든 트랙을 서비스하기 위하여 FCFS 스케줄링 기법이 사용되었을 때, 모두 몇 트랙의 헤드 이동이 생기는가?(단, 현재 헤드의 위치는 50 트랙이다.)
 
 > 디스크 대기 큐 : 10, 40, 55, 35",50,85,105,110,3,"FCFS 디스크 스케줄링은 요청이 들어온 순서(10,40,55,35) 그대로 헤드를 이동시킵니다. 현재 위치 50에서 |50-10|+|10-40|+|40-55|+|55-35| = 40+30+15+20 = 105트랙입니다.",14,cbt,2026_1,0,
@@ -121,10 +127,58 @@ System.out.print(a.length);
 118,ipe_industrial,2,2025_3,다음 중 빌드 도구가 아닌 것은?,Zeplin,Ant,Maven,Gradle,1,"Zeplin은 디자인 협업(디자인-개발자 간 스펙 전달) 도구이며, Ant·Maven·Gradle은 빌드 자동화 도구입니다.",33,cbt,2025_3,0,
 119,ipe_industrial,2,2022_1,모듈을 설계하기 위해서 바람직한 응집도(Cohesion)와 결합도 (Coupling)의 관계는?,응집도는 약하고 결합도는 강해야 한다.,응집도는 강하고 결합도는 약해야 한다.,응집도도 약하고 결합도도 약해야 한다.,응집도도 강하고 결합도도 강해야 한다.,2,"좋은 모듈 설계는 응집도(Cohesion)는 강하게, 결합도(Coupling)는 약하게 하는 것이 원칙입니다.",34,cbt,2022_1,0,
 120,ipe_industrial,2,2024_1,모듈을 설계하기 위해서 바람직한 응집도(Cohesion)와 결합도 (Coupling)의 관계는?,응집도는 약하고 결합도는 강해야 한다.,응집도는 강하고 결합도는 약해야 한다.,응집도도 약하고 결합도도 약해야 한다.,응집도도 강하고 결합도도 강해야 한다.,2,"좋은 모듈 설계는 응집도(Cohesion)는 강하게, 결합도(Coupling)는 약하게 하는 것이 원칙입니다.",34,cbt,2024_1,0,
-121,ipe_industrial,2,2022_1,"다음 C언어 프로그램이 실행되었을 때의 결과는? #include <stdio.h> void func(int* p) { *p = *p - 5; } main() { int a = 13; func(&a); printf(""%d"", a); }",-5,3,8,13,3,포인터로 매개변수를 전달했으므로(&a) 함수 내부에서 원본 a의 값이 실제로 변경됩니다. 13-5=8이 출력됩니다.,35,cbt,2022_1,0,
-122,ipe_industrial,2,2023_1,"다음 C언어 프로그램이 실행되었을 때의 결과는? #include <stdio.h> void func(int* p) { *p = *p - 5; } main() { int a = 13; func(&a); printf(""%d"", a); }",-5,3,8,13,3,포인터로 매개변수를 전달했으므로(&a) 함수 내부에서 원본 a의 값이 실제로 변경됩니다. 13-5=8이 출력됩니다.,35,cbt,2023_1,0,
-123,ipe_industrial,2,2023_2,"다음 C언어 프로그램이 실행되었을 때의 결과는? #include <stdio.h> void func(int* p) { *p = *p - 5; } main() { int a = 13; func(&a); printf(""%d"", a); }",-5,3,8,13,3,포인터로 매개변수를 전달했으므로(&a) 함수 내부에서 원본 a의 값이 실제로 변경됩니다. 13-5=8이 출력됩니다.,35,cbt,2023_2,0,
-124,ipe_industrial,2,2024_3,"다음 C언어 프로그램이 실행되었을 때의 결과는? #include <stdio.h> void func(int* p) { *p = *p - 5; } main() { int a = 13; func(&a); printf(""%d"", a); }",-5,3,8,13,3,포인터로 매개변수를 전달했으므로(&a) 함수 내부에서 원본 a의 값이 실제로 변경됩니다. 13-5=8이 출력됩니다.,35,cbt,2024_3,0,
+121,ipe_industrial,2,2022_1,"다음 C언어 프로그램이 실행되었을 때의 결과는?
+
+```c
+#include <stdio.h>
+void func(int* p) {
+    *p = *p - 5;
+}
+main() {
+    int a = 13;
+    func(&a);
+    printf(""%d"", a);
+}
+```",-5,3,8,13,3,포인터로 매개변수를 전달했으므로(&a) 함수 내부에서 원본 a의 값이 실제로 변경됩니다. 13-5=8이 출력됩니다.,35,cbt,2022_1,0,
+122,ipe_industrial,2,2023_1,"다음 C언어 프로그램이 실행되었을 때의 결과는?
+
+```c
+#include <stdio.h>
+void func(int* p) {
+    *p = *p - 5;
+}
+main() {
+    int a = 13;
+    func(&a);
+    printf(""%d"", a);
+}
+```",-5,3,8,13,3,포인터로 매개변수를 전달했으므로(&a) 함수 내부에서 원본 a의 값이 실제로 변경됩니다. 13-5=8이 출력됩니다.,35,cbt,2023_1,0,
+123,ipe_industrial,2,2023_2,"다음 C언어 프로그램이 실행되었을 때의 결과는?
+
+```c
+#include <stdio.h>
+void func(int* p) {
+    *p = *p - 5;
+}
+main() {
+    int a = 13;
+    func(&a);
+    printf(""%d"", a);
+}
+```",-5,3,8,13,3,포인터로 매개변수를 전달했으므로(&a) 함수 내부에서 원본 a의 값이 실제로 변경됩니다. 13-5=8이 출력됩니다.,35,cbt,2023_2,0,
+124,ipe_industrial,2,2024_3,"다음 C언어 프로그램이 실행되었을 때의 결과는?
+
+```c
+#include <stdio.h>
+void func(int* p) {
+    *p = *p - 5;
+}
+main() {
+    int a = 13;
+    func(&a);
+    printf(""%d"", a);
+}
+```",-5,3,8,13,3,포인터로 매개변수를 전달했으므로(&a) 함수 내부에서 원본 a의 값이 실제로 변경됩니다. 13-5=8이 출력됩니다.,35,cbt,2024_3,0,
 125,ipe_industrial,2,2026_1,"다음 C언어 프로그램이 실행되었을 때의 결과는?
 
 ```c
@@ -211,9 +265,18 @@ main() {
 196,ipe_industrial,1,2026_1,정보 전송 시에 발생하는 오류의 검색 및 정정이 용이하도록 된 코드는?,Excess-3 code,Hamming code,Gray code,Biquinary Code,2,해밍 코드(Hamming code)는 오류 검출과 정정이 모두 가능한 코드입니다.,61,cbt,2026_1,0,
 197,ipe_industrial,1,2022_2,라우팅 프로토콜 중 Distance Vector 방식이 아닌 것은?,RIP,BGP,EIGRP,OSPF,4,"OSPF는 링크 상태(Link State) 방식이며, RIP·BGP·EIGRP는 거리 벡터(Distance Vector) 계열입니다(엄밀히 BGP는 경로 벡터지만 이 문제 맥락상 거리 벡터 계열로 분류). 따라서 Distance Vector가 아닌 것은 OSPF입니다.",62,cbt,2022_2,0,
 198,ipe_industrial,1,2025_2,라우팅 프로토콜 중 Distance Vector 방식이 아닌 것은?,RIP,BGP,EIGRP,OSPF,4,"OSPF는 링크 상태(Link State) 방식이며, RIP·BGP·EIGRP는 거리 벡터(Distance Vector) 계열입니다(엄밀히 BGP는 경로 벡터지만 이 문제 맥락상 거리 벡터 계열로 분류). 따라서 Distance Vector가 아닌 것은 OSPF입니다.",62,cbt,2025_2,0,
-199,ipe_industrial,1,2022_2,"OSI 7 계층 중에서 다음 설명에 해당하는 계층은? ㆍ경로 설정, 트래픽 제어 기능 ㆍ네트워크 연결을 설정, 유지, 해제하는 기능",세션 계층,응용 계층,네트워크 계층,표현 계층,3,"네트워크 계층은 경로 설정(라우팅), 트래픽 제어, 논리 주소를 이용한 연결 설정·유지·해제 기능을 담당합니다.",63,cbt,2022_2,0,
-200,ipe_industrial,1,2023_3,"OSI 7 계층 중에서 다음 설명에 해당하는 계층은? ㆍ경로 설정, 트래픽 제어 기능 ㆍ네트워크 연결을 설정, 유지, 해제하는 기능",세션 계층,응용 계층,네트워크 계층,표현 계층,3,"네트워크 계층은 경로 설정(라우팅), 트래픽 제어, 논리 주소를 이용한 연결 설정·유지·해제 기능을 담당합니다.",63,cbt,2023_3,0,
-201,ipe_industrial,1,2024_3,"OSI 7 계층 중에서 다음 설명에 해당하는 계층은? ㆍ경로 설정, 트래픽 제어 기능 ㆍ네트워크 연결을 설정, 유지, 해제하는 기능",세션 계층,응용 계층,네트워크 계층,표현 계층,3,"네트워크 계층은 경로 설정(라우팅), 트래픽 제어, 논리 주소를 이용한 연결 설정·유지·해제 기능을 담당합니다.",63,cbt,2024_3,0,
+199,ipe_industrial,1,2022_2,"OSI 7 계층 중에서 다음 설명에 해당하는 계층은?
+
+- 경로 설정, 트래픽 제어 기능
+- 네트워크 연결을 설정, 유지, 해제하는 기능",세션 계층,응용 계층,네트워크 계층,표현 계층,3,"네트워크 계층은 경로 설정(라우팅), 트래픽 제어, 논리 주소를 이용한 연결 설정·유지·해제 기능을 담당합니다.",63,cbt,2022_2,0,
+200,ipe_industrial,1,2023_3,"OSI 7 계층 중에서 다음 설명에 해당하는 계층은?
+
+- 경로 설정, 트래픽 제어 기능
+- 네트워크 연결을 설정, 유지, 해제하는 기능",세션 계층,응용 계층,네트워크 계층,표현 계층,3,"네트워크 계층은 경로 설정(라우팅), 트래픽 제어, 논리 주소를 이용한 연결 설정·유지·해제 기능을 담당합니다.",63,cbt,2023_3,0,
+201,ipe_industrial,1,2024_3,"OSI 7 계층 중에서 다음 설명에 해당하는 계층은?
+
+- 경로 설정, 트래픽 제어 기능
+- 네트워크 연결을 설정, 유지, 해제하는 기능",세션 계층,응용 계층,네트워크 계층,표현 계층,3,"네트워크 계층은 경로 설정(라우팅), 트래픽 제어, 논리 주소를 이용한 연결 설정·유지·해제 기능을 담당합니다.",63,cbt,2024_3,0,
 202,ipe_industrial,1,2022_2,프로세스의 정의로 적당하지 않은 것은?,실행중인 프로그램,프로세서가 할당되는 개체,운영체제 내에 프로세스 제어 블록의 존재로서 명시되는 것,하드웨어에 의해 사용되는 입출력 장치,4,"프로세스는 실행 중인 프로그램, PCB로 관리되는 개체, 프로세서가 할당되는 개체입니다. 입출력 장치는 하드웨어 자원이지 프로세스의 정의가 아닙니다.",64,cbt,2022_2,0,
 203,ipe_industrial,1,2024_3,프로세스의 정의로 적당하지 않은 것은?,실행중인 프로그램,프로세서가 할당되는 개체,운영체제 내에 프로세스 제어 블록의 존재로서 명시되는 것,하드웨어에 의해 사용되는 입출력 장치,4,"프로세스는 실행 중인 프로그램, PCB로 관리되는 개체, 프로세서가 할당되는 개체입니다. 입출력 장치는 하드웨어 자원이지 프로세스의 정의가 아닙니다.",64,cbt,2024_3,0,
 204,ipe_industrial,1,2022_2,오류가 발생한 코드를 추적하여 수정하는 작업은?,Loading,Linking,Debugging,Hashing,3,Debugging(디버깅)은 테스트로 발견된 오류의 원인이 되는 코드를 추적해 수정하는 작업입니다.,65,cbt,2022_2,0,
@@ -240,9 +303,15 @@ main() {
 225,ipe_industrial,1,2022_2,데이터 전송 방식 중 패킷 교환 방식에 대한 설명으로 틀린 것은?,가상 회선 방식과 데이터그램 방식이 있다.,전송에 실패한 패킷의 경우 재전송이 가능하다.,패킷 단위로 헤더를 추가하므로 패킷별 오버헤드가 발생한다.,실시간 전송이나 대량의 데이터 전송에 적합하다.,4,"패킷 교환 방식은 짧은 메시지·대화형 트래픽에 적합하며, 실시간·대용량 전송에는 회선 교환 방식이 더 적합합니다.",72,cbt,2022_2,0,
 226,ipe_industrial,1,2024_1,데이터 전송 방식 중 패킷 교환 방식에 대한 설명으로 틀린 것은?,가상 회선 방식과 데이터그램 방식이 있다.,전송에 실패한 패킷의 경우 재전송이 가능하다.,패킷 단위로 헤더를 추가하므로 패킷별 오버헤드가 발생한다.,실시간 전송이나 대량의 데이터 전송에 적합하다.,4,"패킷 교환 방식은 짧은 메시지·대화형 트래픽에 적합하며, 실시간·대용량 전송에는 회선 교환 방식이 더 적합합니다.",72,cbt,2024_1,0,
 227,ipe_industrial,1,2024_3,데이터 전송 방식 중 패킷 교환 방식에 대한 설명으로 틀린 것은?,가상 회선 방식과 데이터그램 방식이 있다.,전송에 실패한 패킷의 경우 재전송이 가능하다.,패킷 단위로 헤더를 추가하므로 패킷별 오버헤드가 발생한다.,실시간 전송이나 대량의 데이터 전송에 적합하다.,4,"패킷 교환 방식은 짧은 메시지·대화형 트래픽에 적합하며, 실시간·대용량 전송에는 회선 교환 방식이 더 적합합니다.",72,cbt,2024_3,0,
-228,ipe_industrial,1,2022_2,"다음 괄호에 들어갈 알맞은 용어는? (     )는 구체 클래스에서 구현하려는 기능들의 공통점만 을 모은 것으로, 인스턴스 생성이 불가능하여 구체 클래 스가 (     )를 상속받아 구체화한 후 구체 클래스의 인스 턴스를 생성하는 방식으로 사용한다.",서브 클래스,제어 클래스,추상 클래스,조상 클래스,3,"추상 클래스는 구체 클래스들이 구현할 기능의 공통점만 모아 놓은 것으로 그 자체로는 인스턴스를 생성할 수 없고, 하위 클래스가 상속받아 구체화한 뒤 인스턴스를 생성합니다.",73,cbt,2022_2,0,
-229,ipe_industrial,1,2023_3,"다음 괄호에 들어갈 알맞은 용어는? (     )는 구체 클래스에서 구현하려는 기능들의 공통점만 을 모은 것으로, 인스턴스 생성이 불가능하여 구체 클래 스가 (     )를 상속받아 구체화한 후 구체 클래스의 인스 턴스를 생성하는 방식으로 사용한다.",서브 클래스,제어 클래스,추상 클래스,조상 클래스,3,"추상 클래스는 구체 클래스들이 구현할 기능의 공통점만 모아 놓은 것으로 그 자체로는 인스턴스를 생성할 수 없고, 하위 클래스가 상속받아 구체화한 뒤 인스턴스를 생성합니다.",73,cbt,2023_3,0,
-230,ipe_industrial,1,2024_2,"다음 괄호에 들어갈 알맞은 용어는? (     )는 구체 클래스에서 구현하려는 기능들의 공통점만 을 모은 것으로, 인스턴스 생성이 불가능하여 구체 클래 스가 (     )를 상속받아 구체화한 후 구체 클래스의 인스 턴스를 생성하는 방식으로 사용한다.",서브 클래스,제어 클래스,추상 클래스,조상 클래스,3,"추상 클래스는 구체 클래스들이 구현할 기능의 공통점만 모아 놓은 것으로 그 자체로는 인스턴스를 생성할 수 없고, 하위 클래스가 상속받아 구체화한 뒤 인스턴스를 생성합니다.",73,cbt,2024_2,0,
+228,ipe_industrial,1,2022_2,"다음 괄호에 들어갈 알맞은 용어는?
+
+> (　　)는 구체 클래스에서 구현하려는 기능들의 공통점만을 모은 것으로, 인스턴스 생성이 불가능하여 구체 클래스가 (　　)를 상속받아 구체화한 후 구체 클래스의 인스턴스를 생성하는 방식으로 사용한다.",서브 클래스,제어 클래스,추상 클래스,조상 클래스,3,"추상 클래스는 구체 클래스들이 구현할 기능의 공통점만 모아 놓은 것으로 그 자체로는 인스턴스를 생성할 수 없고, 하위 클래스가 상속받아 구체화한 뒤 인스턴스를 생성합니다.",73,cbt,2022_2,0,
+229,ipe_industrial,1,2023_3,"다음 괄호에 들어갈 알맞은 용어는?
+
+> (　　)는 구체 클래스에서 구현하려는 기능들의 공통점만을 모은 것으로, 인스턴스 생성이 불가능하여 구체 클래스가 (　　)를 상속받아 구체화한 후 구체 클래스의 인스턴스를 생성하는 방식으로 사용한다.",서브 클래스,제어 클래스,추상 클래스,조상 클래스,3,"추상 클래스는 구체 클래스들이 구현할 기능의 공통점만 모아 놓은 것으로 그 자체로는 인스턴스를 생성할 수 없고, 하위 클래스가 상속받아 구체화한 뒤 인스턴스를 생성합니다.",73,cbt,2023_3,0,
+230,ipe_industrial,1,2024_2,"다음 괄호에 들어갈 알맞은 용어는?
+
+> (　　)는 구체 클래스에서 구현하려는 기능들의 공통점만을 모은 것으로, 인스턴스 생성이 불가능하여 구체 클래스가 (　　)를 상속받아 구체화한 후 구체 클래스의 인스턴스를 생성하는 방식으로 사용한다.",서브 클래스,제어 클래스,추상 클래스,조상 클래스,3,"추상 클래스는 구체 클래스들이 구현할 기능의 공통점만 모아 놓은 것으로 그 자체로는 인스턴스를 생성할 수 없고, 하위 클래스가 상속받아 구체화한 뒤 인스턴스를 생성합니다.",73,cbt,2024_2,0,
 231,ipe_industrial,1,2026_1,"다음 괄호에 들어갈 알맞은 용어는?
 
 > (　　)는 구체 클래스에서 구현하려는 기능들의 공통점만을 모은 것으로, 인스턴스 생성이 불가능하여 구체 클래스가 (　　)를 상속받아 구체화한 후 구체 클래스의 인스턴스를 생성하는 방식으로 사용한다.",서브 클래스,제어 클래스,추상 클래스,조상 클래스,3,"추상 클래스는 구체 클래스들이 구현할 기능의 공통점만 모아 놓은 것으로 그 자체로는 인스턴스를 생성할 수 없고, 하위 클래스가 상속받아 구체화한 뒤 인스턴스를 생성합니다.",73,cbt,2026_1,0,
@@ -278,10 +347,98 @@ main() {
 262,ipe_industrial,2,2026_1,"캡슐화, 추상화, 상속성 등의 특징을 갖는 객체지향 언어는?",C,C++,COBOL,FORTRAN,2,C++는 캡슐화·추상화·상속성 등 객체지향 특성을 갖춘 언어입니다. C·COBOL·FORTRAN은 객체지향 언어가 아닙니다.,82,cbt,2026_1,0,
 263,ipe_industrial,2,2022_2,"Python에서 연속된 숫자를 생성하는 기능으로, 리스트의 생성 시나 반복문에 주로 활용되는 것은?",Goto,Range,Slice,Set,2,"range()는 Python에서 연속된 숫자(정수 수열)를 생성하는 함수로, for문이나 리스트 생성에 자주 사용됩니다.",83,cbt,2022_2,0,
 264,ipe_industrial,2,2023_3,"Python에서 연속된 숫자를 생성하는 기능으로, 리스트의 생성 시나 반복문에 주로 활용되는 것은?",Goto,Range,Slice,Set,2,"range()는 Python에서 연속된 숫자(정수 수열)를 생성하는 함수로, for문이나 리스트 생성에 자주 사용됩니다.",83,cbt,2023_3,0,
-265,ipe_industrial,2,2022_2,다음과 같이 HTML 문서를 작성했을 때 노란색 배경을 갖는 셀의 위치는? <html> <style> tr:nth-child(even) { background-color:yellow; } </style> <body> <table> <thead> <tr> <th></th> </tr> </thead> <tfoot> <tr> <td></td> </tr> </tfoot> <tbody> <tr> <td></td> </tr> <tr> <td></td> </tr> </tbody> </table> </body> </html>,1행,2행,3행,4행,3,"nth-child는 '같은 부모를 둔 형제 요소' 사이에서의 순번을 봅니다. thead의 tr은 thead의 유일한 자식(1번째), tfoot의 tr도 tfoot의 유일한 자식(1번째)이라 둘 다 홀수 번째라 대상이 아닙니다. tbody 안의 두 tr은 tbody의 1, 2번째 자식이므로 그중 2번째 tr만 짝수 번째로 노란 배경이 적용됩니다. 화면에는 브라우저가 tfoot을 항상 맨 아래로 재배치해 보여주므로, 실제 표시 순서는 thead행(1행)-tbody 1번째 행(2행)-tbody 2번째 행(3행)-tfoot행(4행)이 되어, 노란 배경이 적용되는 tbody 2번째 행은 화면상 3행이 됩니다.",84,cbt,2022_2,0,
-266,ipe_industrial,2,2023_2,다음과 같이 HTML 문서를 작성했을 때 노란색 배경을 갖는 셀의 위치는? <html> <style> tr:nth-child(even) { background-color:yellow; } </style> <body> <table> <thead> <tr> <th></th> </tr> </thead> <tfoot> <tr> <td></td> </tr> </tfoot> <tbody> <tr> <td></td> </tr> <tr> <td></td> </tr> </tbody> </table> </body> </html>,1행,2행,3행,4행,3,"nth-child는 '같은 부모를 둔 형제 요소' 사이에서의 순번을 봅니다. thead의 tr은 thead의 유일한 자식(1번째), tfoot의 tr도 tfoot의 유일한 자식(1번째)이라 둘 다 홀수 번째라 대상이 아닙니다. tbody 안의 두 tr은 tbody의 1, 2번째 자식이므로 그중 2번째 tr만 짝수 번째로 노란 배경이 적용됩니다. 화면에는 브라우저가 tfoot을 항상 맨 아래로 재배치해 보여주므로, 실제 표시 순서는 thead행(1행)-tbody 1번째 행(2행)-tbody 2번째 행(3행)-tfoot행(4행)이 되어, 노란 배경이 적용되는 tbody 2번째 행은 화면상 3행이 됩니다.",84,cbt,2023_2,0,
-267,ipe_industrial,2,2024_1,다음과 같이 HTML 문서를 작성했을 때 노란색 배경을 갖는 셀의 위치는? <html> <style> tr:nth-child(even) { background-color:yellow; } </style> <body> <table> <thead> <tr> <th></th> </tr> </thead> <tfoot> <tr> <td></td> </tr> </tfoot> <tbody> <tr> <td></td> </tr> <tr> <td></td> </tr> </tbody> </table> </body> </html>,1행,2행,3행,4행,3,"nth-child는 '같은 부모를 둔 형제 요소' 사이에서의 순번을 봅니다. thead의 tr은 thead의 유일한 자식(1번째), tfoot의 tr도 tfoot의 유일한 자식(1번째)이라 둘 다 홀수 번째라 대상이 아닙니다. tbody 안의 두 tr은 tbody의 1, 2번째 자식이므로 그중 2번째 tr만 짝수 번째로 노란 배경이 적용됩니다. 화면에는 브라우저가 tfoot을 항상 맨 아래로 재배치해 보여주므로, 실제 표시 순서는 thead행(1행)-tbody 1번째 행(2행)-tbody 2번째 행(3행)-tfoot행(4행)이 되어, 노란 배경이 적용되는 tbody 2번째 행은 화면상 3행이 됩니다.",84,cbt,2024_1,0,
-268,ipe_industrial,2,2025_1,다음과 같이 HTML 문서를 작성했을 때 노란색 배경을 갖는 셀의 위치는? <html> <style> tr:nth-child(even) { background-color:yellow; } </style> <body> <table> <thead> <tr> <th></th> </tr> </thead> <tfoot> <tr> <td></td> </tr> </tfoot> <tbody> <tr> <td></td> </tr> <tr> <td></td> </tr> </tbody> </table> </body> </html>,1행,2행,3행,4행,3,"nth-child는 '같은 부모를 둔 형제 요소' 사이에서의 순번을 봅니다. thead의 tr은 thead의 유일한 자식(1번째), tfoot의 tr도 tfoot의 유일한 자식(1번째)이라 둘 다 홀수 번째라 대상이 아닙니다. tbody 안의 두 tr은 tbody의 1, 2번째 자식이므로 그중 2번째 tr만 짝수 번째로 노란 배경이 적용됩니다. 화면에는 브라우저가 tfoot을 항상 맨 아래로 재배치해 보여주므로, 실제 표시 순서는 thead행(1행)-tbody 1번째 행(2행)-tbody 2번째 행(3행)-tfoot행(4행)이 되어, 노란 배경이 적용되는 tbody 2번째 행은 화면상 3행이 됩니다.",84,cbt,2025_1,0,
+265,ipe_industrial,2,2022_2,"다음과 같이 HTML 문서를 작성했을 때 노란색 배경을 갖는 셀의 위치는?
+
+```html
+<html>
+<style>
+tr:nth-child(even) { background-color: yellow; }
+</style>
+<body>
+<table>
+<thead>
+<tr><th></th></tr>
+</thead>
+<tfoot>
+<tr><td></td></tr>
+</tfoot>
+<tbody>
+<tr><td></td></tr>
+<tr><td></td></tr>
+</tbody>
+</table>
+</body>
+</html>
+```",1행,2행,3행,4행,3,"nth-child는 '같은 부모를 둔 형제 요소' 사이에서의 순번을 봅니다. thead의 tr은 thead의 유일한 자식(1번째), tfoot의 tr도 tfoot의 유일한 자식(1번째)이라 둘 다 홀수 번째라 대상이 아닙니다. tbody 안의 두 tr은 tbody의 1, 2번째 자식이므로 그중 2번째 tr만 짝수 번째로 노란 배경이 적용됩니다. 화면에는 브라우저가 tfoot을 항상 맨 아래로 재배치해 보여주므로, 실제 표시 순서는 thead행(1행)-tbody 1번째 행(2행)-tbody 2번째 행(3행)-tfoot행(4행)이 되어, 노란 배경이 적용되는 tbody 2번째 행은 화면상 3행이 됩니다.",84,cbt,2022_2,0,"grid:0,0,1,1,thead;0,1,1,1,tbody-1;0,2,1,1,tbody-2;0,3,1,1,tfoot"
+266,ipe_industrial,2,2023_2,"다음과 같이 HTML 문서를 작성했을 때 노란색 배경을 갖는 셀의 위치는?
+
+```html
+<html>
+<style>
+tr:nth-child(even) { background-color: yellow; }
+</style>
+<body>
+<table>
+<thead>
+<tr><th></th></tr>
+</thead>
+<tfoot>
+<tr><td></td></tr>
+</tfoot>
+<tbody>
+<tr><td></td></tr>
+<tr><td></td></tr>
+</tbody>
+</table>
+</body>
+</html>
+```",1행,2행,3행,4행,3,"nth-child는 '같은 부모를 둔 형제 요소' 사이에서의 순번을 봅니다. thead의 tr은 thead의 유일한 자식(1번째), tfoot의 tr도 tfoot의 유일한 자식(1번째)이라 둘 다 홀수 번째라 대상이 아닙니다. tbody 안의 두 tr은 tbody의 1, 2번째 자식이므로 그중 2번째 tr만 짝수 번째로 노란 배경이 적용됩니다. 화면에는 브라우저가 tfoot을 항상 맨 아래로 재배치해 보여주므로, 실제 표시 순서는 thead행(1행)-tbody 1번째 행(2행)-tbody 2번째 행(3행)-tfoot행(4행)이 되어, 노란 배경이 적용되는 tbody 2번째 행은 화면상 3행이 됩니다.",84,cbt,2023_2,0,"grid:0,0,1,1,thead;0,1,1,1,tbody-1;0,2,1,1,tbody-2;0,3,1,1,tfoot"
+267,ipe_industrial,2,2024_1,"다음과 같이 HTML 문서를 작성했을 때 노란색 배경을 갖는 셀의 위치는?
+
+```html
+<html>
+<style>
+tr:nth-child(even) { background-color: yellow; }
+</style>
+<body>
+<table>
+<thead>
+<tr><th></th></tr>
+</thead>
+<tfoot>
+<tr><td></td></tr>
+</tfoot>
+<tbody>
+<tr><td></td></tr>
+<tr><td></td></tr>
+</tbody>
+</table>
+</body>
+</html>
+```",1행,2행,3행,4행,3,"nth-child는 '같은 부모를 둔 형제 요소' 사이에서의 순번을 봅니다. thead의 tr은 thead의 유일한 자식(1번째), tfoot의 tr도 tfoot의 유일한 자식(1번째)이라 둘 다 홀수 번째라 대상이 아닙니다. tbody 안의 두 tr은 tbody의 1, 2번째 자식이므로 그중 2번째 tr만 짝수 번째로 노란 배경이 적용됩니다. 화면에는 브라우저가 tfoot을 항상 맨 아래로 재배치해 보여주므로, 실제 표시 순서는 thead행(1행)-tbody 1번째 행(2행)-tbody 2번째 행(3행)-tfoot행(4행)이 되어, 노란 배경이 적용되는 tbody 2번째 행은 화면상 3행이 됩니다.",84,cbt,2024_1,0,"grid:0,0,1,1,thead;0,1,1,1,tbody-1;0,2,1,1,tbody-2;0,3,1,1,tfoot"
+268,ipe_industrial,2,2025_1,"다음과 같이 HTML 문서를 작성했을 때 노란색 배경을 갖는 셀의 위치는?
+
+```html
+<html>
+<style>
+tr:nth-child(even) { background-color: yellow; }
+</style>
+<body>
+<table>
+<thead>
+<tr><th></th></tr>
+</thead>
+<tfoot>
+<tr><td></td></tr>
+</tfoot>
+<tbody>
+<tr><td></td></tr>
+<tr><td></td></tr>
+</tbody>
+</table>
+</body>
+</html>
+```",1행,2행,3행,4행,3,"nth-child는 '같은 부모를 둔 형제 요소' 사이에서의 순번을 봅니다. thead의 tr은 thead의 유일한 자식(1번째), tfoot의 tr도 tfoot의 유일한 자식(1번째)이라 둘 다 홀수 번째라 대상이 아닙니다. tbody 안의 두 tr은 tbody의 1, 2번째 자식이므로 그중 2번째 tr만 짝수 번째로 노란 배경이 적용됩니다. 화면에는 브라우저가 tfoot을 항상 맨 아래로 재배치해 보여주므로, 실제 표시 순서는 thead행(1행)-tbody 1번째 행(2행)-tbody 2번째 행(3행)-tfoot행(4행)이 되어, 노란 배경이 적용되는 tbody 2번째 행은 화면상 3행이 됩니다.",84,cbt,2025_1,0,"grid:0,0,1,1,thead;0,1,1,1,tbody-1;0,2,1,1,tbody-2;0,3,1,1,tfoot"
 269,ipe_industrial,2,2026_1,"다음과 같이 HTML 문서를 작성했을 때 노란색 배경을 갖는 셀의 위치는?
 
 ```html
@@ -312,20 +469,131 @@ tr:nth-child(even) { background-color: yellow; }
 274,ipe_industrial,2,2022_2,자바스크립트에서 배열에 데이터를 입력하고자 할 때 사용하는 메소드는?,push,add,pop,shift,1,"push()는 배열의 끝에 새로운 데이터를 추가하는 JavaScript 배열 메소드입니다. pop은 제거, shift는 앞에서 제거하는 메소드입니다.",87,cbt,2022_2,0,
 275,ipe_industrial,2,2023_1,자바스크립트에서 배열에 데이터를 입력하고자 할 때 사용하는 메소드는?,push,add,pop,shift,1,"push()는 배열의 끝에 새로운 데이터를 추가하는 JavaScript 배열 메소드입니다. pop은 제거, shift는 앞에서 제거하는 메소드입니다.",87,cbt,2023_1,0,
 276,ipe_industrial,2,2024_1,자바스크립트에서 배열에 데이터를 입력하고자 할 때 사용하는 메소드는?,push,add,pop,shift,1,"push()는 배열의 끝에 새로운 데이터를 추가하는 JavaScript 배열 메소드입니다. pop은 제거, shift는 앞에서 제거하는 메소드입니다.",87,cbt,2024_1,0,
-277,ipe_industrial,2,2022_2,"다음은 아이디와 패스워드를 입력하는 로그인 창을 자바스크립트 로 구현한 것이다. 괄호(㉠, ㉡)에 들어갈 적합한 속성은? <html> <head> <title>Login</title> </head> <body> <form (  ㉠  )=""post"" (  ㉡  )=""log01.jsp""> <p>ID:<input type=""text"" name=""id""></p> <p>PW:<input type=""password"" name=""pw""></p> <p><input type=""submit"" value=""Send""></p> </form> </body> </html>","㉠-method, ㉡-action","㉠-action, ㉡-function","㉠-function, ㉡-name","㉠-name, ㉡-method",1,"<form> 태그에서 method 속성은 전송 방식(post/get), action 속성은 전송될 대상 URL을 지정합니다.",88,cbt,2022_2,0,
-278,ipe_industrial,2,2023_1,"다음은 아이디와 패스워드를 입력하는 로그인 창을 자바스크립트로 구현한 것이다. 괄호(㉠, ㉡)에 들어갈 적합한 속성은? <html> <head> <title>Login</title> </head> <body> <form (  ㉠  )=""post"" (  ㉡  )=""log01.jsp""> <p>ID:<input type=""text"" name=""id""></p> <p>PW:<input type=""password"" name=""pw""></p> <p><input type=""submit"" value=""Send""></p> </form> </body> </html>","㉠-method, ㉡-action","㉠-action, ㉡-function","㉠-function, ㉡-name","㉠-name, ㉡-method",1,"<form> 태그에서 method 속성은 전송 방식(post/get), action 속성은 전송될 대상 URL을 지정합니다.",88,cbt,2023_1,0,
-279,ipe_industrial,2,2023_3,"다음은 아이디와 패스워드를 입력하는 로그인 창을 자바스크립트로 구현한 것이다. 괄호(㉠, ㉡)에 들어갈 적합한 속성은? <html> <head> <title>Login</title> </head> <body> <form (  ㉠  )=""post"" (  ㉡  )=""log01.jsp""> <p>ID:<input type=""text"" name=""id""></p> <p>PW:<input type=""password"" name=""pw""></p> <p><input type=""submit"" value=""Send""></p> </form> </body> </html>","㉠-method, ㉡-action","㉠-action, ㉡-function","㉠-function, ㉡-name","㉠-name, ㉡-method",1,"<form> 태그에서 method 속성은 전송 방식(post/get), action 속성은 전송될 대상 URL을 지정합니다.",88,cbt,2023_3,0,
-280,ipe_industrial,2,2022_2,"다음 Java 프로그램이 실행되었을 때, 실행 결과는? public class Test { public static void main(String args[]) { int a, b, c, d; a = b = 5; c = --a % --a; d = b++ * b++; System.out.printf(""%d, %d"", c, d); } }","0, 25","1, 25","0, 30","1, 30",4,"a=b=5로 a,b 모두 5에서 시작합니다. c=--a % --a: 첫 --a로 a=4(4 사용), 두 번째 --a로 a=3(3 사용) → c=4%3=1. d=b++ * b++: 첫 b++는 5를 사용 후 b=6, 두 번째 b++는 6을 사용 후 b=7 → d=5*6=30. 결과는 '1, 30'입니다.",89,cbt,2022_2,0,
-281,ipe_industrial,2,2023_2,"다음 Java 프로그램이 실행되었을 때, 실행 결과는? public class Test { public static void main(String args[]) { int a, b, c, d; a = b = 5; c = --a % --a; d = b++ * b++; System.out.printf(""%d, %d"", c, d); } }","0, 25","1, 25","0, 30","1, 30",4,"a=b=5로 a,b 모두 5에서 시작합니다. c=--a % --a: 첫 --a로 a=4(4 사용), 두 번째 --a로 a=3(3 사용) → c=4%3=1. d=b++ * b++: 첫 b++는 5를 사용 후 b=6, 두 번째 b++는 6을 사용 후 b=7 → d=5*6=30. 결과는 '1, 30'입니다.",89,cbt,2023_2,0,
-282,ipe_industrial,2,2024_2,"다음 Java 프로그램이 실행되었을 때, 실행 결과는? public class Test { public static void main(String[] args) { int n = 17; n += 1; n -= 2; n *= 3; n /= 4; n %= 5; System.out.println(n); } }",0,1,2,3,3,"n=17에서 시작해 n+=1→18, n-=2→16, n*=3→48, n/=4→12(정수 나눗셈), n%=5→12%5=2가 되어 최종 출력값은 2입니다.",89,cbt,2024_2,1,
-283,ipe_industrial,2,2024_3,"다음 Java 프로그램이 실행되었을 때, 실행 결과는? public class Test { public static void main(String args[]) { int a, b, c, d; a = b = 5; c = --a % --a; d = b++ * b++; System.out.printf(""%d, %d"", c, d); } }","0, 25","1, 25","0, 30","1, 30",4,"a=b=5로 a,b 모두 5에서 시작합니다. c=--a % --a: 첫 --a로 a=4(4 사용), 두 번째 --a로 a=3(3 사용) → c=4%3=1. d=b++ * b++: 첫 b++는 5를 사용 후 b=6, 두 번째 b++는 6을 사용 후 b=7 → d=5*6=30. 결과는 '1, 30'입니다.",89,cbt,2024_3,0,
+277,ipe_industrial,2,2022_2,"다음은 아이디와 패스워드를 입력하는 로그인 창을 자바스크립트 로 구현한 것이다. 괄호(㉠, ㉡)에 들어갈 적합한 속성은?
+
+```html
+<html>
+<head>
+<title>Login</title>
+</head>
+<body>
+<form (  ㉠  )=""post"" (  ㉡  )=""log01.jsp"">
+<p>ID:<input type=""text"" name=""id""></p>
+<p>PW:<input type=""password"" name=""pw""></p>
+<p><input type=""submit"" value=""Send""></p>
+</form>
+</body>
+</html>
+```","㉠-method, ㉡-action","㉠-action, ㉡-function","㉠-function, ㉡-name","㉠-name, ㉡-method",1,"<form> 태그에서 method 속성은 전송 방식(post/get), action 속성은 전송될 대상 URL을 지정합니다.",88,cbt,2022_2,0,
+278,ipe_industrial,2,2023_1,"다음은 아이디와 패스워드를 입력하는 로그인 창을 자바스크립트로 구현한 것이다. 괄호(㉠, ㉡)에 들어갈 적합한 속성은?
+
+```html
+<html>
+<head>
+<title>Login</title>
+</head>
+<body>
+<form (  ㉠  )=""post"" (  ㉡  )=""log01.jsp"">
+<p>ID:<input type=""text"" name=""id""></p>
+<p>PW:<input type=""password"" name=""pw""></p>
+<p><input type=""submit"" value=""Send""></p>
+</form>
+</body>
+</html>
+```","㉠-method, ㉡-action","㉠-action, ㉡-function","㉠-function, ㉡-name","㉠-name, ㉡-method",1,"<form> 태그에서 method 속성은 전송 방식(post/get), action 속성은 전송될 대상 URL을 지정합니다.",88,cbt,2023_1,0,
+279,ipe_industrial,2,2023_3,"다음은 아이디와 패스워드를 입력하는 로그인 창을 자바스크립트로 구현한 것이다. 괄호(㉠, ㉡)에 들어갈 적합한 속성은?
+
+```html
+<html>
+<head>
+<title>Login</title>
+</head>
+<body>
+<form (  ㉠  )=""post"" (  ㉡  )=""log01.jsp"">
+<p>ID:<input type=""text"" name=""id""></p>
+<p>PW:<input type=""password"" name=""pw""></p>
+<p><input type=""submit"" value=""Send""></p>
+</form>
+</body>
+</html>
+```","㉠-method, ㉡-action","㉠-action, ㉡-function","㉠-function, ㉡-name","㉠-name, ㉡-method",1,"<form> 태그에서 method 속성은 전송 방식(post/get), action 속성은 전송될 대상 URL을 지정합니다.",88,cbt,2023_3,0,
+280,ipe_industrial,2,2022_2,"다음 Java 프로그램이 실행되었을 때, 실행 결과는?
+
+```java
+public class Test {
+    public static void main(String args[]) {
+        int a, b, c, d;
+        a = b = 5;
+        c = --a % --a;
+        d = b++ * b++;
+        System.out.printf(""%d, %d"", c, d);
+    }
+}
+```","0, 25","1, 25","0, 30","1, 30",4,"a=b=5로 a,b 모두 5에서 시작합니다. c=--a % --a: 첫 --a로 a=4(4 사용), 두 번째 --a로 a=3(3 사용) → c=4%3=1. d=b++ * b++: 첫 b++는 5를 사용 후 b=6, 두 번째 b++는 6을 사용 후 b=7 → d=5*6=30. 결과는 '1, 30'입니다.",89,cbt,2022_2,0,
+281,ipe_industrial,2,2023_2,"다음 Java 프로그램이 실행되었을 때, 실행 결과는?
+
+```java
+public class Test {
+    public static void main(String args[]) {
+        int a, b, c, d;
+        a = b = 5;
+        c = --a % --a;
+        d = b++ * b++;
+        System.out.printf(""%d, %d"", c, d);
+    }
+}
+```","0, 25","1, 25","0, 30","1, 30",4,"a=b=5로 a,b 모두 5에서 시작합니다. c=--a % --a: 첫 --a로 a=4(4 사용), 두 번째 --a로 a=3(3 사용) → c=4%3=1. d=b++ * b++: 첫 b++는 5를 사용 후 b=6, 두 번째 b++는 6을 사용 후 b=7 → d=5*6=30. 결과는 '1, 30'입니다.",89,cbt,2023_2,0,
+282,ipe_industrial,2,2024_2,"다음 Java 프로그램이 실행되었을 때, 실행 결과는?
+
+```java
+public class Test {
+    public static void main(String[] args) {
+        int n = 17;
+        n += 1;
+        n -= 2;
+        n *= 3;
+        n /= 4;
+        n %= 5;
+        System.out.println(n);
+    }
+}
+```",0,1,2,3,3,"n=17에서 시작해 n+=1→18, n-=2→16, n*=3→48, n/=4→12(정수 나눗셈), n%=5→12%5=2가 되어 최종 출력값은 2입니다.",89,cbt,2024_2,1,
+283,ipe_industrial,2,2024_3,"다음 Java 프로그램이 실행되었을 때, 실행 결과는?
+
+```java
+public class Test {
+    public static void main(String args[]) {
+        int a, b, c, d;
+        a = b = 5;
+        c = --a % --a;
+        d = b++ * b++;
+        System.out.printf(""%d, %d"", c, d);
+    }
+}
+```","0, 25","1, 25","0, 30","1, 30",4,"a=b=5로 a,b 모두 5에서 시작합니다. c=--a % --a: 첫 --a로 a=4(4 사용), 두 번째 --a로 a=3(3 사용) → c=4%3=1. d=b++ * b++: 첫 b++는 5를 사용 후 b=6, 두 번째 b++는 6을 사용 후 b=7 → d=5*6=30. 결과는 '1, 30'입니다.",89,cbt,2024_3,0,
 284,ipe_industrial,2,2022_2,Python에서 문자열을 표현하는 방법으로 옳지 않은 것은?,'I don't like it',"""I don't like it""","""Hello World""",'Hello World',1,'I don't like it'처럼 작은따옴표 문자열 안에 어퍼스트로피(작은따옴표)가 그대로 들어가면 문자열이 조기 종료되어 문법 오류가 됩니다. 큰따옴표로 감싸거나 이스케이프 처리를 해야 합니다.,90,cbt,2022_2,0,
 285,ipe_industrial,2,2025_1,Python에서 문자열을 표현하는 방법으로 옳지 않은 것은?,'I don't like it',"""I don't like it""","""Hello World""",'Hello World’,1,'I don't like it'처럼 작은따옴표 문자열 안에 어퍼스트로피(작은따옴표)가 그대로 들어가면 문자열이 조기 종료되어 문법 오류가 됩니다. 큰따옴표로 감싸거나 이스케이프 처리를 해야 합니다.,90,cbt,2025_1,0,
 286,ipe_industrial,2,2022_2,다음 자바 프로그램 조건문에 대해 삼항 조건 연산자를 사용하여 옳게 나타낸 것은? if (a > b) max = a; else if (a <= b) max = b;,max = (a > b) ? a : b;,(a > b) ? max = a : max = b;,max = (a <= b) ? a : b;,(a <= b) ? max = a : max = b;,1,"if(a>b) max=a; else if(a<=b) max=b; 는 'a>b이면 a, 아니면 b'를 max에 대입하는 것과 같으므로 max = (a > b) ? a : b; 로 표현됩니다.",91,cbt,2022_2,0,
 287,ipe_industrial,2,2023_1,다음 자바 프로그램 조건문에 대해 삼항 조건 연산자를 사용하여 옳게 나타낸 것은? if (a > b) max = a; else if (a <= b) max = b;,max = (a > b) ? a : b;,(a > b) ? max = a : max = b;,max = (a <= b) ? a : b;,(a <= b) ? max = a : max = b;,1,"if(a>b) max=a; else if(a<=b) max=b; 는 'a>b이면 a, 아니면 b'를 max에 대입하는 것과 같으므로 max = (a > b) ? a : b; 로 표현됩니다.",91,cbt,2023_1,0,
 288,ipe_industrial,2,2024_1,다음 자바 프로그램 조건문에 대해 삼항 조건 연산자를 사용하여 옳게 나타낸 것은? if (a > b) max = a; else if (a <= b) max = b;,max = (a > b) ? a : b;,(a > b) ? max = a : max = b;,max = (a <= b) ? a : b;,(a <= b) ? max = a : max = b;,1,"if(a>b) max=a; else if(a<=b) max=b; 는 'a>b이면 a, 아니면 b'를 max에 대입하는 것과 같으므로 max = (a > b) ? a : b; 로 표현됩니다.",91,cbt,2024_1,0,
-289,ipe_industrial,2,2022_2,"다음 C언어 프로그램이 실행되었을 때, 실행 결과는? int main() { int arg[4] = { 70, 80, 90, 100 }; int* p = arg + 1; printf(""%d"", p[2]); }",70,80,90,100,4,"arg={70,80,90,100}에서 p=arg+1은 arg[1](80)을 가리킵니다. p[2]는 p 기준 2칸 뒤인 arg[1+2]=arg[3]=100입니다.",92,cbt,2022_2,0,
-290,ipe_industrial,2,2025_2,"다음 C언어 프로그램이 실행되었을 때, 실행 결과는? int main() { int arg[4] = { 70, 80, 90, 100 }; int* p = arg + 1; printf(""%d"", p[2]); }",70,80,90,100,4,"arg={70,80,90,100}에서 p=arg+1은 arg[1](80)을 가리킵니다. p[2]는 p 기준 2칸 뒤인 arg[1+2]=arg[3]=100입니다.",92,cbt,2025_2,0,
+289,ipe_industrial,2,2022_2,"다음 C언어 프로그램이 실행되었을 때, 실행 결과는?
+
+```c
+int main() {
+    int arg[4] = { 70, 80, 90, 100 };
+    int* p = arg + 1;
+    printf(""%d"", p[2]);
+}
+```",70,80,90,100,4,"arg={70,80,90,100}에서 p=arg+1은 arg[1](80)을 가리킵니다. p[2]는 p 기준 2칸 뒤인 arg[1+2]=arg[3]=100입니다.",92,cbt,2022_2,0,
+290,ipe_industrial,2,2025_2,"다음 C언어 프로그램이 실행되었을 때, 실행 결과는?
+
+```c
+int main() {
+    int arg[4] = { 70, 80, 90, 100 };
+    int* p = arg + 1;
+    printf(""%d"", p[2]);
+}
+```",70,80,90,100,4,"arg={70,80,90,100}에서 p=arg+1은 arg[1](80)을 가리킵니다. p[2]는 p 기준 2칸 뒤인 arg[1+2]=arg[3]=100입니다.",92,cbt,2025_2,0,
 291,ipe_industrial,2,2022_2,시스템을 설계할 때 필요한 설계 지침으로 두 모듈 간의 상호 의존도 또는 두 모듈 사이의 연관 관계를 나타내는 것은?,결합도,응집도,신뢰도,종합도,1,"결합도(Coupling)는 두 모듈 간의 상호 의존도, 즉 모듈 사이의 연관 관계를 나타내는 척도입니다.",93,cbt,2022_2,0,
 292,ipe_industrial,2,2023_3,시스템을 설계할 때 필요한 설계 지침으로 두 모듈 간의 상호 의존도 또는 두 모듈 사이의 연관 관계를 나타내는 것은?,결합도,응집도,신뢰도,종합도,1,"결합도(Coupling)는 두 모듈 간의 상호 의존도, 즉 모듈 사이의 연관 관계를 나타내는 척도입니다.",93,cbt,2023_3,0,
 293,ipe_industrial,2,2022_2,모듈 응집도가 높은 것에서 낮은 것의 순서로 옳게 나열된 것은?,절차적 응집성 → 통신적 응집성 → 순차적 응집성 → 기능적 응집성,통신적 응집성 → 절차적 응집성 → 순차적 응집성 → 기능적 응집성,절차적 응집성 → 통신적 응집성 → 기능적 응집성 → 순차적 응집성,기능적 응집성 → 순차적 응집성 → 통신적 응집성 → 절차적 응집성,4,응집도는 강한 것부터 기능적 → 순차적 → 교환(통신)적 → 절차적 → 시간적 → 논리적 → 우연적 순으로 약해집니다. 따라서 높은 것에서 낮은 순은 기능적 → 순차적 → 통신적 → 절차적 응집성입니다.,94,cbt,2022_2,0,
@@ -351,9 +619,9 @@ tr:nth-child(even) { background-color: yellow; }
 313,ipe_industrial,3,2023_2,‘학생’ 테이블에서 3학년이고 컴퓨터공학과인 학생의 이름만 조회하 는 SQL문으로 옳바른 것은?,SELECT 이름 FROM 학생 WHERE 학년 = 3 AND 학과 = “컴퓨터공학”;,SELECT 이름 FROM 학생 WHERE 학년 = 3 OR 학과 = “컴퓨 터공학”;,SELECT 이름 WHEN 학생 WHERE 학년 = 3 AND 학과 = “컴퓨터공학”;,SELECT 이름 WHEN 학생 WHERE 학년 = 3 OR 학과 = “컴퓨터공학”;,1,"여러 조건을 모두 만족(그리고=AND)해야 하므로 WHERE 학년=3 AND 학과=""컴퓨터공학""이 올바른 조건이며, SELECT 다음에는 FROM 절이 와야 합니다(WHEN은 SQL 문법이 아님).",101,cbt,2023_2,0,
 314,ipe_industrial,3,2024_1,‘학생’ 테이블에서 3학년이고 컴퓨터공학과인 학생의 이름만 조회하 는 SQL문으로 옳바른 것은?,SELECT 이름 FROM 학생 WHERE 학년 = 3 AND 학과 = “컴퓨터공학”;,SELECT 이름 FROM 학생 WHERE 학년 = 3 OR 학과 = “컴퓨 터공학”;,SELECT 이름 WHEN 학생 WHERE 학년 = 3 AND 학과 = “컴퓨터공학”;,SELECT 이름 WHEN 학생 WHERE 학년 = 3 OR 학과 = “컴퓨터공학”;,1,"여러 조건을 모두 만족(그리고=AND)해야 하므로 WHERE 학년=3 AND 학과=""컴퓨터공학""이 올바른 조건이며, SELECT 다음에는 FROM 절이 와야 합니다(WHEN은 SQL 문법이 아님).",101,cbt,2024_1,0,
 315,ipe_industrial,3,2025_3,‘학생’ 테이블에서 3학년이고 컴퓨터공학과인 학생의 이름만 조회 하는 SQL문으로 옳바른 것은?,SELECT 이름 FROM 학생 WHERE 학년 = 3 AND 학과 = “컴퓨터공학”;,SELECT 이름 FROM 학생 WHERE 학년 = 3 OR 학과 = “컴퓨터공학”;,SELECT 이름 WHEN 학생 WHERE 학년 = 3 AND 학과 = “컴퓨터공학”;,SELECT 이름 WHEN 학생 WHERE 학년 = 3 OR 학과 = “컴퓨터공학”;,1,"여러 조건을 모두 만족(그리고=AND)해야 하므로 WHERE 학년=3 AND 학과=""컴퓨터공학""이 올바른 조건이며, SELECT 다음에는 FROM 절이 와야 합니다(WHEN은 SQL 문법이 아님).",101,cbt,2025_3,0,
-316,ipe_industrial,3,2022_2,다음 이진 트리에 대한 Preorder 운행 결과는?,A B C D E F,D B A E C F,D B E C F A,A B D C E F,4,Preorder(전위 순회)는 '루트 → 왼쪽 서브트리 → 오른쪽 서브트리' 순서로 방문합니다. 정확한 방문 순서는 그림의 트리 구조에 따라 결정됩니다.,102,cbt,2022_2,0,
-317,ipe_industrial,3,2023_2,다음 이진 트리에 대한 Preorder 운행 결과는?,A B C D E F,D B A E C F,D B E C F A,A B D C E F,4,Preorder(전위 순회)는 '루트 → 왼쪽 서브트리 → 오른쪽 서브트리' 순서로 방문합니다. 정확한 방문 순서는 그림의 트리 구조에 따라 결정됩니다.,102,cbt,2023_2,0,
-318,ipe_industrial,3,2025_1,다음 이진 트리에 대한 Preorder 운행 결과는?,A B C D E F,D B A E C F,D B E C F A,A B D C E F,4,Preorder(전위 순회)는 '루트 → 왼쪽 서브트리 → 오른쪽 서브트리' 순서로 방문합니다. 정확한 방문 순서는 그림의 트리 구조에 따라 결정됩니다.,102,cbt,2025_1,0,
+316,ipe_industrial,3,2022_2,다음 이진 트리에 대한 Preorder 운행 결과는?,A B C D E F,D B A E C F,D B E C F A,A B D C E F,4,Preorder(전위 순회)는 '루트 → 왼쪽 서브트리 → 오른쪽 서브트리' 순서로 방문합니다. 정확한 방문 순서는 그림의 트리 구조에 따라 결정됩니다.,102,cbt,2022_2,0,"tree:A>B,A>C,B>D,C>E,C>F"
+317,ipe_industrial,3,2023_2,다음 이진 트리에 대한 Preorder 운행 결과는?,A B C D E F,D B A E C F,D B E C F A,A B D C E F,4,Preorder(전위 순회)는 '루트 → 왼쪽 서브트리 → 오른쪽 서브트리' 순서로 방문합니다. 정확한 방문 순서는 그림의 트리 구조에 따라 결정됩니다.,102,cbt,2023_2,0,"tree:A>B,A>C,B>D,C>E,C>F"
+318,ipe_industrial,3,2025_1,다음 이진 트리에 대한 Preorder 운행 결과는?,A B C D E F,D B A E C F,D B E C F A,A B D C E F,4,Preorder(전위 순회)는 '루트 → 왼쪽 서브트리 → 오른쪽 서브트리' 순서로 방문합니다. 정확한 방문 순서는 그림의 트리 구조에 따라 결정됩니다.,102,cbt,2025_1,0,"tree:A>B,A>C,B>D,C>E,C>F"
 319,ipe_industrial,3,2022_2,뷰(View)에 대한 설명으로 틀린 것은?,뷰 위에 또 다른 뷰를 정의할 수 있다.,DBA는 보안성 측면에서 뷰를 활용할 수 있다.,사용자가 필요한 정보를 요구에 맞게 가공하여 뷰로 만들 수 있다.,"SQL을 사용하면 뷰에 대한 삽입, 갱신, 삭제 연산 시 제약 사항이 없다.",4,"SQL로 뷰에 삽입·갱신·삭제 연산을 할 때는 제약 사항(단일 기본 테이블 유래, 집계 함수 미사용 등)이 따릅니다. '제약 사항이 없다'는 설명이 틀렸습니다.",103,cbt,2022_2,0,
 320,ipe_industrial,3,2023_3,뷰(View)에 대한 설명으로 틀린 것은?,뷰 위에 또 다른 뷰를 정의할 수 있다.,DBA는 보안성 측면에서 뷰를 활용할 수 있다.,사용자가 필요한 정보를 요구에 맞게 가공하여 뷰로 만들 수 있다.,"SQL을 사용하면 뷰에 대한 삽입, 갱신, 삭제 연산 시 제약 사항 이 없다.",4,"SQL로 뷰에 삽입·갱신·삭제 연산을 할 때는 제약 사항(단일 기본 테이블 유래, 집계 함수 미사용 등)이 따릅니다. '제약 사항이 없다'는 설명이 틀렸습니다.",103,cbt,2023_3,0,
 321,ipe_industrial,3,2022_2,개체-관계 모델(E-R 모델)에 대한 설명으로 옳지 않은 것은?,개체 타입과 관계 타입을 이용해서 현실 세계를 개념적으로 표현하는 방법이다.,E-R 다이어그램은 E-R 모델을 그래프 방식으로 표현한 것이다.,"E-R 다이어그램은 개체를 사각형, 관계를 마름모, 속성을 화 살표로 표현한다.",현실 세계의 무질서한 데이터를 개념적인 논리 데이터로 표현 하기 위한 방법으로 많이 사용된다.,3,"E-R 다이어그램은 개체를 사각형, 관계를 마름모, '속성은 타원'으로 표현합니다. 속성을 화살표로 표현한다는 설명이 틀렸습니다.",104,cbt,2022_2,0,
@@ -475,12 +743,67 @@ tr:nth-child(even) { background-color: yellow; }
 416,ipe_industrial,1,2022_3,기업의 소프트웨어 인프라인 정보 시스템을 공유와 재사용이 가능 한 서비스 단위로 구축하는 정보기술 아키텍처를 의미하는 용어는?,SOA,OGSA,Mashup,SDE,1,SOA(Service Oriented Architecture)는 정보 시스템을 공유·재사용 가능한 서비스 단위로 구축하는 IT 아키텍처입니다.,135,cbt,2022_3,0,
 417,ipe_industrial,1,2023_2,기업의 소프트웨어 인프라인 정보 시스템을 공유와 재사용이 가능한 서비스 단위로 구축하는 정보기술 아키텍처를 의미하는 용어는?,SOA,OGSA,Mashup,SDE,1,SOA(Service Oriented Architecture)는 정보 시스템을 공유·재사용 가능한 서비스 단위로 구축하는 IT 아키텍처입니다.,135,cbt,2023_2,0,
 418,ipe_industrial,1,2026_1,기업의 소프트웨어 인프라인 정보 시스템을 공유와 재사용이 가능한 서비스 단위로 구축하는 정보기술 아키텍처를 의미하는 용어는?,SOA,OGSA,Mashup,SDE,1,SOA(Service Oriented Architecture)는 정보 시스템을 공유·재사용 가능한 서비스 단위로 구축하는 IT 아키텍처입니다.,135,cbt,2026_1,0,
-419,ipe_industrial,2,2022_3,"다음은 아이디와 암호를 입력하는 로그인 창을 JavaScript로 구현한 것이다. 괄호(㉠~㉣)에 들어갈 적합한 속성은? <html> <body> <(  ㉠  ) (  ㉡  )=""post"" (  ㉢  )=""log01.jsp""> <p>아이디<input type=""text"" name=""id""></p> <p>암호<input type=""password"" name=""pw""></p> <(  ㉣  )> </body> </html>","㉠ form, ㉡ action, ㉢ method, ㉣ /form","㉠ form, ㉡ method, ㉢ action, ㉣ /form","㉠ function, ㉡ form, ㉢ method, ㉣ /function","㉠ function, ㉡ action, ㉢ form, ㉣ /function",2,"<form> 태그를 열고, method(전송방식)와 action(대상 URL) 속성을 지정한 뒤 </form>으로 닫습니다.",136,cbt,2022_3,0,
-420,ipe_industrial,2,2024_1,"다음은 아이디와 암호를 입력하는 로그인 창을 JavaScript로 구현한 것이다. 괄호(㉠~㉣)에 들어갈 적합한 속성은? <html> <body> <(  ㉠  ) (  ㉡  )=""post"" (  ㉢  )=""log01.jsp""> <p>아이디<input type=""text"" name=""id""></p> <p>암호<input type=""password"" name=""pw""></p> <(  ㉣  )> </body> </html>","㉠ form, ㉡ action, ㉢ method, ㉣ /form","㉠ form, ㉡ method, ㉢ action, ㉣ /form","㉠ function, ㉡ form, ㉢ method, ㉣ /function","㉠ function, ㉡ action, ㉢ form, ㉣ /function",2,"<form> 태그를 열고, method(전송방식)와 action(대상 URL) 속성을 지정한 뒤 </form>으로 닫습니다.",136,cbt,2024_1,0,
-421,ipe_industrial,2,2025_1,"다음은 아이디와 암호를 입력하는 로그인 창을 JavaScript로 구현한 것이다. 괄호(㉠~㉣)에 들어갈 적합한 속성은? <html> <body> <(  ㉠  ) (  ㉡  )=""post"" (  ㉢  )=""log01.jsp""> <p>아이디<input type=""text"" name=""id""></p> <p>암호<input type=""password"" name=""pw""></p> <(  ㉣  )> </body> </html>","㉠ form, ㉡ action, ㉢ method, ㉣ /form","㉠ form, ㉡ method, ㉢ action, ㉣ /form","㉠ function, ㉡ form, ㉢ method, ㉣ /function","㉠ function, ㉡ action, ㉢ form, ㉣ /function",2,"<form> 태그를 열고, method(전송방식)와 action(대상 URL) 속성을 지정한 뒤 </form>으로 닫습니다.",136,cbt,2025_1,0,
+419,ipe_industrial,2,2022_3,"다음은 아이디와 암호를 입력하는 로그인 창을 JavaScript로 구현한 것이다. 괄호(㉠~㉣)에 들어갈 적합한 속성은?
+
+```html
+<html>
+<body>
+<(  ㉠  ) (  ㉡  )=""post"" (  ㉢  )=""log01.jsp"">
+<p>아이디<input type=""text"" name=""id""></p>
+<p>암호<input type=""password"" name=""pw""></p>
+<(  ㉣  )>
+</body>
+</html>
+```","㉠ form, ㉡ action, ㉢ method, ㉣ /form","㉠ form, ㉡ method, ㉢ action, ㉣ /form","㉠ function, ㉡ form, ㉢ method, ㉣ /function","㉠ function, ㉡ action, ㉢ form, ㉣ /function",2,"<form> 태그를 열고, method(전송방식)와 action(대상 URL) 속성을 지정한 뒤 </form>으로 닫습니다.",136,cbt,2022_3,0,
+420,ipe_industrial,2,2024_1,"다음은 아이디와 암호를 입력하는 로그인 창을 JavaScript로 구현한 것이다. 괄호(㉠~㉣)에 들어갈 적합한 속성은?
+
+```html
+<html>
+<body>
+<(  ㉠  ) (  ㉡  )=""post"" (  ㉢  )=""log01.jsp"">
+<p>아이디<input type=""text"" name=""id""></p>
+<p>암호<input type=""password"" name=""pw""></p>
+<(  ㉣  )>
+</body>
+</html>
+```","㉠ form, ㉡ action, ㉢ method, ㉣ /form","㉠ form, ㉡ method, ㉢ action, ㉣ /form","㉠ function, ㉡ form, ㉢ method, ㉣ /function","㉠ function, ㉡ action, ㉢ form, ㉣ /function",2,"<form> 태그를 열고, method(전송방식)와 action(대상 URL) 속성을 지정한 뒤 </form>으로 닫습니다.",136,cbt,2024_1,0,
+421,ipe_industrial,2,2025_1,"다음은 아이디와 암호를 입력하는 로그인 창을 JavaScript로 구현한 것이다. 괄호(㉠~㉣)에 들어갈 적합한 속성은?
+
+```html
+<html>
+<body>
+<(  ㉠  ) (  ㉡  )=""post"" (  ㉢  )=""log01.jsp"">
+<p>아이디<input type=""text"" name=""id""></p>
+<p>암호<input type=""password"" name=""pw""></p>
+<(  ㉣  )>
+</body>
+</html>
+```","㉠ form, ㉡ action, ㉢ method, ㉣ /form","㉠ form, ㉡ method, ㉢ action, ㉣ /form","㉠ function, ㉡ form, ㉢ method, ㉣ /function","㉠ function, ㉡ action, ㉢ form, ㉣ /function",2,"<form> 태그를 열고, method(전송방식)와 action(대상 URL) 속성을 지정한 뒤 </form>으로 닫습니다.",136,cbt,2025_1,0,
 422,ipe_industrial,2,2022_3,Java의 라이브러리 중 객체 단위 입력을 위한 기능 및 프로토콜을 제공하는 클래스는?,ObjectInputStream,DataInputStream,FileInputStream,IOException,1,ObjectInputStream은 객체 단위로 입력을 처리하는 Java 입출력 클래스입니다.,137,cbt,2022_3,0,
-423,ipe_industrial,2,2022_3,"다음 C언어 코드에서 괄호에 들어갈 알맞은 예약어는? #include <stdio.h> int func(int i, int j) { int sum = i + j; (      ) sum; } main( ) { int r = func(3, 5); }",print,input,continue,return,4,함수가 계산 결과 sum을 호출한 곳으로 반환하기 위해서는 return 문이 필요합니다.,138,cbt,2022_3,0,
-424,ipe_industrial,2,2023_3,"다음 C 언어 코드에서 괄호에 들어갈 알맞은 예약어는? #include <stdio.h> int func(int i, int j) { int sum = i + j; (      ) sum; } main( ) { int r = func(3, 5); }",print,input,continue,return,4,함수가 계산 결과 sum을 호출한 곳으로 반환하기 위해서는 return 문이 필요합니다.,138,cbt,2023_3,0,
+423,ipe_industrial,2,2022_3,"다음 C언어 코드에서 괄호에 들어갈 알맞은 예약어는?
+
+```c
+#include <stdio.h>
+int func(int i, int j) {
+    int sum = i + j;
+    (      ) sum;
+}
+main( ) {
+    int r = func(3, 5);
+}
+```",print,input,continue,return,4,함수가 계산 결과 sum을 호출한 곳으로 반환하기 위해서는 return 문이 필요합니다.,138,cbt,2022_3,0,
+424,ipe_industrial,2,2023_3,"다음 C 언어 코드에서 괄호에 들어갈 알맞은 예약어는?
+
+```c
+#include <stdio.h>
+int func(int i, int j) {
+    int sum = i + j;
+    (      ) sum;
+}
+main( ) {
+    int r = func(3, 5);
+}
+```",print,input,continue,return,4,함수가 계산 결과 sum을 호출한 곳으로 반환하기 위해서는 return 문이 필요합니다.,138,cbt,2023_3,0,
 425,ipe_industrial,2,2026_1,"다음 C언어 코드에서 괄호에 들어갈 알맞은 예약어는?
 
 ```c
@@ -493,11 +816,62 @@ main() {
     int r = func(3, 5);
 }
 ```",print,input,continue,return,4,함수가 계산 결과 sum을 호출한 곳으로 반환하기 위해서는 return 문이 필요합니다.,138,cbt,2026_1,0,
-426,ipe_industrial,2,2022_3,"다음 C언어 코드에서 괄호에 들어갈 알맞은 코드는? #include <stdio.h> struct st { int x; int y; }; int calc(int i, int j) { return i - j; } main( ) { struct st r; r.x = 20000; r.y = 7000; printf(""%d"", (        )); }","st(x, y)","calc(x, y)","st(r.x, r.y)","calc(r.x, r.y)",4,"구조체 멤버 r.x, r.y 값을 인수로 calc 함수를 호출하는 calc(r.x, r.y)가 올바른 함수 호출 코드입니다.",139,cbt,2022_3,0,
+426,ipe_industrial,2,2022_3,"다음 C언어 코드에서 괄호에 들어갈 알맞은 코드는?
+
+```c
+#include <stdio.h>
+struct st { int x; int y; };
+int calc(int i, int j) { return i - j; }
+main( ) {
+    struct st r;
+    r.x = 20000;
+    r.y = 7000;
+    printf(""%d"", (        ));
+}
+```","st(x, y)","calc(x, y)","st(r.x, r.y)","calc(r.x, r.y)",4,"구조체 멤버 r.x, r.y 값을 인수로 calc 함수를 호출하는 calc(r.x, r.y)가 올바른 함수 호출 코드입니다.",139,cbt,2022_3,0,
 427,ipe_industrial,2,2022_3,JavaScript에서 화면에 숫자 100을 출력하는 명령문으로 올바른 것은?,write(100),document.write(100),print(100),console.print(100),2,document.write(100)은 JavaScript에서 화면(문서)에 값을 출력하는 표준 메소드입니다.,140,cbt,2022_3,0,
-428,ipe_industrial,2,2022_3,"다음은 1000까지의 7의 배수를 모두 합하는 JavaScript 코드이다. 괄호(㉠, ㉡)에 들어갈 알맞은 예약어는? …생략… <script> var r = 0, i = 0; (  ㉠  ) { i = i + 1; if (i%7 == 0) { r = r + i; } } (  ㉡  ) (i < 1000); console.log(r); </script> …생략…","㉠-do, ㉡-while","㉠-do, ㉡-loop","㉠-while, ㉡-do","㉠-loop, ㉡-do",1,"do{...}while(조건); 구문은 본문을 먼저 한 번 실행한 뒤 조건을 검사하며, 조건이 참인 동안 반복합니다.",141,cbt,2022_3,0,
-429,ipe_industrial,2,2024_1,"다음은 1000까지의 7의 배수를 모두 합하는 JavaScript 코드이다. 괄호(㉠, ㉡)에 들어갈 알맞은 예약어는? …생략… <script> var r = 0, i = 0; (  ㉠  ) { i = i + 1; if (i%7 == 0) { r = r + i; } } (  ㉡  ) (i < 1000); console.log(r); </script> …생략…","㉠-do, ㉡-while","㉠-do, ㉡-loop","㉠-while, ㉡-do","㉠-loop, ㉡-do",1,"do{...}while(조건); 구문은 본문을 먼저 한 번 실행한 뒤 조건을 검사하며, 조건이 참인 동안 반복합니다.",141,cbt,2024_1,0,
-430,ipe_industrial,2,2025_3,"다음은 1000까지의 7의 배수를 모두 합하는 JavaScript 코드이다. 괄호(㉠, ㉡)에 들어갈 알맞은 예약어는? …생략… <script> var r = 0, i = 0; ( ㉠ ) { i = i + 1; if (i%7 == 0) { r = r + i; } } ( ㉡ ) (i < 1000); console.log(r); </script> …생략…","㉠-do, ㉡-while","㉠-do, ㉡-loop","㉠-while, ㉡-do","㉠-loop, ㉡-do",1,"do{...}while(조건); 구문은 본문을 먼저 한 번 실행한 뒤 조건을 검사하며, 조건이 참인 동안 반복합니다.",141,cbt,2025_3,0,
+428,ipe_industrial,2,2022_3,"다음은 1000까지의 7의 배수를 모두 합하는 JavaScript 코드이다. 괄호(㉠, ㉡)에 들어갈 알맞은 예약어는? …생략…
+
+```html
+<script>
+var r = 0, i = 0;
+(  ㉠  ) {
+    i = i + 1;
+    if (i%7 == 0) {
+        r = r + i;
+    }
+} (  ㉡  ) (i < 1000);
+console.log(r);
+</script>
+```","㉠-do, ㉡-while","㉠-do, ㉡-loop","㉠-while, ㉡-do","㉠-loop, ㉡-do",1,"do{...}while(조건); 구문은 본문을 먼저 한 번 실행한 뒤 조건을 검사하며, 조건이 참인 동안 반복합니다.",141,cbt,2022_3,0,
+429,ipe_industrial,2,2024_1,"다음은 1000까지의 7의 배수를 모두 합하는 JavaScript 코드이다. 괄호(㉠, ㉡)에 들어갈 알맞은 예약어는? …생략…
+
+```html
+<script>
+var r = 0, i = 0;
+(  ㉠  ) {
+    i = i + 1;
+    if (i%7 == 0) {
+        r = r + i;
+    }
+} (  ㉡  ) (i < 1000);
+console.log(r);
+</script>
+```","㉠-do, ㉡-while","㉠-do, ㉡-loop","㉠-while, ㉡-do","㉠-loop, ㉡-do",1,"do{...}while(조건); 구문은 본문을 먼저 한 번 실행한 뒤 조건을 검사하며, 조건이 참인 동안 반복합니다.",141,cbt,2024_1,0,
+430,ipe_industrial,2,2025_3,"다음은 1000까지의 7의 배수를 모두 합하는 JavaScript 코드이다. 괄호(㉠, ㉡)에 들어갈 알맞은 예약어는? …생략…
+
+```html
+<script>
+var r = 0, i = 0;
+(  ㉠  ) {
+    i = i + 1;
+    if (i%7 == 0) {
+        r = r + i;
+    }
+} (  ㉡  ) (i < 1000);
+console.log(r);
+</script>
+```","㉠-do, ㉡-while","㉠-do, ㉡-loop","㉠-while, ㉡-do","㉠-loop, ㉡-do",1,"do{...}while(조건); 구문은 본문을 먼저 한 번 실행한 뒤 조건을 검사하며, 조건이 참인 동안 반복합니다.",141,cbt,2025_3,0,
 431,ipe_industrial,2,2022_3,다음 중 C언어에서 반드시 정수를 사용해야 하는 연산자는?,%,/,*,+,1,"나머지 연산자(%)는 정수형 피연산자에만 사용할 수 있으며, 실수에 사용하면 오류가 발생합니다.",142,cbt,2022_3,0,
 432,ipe_industrial,2,2023_2,다음 중 C 언어에서 반드시 정수를 사용해야 하는 연산자는?,%,/,*,+,1,"나머지 연산자(%)는 정수형 피연산자에만 사용할 수 있으며, 실수에 사용하면 오류가 발생합니다.",142,cbt,2023_2,0,
 433,ipe_industrial,2,2022_3,파이썬의 변수명으로 올바르지 않은 것은?,signed,3edc,PI,ed_sp,2,3edc는 숫자로 시작하므로 Python 변수명으로 사용할 수 없습니다.,143,cbt,2022_3,0,
@@ -570,9 +944,18 @@ main() {
 500,ipe_industrial,3,2024_2,시스템 카탈로그에 대한 설명으로 옳지 않은 것은?,시스템 자체에 관련 있는 다양한 객체에 관한 정보를 포함하는 시스템 데이터베이스이다.,카탈로그들이 생성되면 자료 사전에 저장되기 때문에 좁은 의 미로는 자료 사전이라고도 한다.,무결성 확보를 위하여 일반 사용자는 내용을 검색할 수 없다.,"기본 테이블, 뷰, 인덱스, 패키지, 접근 권한 등의 정보를 저장 한다.",3,일반 사용자는 시스템 카탈로그를 SQL로 '조회'할 수는 있지만 직접 '갱신'할 수는 없습니다. DBMS가 스스로 관리합니다.,162,cbt,2024_2,0,
 501,ipe_industrial,3,2024_3,시스템 카탈로그에 대한 설명으로 옳지 않은 것은?,데이터 사전이라고도 한다.,시스템 카탈로그에 저장되는 내용을 메타 데이터라고 한다.,시스템 자신이 필요로 하는 스키마 및 여러 가지 객체에 관한 정보를 포함하고 있는 시스템 데이터베이스이다.,"시스템 카탈로그의 정보를 INSERT, UPDATE, DELETE 문 으로 직접 갱신할 수 있다.",4,일반 사용자는 시스템 카탈로그를 SQL로 '조회'할 수는 있지만 직접 '갱신'할 수는 없습니다. DBMS가 스스로 관리합니다.,162,cbt,2024_3,0,
 502,ipe_industrial,3,2025_2,시스템 카탈로그에 대한 설명으로 옳지 않은 것은?,시스템 자체에 관련 있는 다양한 객체에 관한 정보를 포함하는 시스템 데이터베이스이다.,카탈로그들이 생성되면 자료 사전에 저장되기 때문에 좁은 의 미로는 자료 사전이라고도 한다.,무결성 확보를 위하여 일반 사용자는 내용을 검색할 수 없다.,"기본 테이블, 뷰, 인덱스, 패키지, 접근 권한 등의 정보를 저장 한다.",3,일반 사용자는 시스템 카탈로그를 SQL로 '조회'할 수는 있지만 직접 '갱신'할 수는 없습니다. DBMS가 스스로 관리합니다.,162,cbt,2025_2,0,
-503,ipe_industrial,3,2022_3,"다음 설명이 의미하는 것은? ㆍ삽입과 삭제가 리스트의 양쪽 끝에서 발생할 수 있는 형태이다. ㆍ입력이 한쪽에서만 발생하고 출력은 양쪽에서 일어날 수 있는 입력 제한과, 입력은 양쪽에서 일어나고 출력 은 한 곳에서만 이루어지는 출력 제한이 있다.",스택,큐,다중 스택,데크,4,"데크(Deque)는 리스트 양쪽 끝에서 삽입·삭제가 가능한 자료구조로, 입력이나 출력 중 한쪽만 제한하는 형태(스크롤/셸프)도 가질 수 있습니다.",163,cbt,2022_3,0,
-504,ipe_industrial,3,2023_2,"다음 설명이 의미하는 것은? ㆍ삽입과 삭제가 리스트의 양쪽 끝에서 발생할 수 있는 형태이다. ㆍ입력이 한쪽에서만 발생하고 출력은 양쪽에서 일어날 수 있는 입력 제한과, 입력은 양쪽에서 일어나고 출력 은 한 곳에서만 이루어지는 출력 제한이 있다.",스택,큐,다중 스택,데크,4,"데크(Deque)는 리스트 양쪽 끝에서 삽입·삭제가 가능한 자료구조로, 입력이나 출력 중 한쪽만 제한하는 형태(스크롤/셸프)도 가질 수 있습니다.",163,cbt,2023_2,0,
-505,ipe_industrial,3,2024_1,다음 설명이 의미하는 것은? ㆍ삽입과 삭제가 리스트의 양쪽 끝에서 발생할 수 있는 형태이다. ㆍ입력이 한쪽에서만 발생하고 출력은 양쪽에서 일어날 수 있는 입력 제한과 입력은 양쪽에서 일어나고 출력 은 한 곳에서만 이루어지는 출력 제한이 있다.,스택,큐,다중 스택,데크,4,"데크(Deque)는 리스트 양쪽 끝에서 삽입·삭제가 가능한 자료구조로, 입력이나 출력 중 한쪽만 제한하는 형태(스크롤/셸프)도 가질 수 있습니다.",163,cbt,2024_1,0,
+503,ipe_industrial,3,2022_3,"다음 설명이 의미하는 것은?
+
+- 삽입과 삭제가 리스트의 양쪽 끝에서 발생할 수 있는 형태이다.
+- 입력이 한쪽에서만 발생하고 출력은 양쪽에서 일어날 수 있는 입력 제한과, 입력은 양쪽에서 일어나고 출력은 한 곳에서만 이루어지는 출력 제한이 있다.",스택,큐,다중 스택,데크,4,"데크(Deque)는 리스트 양쪽 끝에서 삽입·삭제가 가능한 자료구조로, 입력이나 출력 중 한쪽만 제한하는 형태(스크롤/셸프)도 가질 수 있습니다.",163,cbt,2022_3,0,
+504,ipe_industrial,3,2023_2,"다음 설명이 의미하는 것은?
+
+- 삽입과 삭제가 리스트의 양쪽 끝에서 발생할 수 있는 형태이다.
+- 입력이 한쪽에서만 발생하고 출력은 양쪽에서 일어날 수 있는 입력 제한과, 입력은 양쪽에서 일어나고 출력은 한 곳에서만 이루어지는 출력 제한이 있다.",스택,큐,다중 스택,데크,4,"데크(Deque)는 리스트 양쪽 끝에서 삽입·삭제가 가능한 자료구조로, 입력이나 출력 중 한쪽만 제한하는 형태(스크롤/셸프)도 가질 수 있습니다.",163,cbt,2023_2,0,
+505,ipe_industrial,3,2024_1,"다음 설명이 의미하는 것은?
+
+- 삽입과 삭제가 리스트의 양쪽 끝에서 발생할 수 있는 형태이다.
+- 입력이 한쪽에서만 발생하고 출력은 양쪽에서 일어날 수 있는 입력 제한과, 입력은 양쪽에서 일어나고 출력은 한 곳에서만 이루어지는 출력 제한이 있다.",스택,큐,다중 스택,데크,4,"데크(Deque)는 리스트 양쪽 끝에서 삽입·삭제가 가능한 자료구조로, 입력이나 출력 중 한쪽만 제한하는 형태(스크롤/셸프)도 가질 수 있습니다.",163,cbt,2024_1,0,
 506,ipe_industrial,3,2022_3,"삽입 정렬을 사용하여 다음의 자료를 오름차순으로 정렬하고자 한다. 2회전 후의 결과는? 5, 4, 3, 2, 1","4, 5, 3, 2, 1","2, 3, 4, 5, 1","3, 4, 5, 2, 1","1, 2, 3, 4, 5",3,"5,4,3,2,1을 삽입 정렬: 1회전(4 삽입) 4,5,3,2,1 → 2회전(3을 4,5 앞에 삽입) 3,4,5,2,1.",164,cbt,2022_3,0,
 507,ipe_industrial,3,2023_1,"삽입 정렬을 사용하여 다음의 자료를 오름차순으로 정렬하고자 한다. 2회전 후의 결과는? 5, 4, 3, 2, 1","4, 5, 3, 2, 1","2, 3, 4, 5, 1","3, 4, 5, 2, 1","1, 2, 3, 4, 5",3,"5,4,3,2,1을 삽입 정렬: 1회전(4 삽입) 4,5,3,2,1 → 2회전(3을 4,5 앞에 삽입) 3,4,5,2,1.",164,cbt,2023_1,0,
 508,ipe_industrial,3,2025_3,"삽입 정렬을 사용하여 다음의 자료를 오름차순으로 정렬하고자 한다. 2회전 후의 결과는? 5, 4, 3, 2, 1","4, 5, 3, 2, 1","2, 3, 4, 5, 1","3, 4, 5, 2, 1","1, 2, 3, 4, 5",3,"5,4,3,2,1을 삽입 정렬: 1회전(4 삽입) 4,5,3,2,1 → 2회전(3을 4,5 앞에 삽입) 3,4,5,2,1.",164,cbt,2025_3,0,
@@ -655,8 +1038,18 @@ main() {
 580,ipe_industrial,3,2023_1,학생 테이블에서 학번이 “1144077”인 학생의 학년을 “2”로 수정하기 위한 SQL 질의어는?,UPDATE 학년=“2” FROM 학생 WHERE 학번=“1144077”;,UPDATE 학생 SET 학년=“2” WHERE 학번=“1144077”;,REPLACE FROM 학생 SET 학년=“2” WHERE 학번 =“1144077”;,REPLACE 학년=“2” SET 학생 WHEN 학번=“1144077”;,2,특정 튜플의 값을 변경할 때는 'UPDATE 테이블 SET 컬럼=값 WHERE 조건;' 형식을 사용합니다.,198,cbt,2023_1,0,
 581,ipe_industrial,3,2026_1,학생 테이블에서 학번이 “1144077”인 학생의 학년을 “2”로 수정하기 위한 SQL 질의어는?,UPDATE 학년=“2” FROM 학생 WHERE 학번=“1144077”;,UPDATE 학생 SET 학년=“2” WHERE 학번=“1144077”;,REPLACE FROM 학생 SET 학년=“2” WHERE 학번 =“1144077”;,REPLACE 학년=“2” SET 학생 WHEN 학번=“1144077”;,2,특정 튜플의 값을 변경할 때는 'UPDATE 테이블 SET 컬럼=값 WHERE 조건;' 형식을 사용합니다.,198,cbt,2026_1,0,
 582,ipe_industrial,1,2023_2,"프로세스 스케줄링 방법 중 시분할 시스템을 위해 고안되었으며, 타임 슬라이스라는 작은 단위 시간이 정의되고 이 단위 시간 동안 CPU를 제공하는 방법은?",선입선출,다단계 큐,라운드 로빈,다단계 피드백 큐,3,"라운드 로빈(Round Robin)은 시분할 시스템을 위해 고안된 기법으로, 정해진 타임 슬라이스만큼씩 순환하며 CPU를 배분합니다.",199,cbt,2023_2,0,
-583,ipe_industrial,1,2023_2,다음은 무엇에 관한 정의인가? ㆍ실행 중인 프로그램 ㆍ비동기적 행위를 일으키는 주체 ㆍ프로시저가 활동 중인 것 ㆍPCB를 가진 프로그램,PROCESS,WORKING SET,MONITOR,SEMAPHORE,1,실행 중인 프로그램이면서 PCB를 가지고 비동기적 행위를 일으키는 것은 프로세스(Process)의 정의입니다.,200,cbt,2023_2,0,
-584,ipe_industrial,1,2025_3,다음은 무엇에 관한 정의인가? ㆍ실행 중인 프로그램 ㆍ비동기적 행위를 일으키는 주체 ㆍ프로시저가 활동 중인 것 ㆍPCB를 가진 프로그램,PROCESS,WORKING SET,MONITOR,SEMAPHORE,1,실행 중인 프로그램이면서 PCB를 가지고 비동기적 행위를 일으키는 것은 프로세스(Process)의 정의입니다.,200,cbt,2025_3,0,
+583,ipe_industrial,1,2023_2,"다음은 무엇에 관한 정의인가?
+
+- 실행 중인 프로그램
+- 비동기적 행위를 일으키는 주체
+- 프로시저가 활동 중인 것
+- PCB를 가진 프로그램",PROCESS,WORKING SET,MONITOR,SEMAPHORE,1,실행 중인 프로그램이면서 PCB를 가지고 비동기적 행위를 일으키는 것은 프로세스(Process)의 정의입니다.,200,cbt,2023_2,0,
+584,ipe_industrial,1,2025_3,"다음은 무엇에 관한 정의인가?
+
+- 실행 중인 프로그램
+- 비동기적 행위를 일으키는 주체
+- 프로시저가 활동 중인 것
+- PCB를 가진 프로그램",PROCESS,WORKING SET,MONITOR,SEMAPHORE,1,실행 중인 프로그램이면서 PCB를 가지고 비동기적 행위를 일으키는 것은 프로세스(Process)의 정의입니다.,200,cbt,2025_3,0,
 585,ipe_industrial,1,2023_2,"연산 P, V와 정수 변수를 이용하여 동기화 문제를 해결하는 것은?",Critical Section,Monitor,Semaphore,Mutual Exclusion,3,"세마포어(Semaphore)는 P, V 두 연산과 정수 변수를 이용해 프로세스 간 동기화 문제를 해결하는 기법입니다.",201,cbt,2023_2,0,
 586,ipe_industrial,1,2024_1,"연산 P, V와 정수 변수를 이용하여 동기화 문제를 해결하는 것은?",Critical Section,Monitor,Semaphore,Mutual Exclusion,3,"세마포어(Semaphore)는 P, V 두 연산과 정수 변수를 이용해 프로세스 간 동기화 문제를 해결하는 기법입니다.",201,cbt,2024_1,0,
 587,ipe_industrial,1,2025_2,"연산 P, V와 정수 변수를 이용하여 동기화 문제를 해결하는 것은?",Critical Section,Monitor,Semaphore,Mutual Exclusion,3,"세마포어(Semaphore)는 P, V 두 연산과 정수 변수를 이용해 프로세스 간 동기화 문제를 해결하는 기법입니다.",201,cbt,2025_2,0,
@@ -676,11 +1069,30 @@ main() {
 601,ipe_industrial,2,2024_1,"C언어에서 정수 변수 a, b에 각각 1, 2가 저장되어 있을 때 다음 식의 연산 결과로 옳은 것은? a < b + 2 && a << 1 <= b",0,1,3,5,2,"a=1,b=2일 때 a<b+2는 1<4=참(1). a<<1은 1을 왼쪽으로 1비트 시프트해 2. 2<=b는 2<=2=참(1). 참&&참=1이 결과입니다.",208,cbt,2024_1,0,
 602,ipe_industrial,2,2024_3,"C언어에서 정수 변수 a, b에 각각 1, 2가 저장되어 있을 때 다음 식의 연산 결과로 옳은 것은? a < b + 2 && a << 1 <= b",0,1,3,5,2,"a=1,b=2일 때 a<b+2는 1<4=참(1). a<<1은 1을 왼쪽으로 1비트 시프트해 2. 2<=b는 2<=2=참(1). 참&&참=1이 결과입니다.",208,cbt,2024_3,0,
 603,ipe_industrial,2,2025_2,"C언어에서 정수 변수 a, b에 각각 1, 2가 저장되어 있을 때 다음 식의 연산 결과로 옳은 것은? a < b + 2 && a << 1 <= b",0,1,3,5,2,"a=1,b=2일 때 a<b+2는 1<4=참(1). a<<1은 1을 왼쪽으로 1비트 시프트해 2. 2<=b는 2<=2=참(1). 참&&참=1이 결과입니다.",208,cbt,2025_2,0,
-604,ipe_industrial,2,2023_2,"다음 C언어 프로그램이 실행되었을 때, 실행 결과는? #include <stdio.h> #include <stdlib.h> int main(int argc, char* argv[]) { int i = 0; while (1) { if (i == 4) { break; } ++i; } printf(""i = %d"", i); return 0; }",i = 0,i = 1,i = 3,i = 4,4,i=0에서 시작해 i==4가 될 때까지 ++i를 반복하다 i가 4가 되는 순간 break로 루프를 빠져나오므로 최종 i=4가 출력됩니다.,209,cbt,2023_2,0,
+604,ipe_industrial,2,2023_2,"다음 C언어 프로그램이 실행되었을 때, 실행 결과는?
+
+```c
+#include <stdio.h>
+#include <stdlib.h>
+int main(int argc, char* argv[]) {
+    int i = 0;
+    while (1) {
+        if (i == 4) {
+            break;
+        }
+        ++i;
+    }
+    printf(""i = %d"", i);
+    return 0;
+}
+```",i = 0,i = 1,i = 3,i = 4,4,i=0에서 시작해 i==4가 될 때까지 ++i를 반복하다 i가 4가 되는 순간 break로 루프를 빠져나오므로 최종 i=4가 출력됩니다.,209,cbt,2023_2,0,
 605,ipe_industrial,2,2023_2,소프트웨어 개발에서 모듈(Module)이 되기 위한 주요 특징에 해당하 지 않는 것은?,다른 것들과 구별될 수 있는 독립적인 기능을 가진 단위(Unit) 이다.,독립적인 컴파일이 가능하다.,유일한 이름을 가져야 한다.,다른 모듈에서의 접근이 불가능해야 한다.,4,"모듈은 다른 모듈에서 호출·접근될 수 있어야 그 기능이 시스템에서 쓰일 수 있으므로, '다른 모듈에서의 접근이 불가능해야 한다'는 모듈의 특징이 아닙니다.",210,cbt,2023_2,0,
 606,ipe_industrial,2,2023_3,소프트웨어 개발에서 모듈(Module)이 되기 위한 주요 특징에 해당하 지 않는 것은?,다른 것들과 구별될 수 있는 독립적인 기능을 가진 단위(Unit) 이다.,독립적인 컴파일이 가능하다.,유일한 이름을 가져야 한다.,다른 모듈에서의 접근이 불가능해야 한다.,4,"모듈은 다른 모듈에서 호출·접근될 수 있어야 그 기능이 시스템에서 쓰일 수 있으므로, '다른 모듈에서의 접근이 불가능해야 한다'는 모듈의 특징이 아닙니다.",210,cbt,2023_3,0,
 607,ipe_industrial,2,2024_3,소프트웨어 개발에서 모듈(Module)이 되기 위한 주요 특징에 해당 하지 않는 것은?,다른 것들과 구별될 수 있는 독립적인 기능을 가진 단위(Unit) 이다.,독립적인 컴파일이 가능하다.,유일한 이름을 가져야 한다.,다른 모듈에서의 접근이 불가능해야 한다.,4,"모듈은 다른 모듈에서 호출·접근될 수 있어야 그 기능이 시스템에서 쓰일 수 있으므로, '다른 모듈에서의 접근이 불가능해야 한다'는 모듈의 특징이 아닙니다.",210,cbt,2024_3,0,
-608,ipe_industrial,1,2024_2,행위 다이어그램의 종류 중 다음 설명에 해당하는 것은? ㆍ하나의 객체가 자신이 속한 클래스의 상태 변화 혹은 다른 객체와의 상호 작용에 따라 상태가 어떻게 변화 하는지를 표현한다. ㆍ럼바우(Rumbaugh) 객체지향 분석 기법에서 동적 모델 링에 활용된다.,상태 다이어그램(State Diagram),순차 다이어그램(Sequence Diagram),객체 다이어그램(Object Diagram),유스케이스 다이어그램(Use Case Diagram),1,"상태 다이어그램(State Diagram)은 객체가 자신의 상태 변화나 다른 객체와의 상호작용에 따라 상태가 어떻게 바뀌는지를 표현하며, 럼바우 기법의 동적 모델링에 활용됩니다.",211,cbt,2024_2,0,
+608,ipe_industrial,1,2024_2,"행위 다이어그램의 종류 중 다음 설명에 해당하는 것은?
+
+- 하나의 객체가 자신이 속한 클래스의 상태 변화 혹은 다른 객체와의 상호 작용에 따라 상태가 어떻게 변화하는지를 표현한다.
+- 럼바우(Rumbaugh) 객체지향 분석 기법에서 동적 모델링에 활용된다.",상태 다이어그램(State Diagram),순차 다이어그램(Sequence Diagram),객체 다이어그램(Object Diagram),유스케이스 다이어그램(Use Case Diagram),1,"상태 다이어그램(State Diagram)은 객체가 자신의 상태 변화나 다른 객체와의 상호작용에 따라 상태가 어떻게 바뀌는지를 표현하며, 럼바우 기법의 동적 모델링에 활용됩니다.",211,cbt,2024_2,0,
 609,ipe_industrial,1,2024_2,애자일 개발 방법론에 해당하지 않는 것은?,"기능 주도 개발(FDD, Feature Driven Development)",하둡(Hadoop),스크럼(Scrum),"익스트림 프로그래밍(XP, eXtreme Programming)",2,"하둡(Hadoop)은 분산 데이터 처리 플랫폼이며, 애자일 개발 방법론이 아닙니다. FDD·스크럼·XP는 모두 애자일 방법론입니다.",212,cbt,2024_2,0,
 610,ipe_industrial,1,2024_2,다이어그램에 대한 설명으로 옳지 않은 것은?,활동 다이어그램(Activity Diagram) : 시스템이 어떤 기능을 수행하는지 객체의 처리 로직이나 조건에 따른 처리의 흐름을 순서에 따라 표현한다.,시퀀스 다이어그램(Sequence Diagram) : 상호 작용하는 시스 템이나 객체들이 주고받는 메시지를 표현한다.,유스케이스 다이어그램(Use Case Diagram) : 사용자의 요구 를 분석하는 것으로 기능 모델링 작업에 사용한다.,"객체 다이어그램(Object Diagram) : 클래스와 클래스가 가지 는 속성, 클래스 사이의 관계를 표현한다.",4,"객체 다이어그램은 특정 시점의 객체와 객체 간 관계(인스턴스) 스냅샷을 표현합니다. '클래스와 속성, 클래스 간 관계'를 표현하는 것은 클래스 다이어그램에 대한 설명입니다.",213,cbt,2024_2,0,
 611,ipe_industrial,1,2024_2,다음 검사의 기법 중 종류가 다른 하나는 무엇인가?,원인 효과 그래픽 기법(Cause-effect Graphingtesting),동치 분할 검사(Equivalence Partitioning Testing),데이터 흐름 검사(Data Flow Testing),비교 검사(Comparison Testing),3,"원인효과 그래프·동치분할·비교검사는 블랙박스 테스트 기법이고, 데이터 흐름 검사는 화이트박스 테스트 기법으로 종류가 다릅니다.",214,cbt,2024_2,0,
@@ -714,7 +1126,15 @@ main() {
 639,ipe_industrial,2,2025_1,객체지향 프로그래밍 언어에 대한 설명으로 옳지 않은 것은?,추상화(Abstraction)는 다른 객체에게 자신의 정보를 숨기고 자신의 연산만을 통하여 접근을 허용하는 것이다.,클래스(Class)는 두 개 이상의 유사한 객체들을 묶어서 하나의 공통된 특성을 표현하는 요소이다.,캡슐화(Encapsulation)는 데이터(속성)와 데이터를 처리하는 함수를 하나로 묶는 것을 의미한다.,객체(Object)는 데이터(속성)와 이를 처리하기 위한 연산(메소 드)을 결합시킨 실체이다.,1,정보 은닉(다른 객체에게 자신의 정보를 숨기고 연산으로만 접근을 허용)은 캡슐화(Encapsulation)의 특성입니다. 추상화(Abstraction)는 공통 속성을 뽑아 일반화하는 개념으로 이 설명과 다릅니다.,233,cbt,2025_1,0,
 640,ipe_industrial,2,2024_2,"웹 서버(Web Server)의 기능 중 하나로, 네트워크 트래픽의 포화를 방지하기 위해 응답 속도를 제한하는 기능을 무엇이라 하는가?",HTTP/HTTPS,정적 파일 관리,대역폭 제한,가상 호스팅,3,대역폭 제한(Bandwidth Throttling)은 네트워크 트래픽 포화를 막기 위해 응답 속도(전송량)를 제한하는 웹 서버 기능입니다.,234,cbt,2024_2,0,
 641,ipe_industrial,2,2025_2,"웹 서버(Web Server)의 기능 중 하나로, 네트워크 트래픽의 포화를 방지하기 위해 응답 속도를 제한하는 기능을 무엇이라 하는가?",HTTP/HTTPS,정적 파일 관리,대역폭 제한,가상 호스팅,3,대역폭 제한(Bandwidth Throttling)은 네트워크 트래픽 포화를 막기 위해 응답 속도(전송량)를 제한하는 웹 서버 기능입니다.,234,cbt,2025_2,0,
-642,ipe_industrial,2,2024_2,"다음은 Java로 만들어진 반복문 코드이다. 이 코드의 결과는? ..생략.. int a = 0, sum = 0; do { a++; sum += a; } while(a > 10); ..생략..","a = 0, sum = 0","a = 1, sum = 1","a = 9, sum = 45","a = 10, sum = 55",2,"do-while은 조건과 무관하게 본문을 먼저 1회 실행합니다. a++로 a=1, sum+=a로 sum=1이 된 뒤 조건 a>10(1>10)이 거짓이라 종료되어 a=1, sum=1이 출력됩니다.",235,cbt,2024_2,0,
+642,ipe_industrial,2,2024_2,"다음은 Java로 만들어진 반복문 코드이다. 이 코드의 결과는?
+
+```java
+int a = 0, sum = 0;
+do {
+    a++;
+    sum += a;
+} while(a > 10);
+```","a = 0, sum = 0","a = 1, sum = 1","a = 9, sum = 45","a = 10, sum = 55",2,"do-while은 조건과 무관하게 본문을 먼저 1회 실행합니다. a++로 a=1, sum+=a로 sum=1이 된 뒤 조건 a>10(1>10)이 거짓이라 종료되어 a=1, sum=1이 출력됩니다.",235,cbt,2024_2,0,
 643,ipe_industrial,2,2024_2,일련의 처리 절차를 정해진 문법에 따라 순서대로 기술해 나가는 언어는?,객체 지향 프로그래밍 언어,스크립트 언어,구조적 프로그래밍 언어,절차적 프로그래밍 언어,4,절차적 프로그래밍 언어는 처리 절차를 정해진 문법에 따라 순서대로 기술해 나가는 언어입니다.,236,cbt,2024_2,0,
 644,ipe_industrial,2,2024_2,다음 중 스크립트 언어에 대한 설명으로 옳지 않은 것은?,개발 시간이 짧다.,코딩하기 쉽다.,런타임 오류가 많이 발생한다.,실행 속도가 빠르다.,4,스크립트 언어는 인터프리터 방식으로 한 줄씩 해석·실행되어 컴파일 언어보다 실행 속도가 느린 편입니다. '실행 속도가 빠르다'는 설명이 옳지 않습니다.,237,cbt,2024_2,0,
 645,ipe_industrial,2,2025_1,다음 중 스크립트 언어에 대한 설명으로 옳지 않은 것은?,개발 시간이 짧다.,코딩하기 쉽다.,런타임 오류가 많이 발생한다.,실행 속도가 빠르다.,4,스크립트 언어는 인터프리터 방식으로 한 줄씩 해석·실행되어 컴파일 언어보다 실행 속도가 느린 편입니다. '실행 속도가 빠르다'는 설명이 옳지 않습니다.,237,cbt,2025_1,0,
@@ -724,7 +1144,20 @@ main() {
 649,ipe_industrial,2,2024_2,C 언어 라이브러리 중 stdlib.h에 대한 설명으로 옳은 것은?,문자열을 수치 데이터로 바꾸는 문자 변환함수와 수치를 문자 열로 바꿔주는 변환함수 등이 있다.,문자열 처리 함수로 strlen()이 포함되어 있다.,표준 입출력 라이브러리이다.,"삼각 함수, 제곱근, 지수 등 수학적인 함수를 내장하고 있다.",1,"stdlib.h는 atoi·atof 같은 문자열-수치 변환 함수, rand, malloc 등을 제공하는 라이브러리입니다. 수학 함수는 math.h, 문자열 함수는 string.h, 표준 입출력은 stdio.h가 담당합니다.",240,cbt,2024_2,0,
 650,ipe_industrial,2,2024_2,N-S(Nassi-Schneiderman) chart에 대한 설명으로 거리가 먼 것은?,논리의 기술에 중점을 둔 도형식 표현 방법이다.,"연속, 선택 및 다중 선택, 반복 등의 제어논리 구조로 표현한다.",주로 화살표를 사용하여 논리적인 제어구조로 흐름을 표현한 다.,조건이 복합되어 있는 곳의 처리를 시각적으로 명확히 식별하 는데 적합하다.,3,"N-S 차트는 논리적 제어 구조를 박스(사각형) 형태로 표현하며, 임의의 화살표(GOTO 식 흐름)를 허용하지 않는 것이 특징입니다. '주로 화살표를 사용한다'는 설명이 N-S 차트의 특성과 맞지 않습니다.",241,cbt,2024_2,0,
 651,ipe_industrial,2,2024_3,N-S(Nassi-Schneiderman) chart에 대한 설명으로 거리가 먼 것 은?,논리의 기술에 중점을 둔 도형식 표현 방법이다.,"연속, 선택 및 다중 선택, 반복 등의 제어 논리 구조로 표현한 다.",주로 화살표를 사용하여 논리적인 제어 구조로 흐름을 표현한 다.,조건이 복합되어 있는 곳의 처리를 시각적으로 명확히 식별하 는데 적합하다.,3,"N-S 차트는 논리적 제어 구조를 박스(사각형) 형태로 표현하며, 임의의 화살표(GOTO 식 흐름)를 허용하지 않는 것이 특징입니다. '주로 화살표를 사용한다'는 설명이 N-S 차트의 특성과 맞지 않습니다.",241,cbt,2024_3,0,
-652,ipe_industrial,2,2024_2,"다음 Java 프로그램이 실행되었을 때의 결과는? public class Test { public static void main(String[ ] args) { int x = 7, y = 0; while(x-- > 0) { if (x%3 == 0) continue; y++; } System.out.print(y); } }",0,4,5,7,2,"x=7에서 시작해 x--로 감소시키며 반복: x가 6,4,2,0이 될 때(즉 3의 배수가 되는 x=6,3,0 등에서 continue 발생)를 제외하고 y++가 4번 수행되어 최종 y=4가 출력됩니다.",242,cbt,2024_2,0,
+652,ipe_industrial,2,2024_2,"다음 Java 프로그램이 실행되었을 때의 결과는?
+
+```java
+public class Test {
+    public static void main(String[ ] args) {
+        int x = 7, y = 0;
+        while(x-- > 0) {
+            if (x%3 == 0) continue;
+            y++;
+        }
+        System.out.print(y);
+    }
+}
+```",0,4,5,7,2,"x=7에서 시작해 x--로 감소시키며 반복: x가 6,4,2,0이 될 때(즉 3의 배수가 되는 x=6,3,0 등에서 continue 발생)를 제외하고 y++가 4번 수행되어 최종 y=4가 출력됩니다.",242,cbt,2024_2,0,
 653,ipe_industrial,3,2024_2,"스택에 데이터를 A, B, C, D 순으로 저장했을 경우, 이들 데이터가 출력되는 결과로 가능한 것은?","D, B, C, A","C, B, D, A","C, D, A, B","D, A, C, B",2,"A,B,C 순서로 push한 뒤 pop하면 C,B가 차례로 나오고(스택엔 A만 남음), 이어서 D를 push한 뒤 곧바로 pop하면 D, 마지막으로 A를 pop하면 A가 나와 'C, B, D, A' 순서가 그대로 만들어집니다. 따라서 이 출력 순서는 실제로 가능합니다.",243,cbt,2024_2,0,
 654,ipe_industrial,3,2024_2,데이터베이스 설계 단계 중 논리적 설계 단계에 해당하는 것은?,개념 스키마를 평가 및 정제하고 DBMS에 따라 서로 다른 논리 적 스키마를 설계한다.,데이터베이스 파일의 저장 구조 및 액세스 경로를 결정한다.,물리적 저장장치에 저장할 수 있는 물리적 구조의 데이터로 변환하는 과정이다.,"저장 레코드의 형식, 순서, 접근 경로 등의 정보가 컴퓨터에 저장되는 방법을 묘사한다.",1,개념 스키마를 평가·정제하고 목표 DBMS에 맞는 논리적 스키마를 설계하는 것이 논리적 설계 단계의 작업입니다.,244,cbt,2024_2,0,
 655,ipe_industrial,3,2024_3,데이터베이스 설계 단계 중 논리적 설계 단계에 해당하는 것은?,개념 스키마를 평가 및 정제하고 DBMS에 따라 서로 다른 논리적 스키마를 설계한다.,데이터베이스 파일의 저장 구조 및 액세스 경로를 결정한다.,물리적 저장장치에 저장할 수 있는 물리적 구조의 데이터로 변환하는 과정이다.,"저장 레코드의 형식, 순서, 접근 경로 등의 정보가 컴퓨터에 저장되는 방법을 묘사한다.",1,개념 스키마를 평가·정제하고 목표 DBMS에 맞는 논리적 스키마를 설계하는 것이 논리적 설계 단계의 작업입니다.,244,cbt,2024_3,0,
@@ -755,8 +1188,22 @@ main() {
 681,ipe_industrial,2,2024_3,"웹 페이지에 악의적인 스크립트를 포함시켜 사용자 측에서 실행되 게 유도함으로써, 정보 유출 등의 공격을 유발할 수 있는 취약점은?",Ransomware,Pharming,Phishing,XSS,4,XSS(Cross Site Scripting)는 웹 페이지에 악성 스크립트를 삽입해 사용자 브라우저에서 실행되게 하는 취약점입니다.,263,cbt,2024_3,0,
 682,ipe_industrial,2,2026_1,"웹 페이지에 악의적인 스크립트를 포함시켜 사용자 측에서 실행되게 유도함으로써, 정보 유출 등의 공격을 유발할 수 있는 취약점은?",Ransomware,Pharming,Phishing,XSS,4,XSS(Cross Site Scripting)는 웹 페이지에 악성 스크립트를 삽입해 사용자 브라우저에서 실행되게 하는 취약점입니다.,263,cbt,2026_1,0,
 683,ipe_industrial,2,2024_3,"Python에서 연속된 숫자를 생성하는 함수로, 리스트, 반복문 등에 서 많이 사용되는 것은?",for,slice,range,continue,3,"range()는 Python에서 연속된 숫자를 생성하는 함수로 for문, 리스트 생성에 널리 쓰입니다.",264,cbt,2024_3,0,
-684,ipe_industrial,2,2024_3,다음은 어떤 프로그램 구조를 나타낸다. 모듈 F에서의 fan-in과 fan-out의 수는 얼마인가?,"fan-in : 2, fan-out : 3","fan-in : 3, fan-out : 2","fan-in : 1, fan-out : 2","fan-in : 2, fan-out : 1",2,"fan-in은 해당 모듈을 호출하는 상위 모듈의 수, fan-out은 해당 모듈이 호출하는 하위 모듈의 수를 의미합니다(그림상 F를 부르는 모듈 3개, F가 부르는 모듈 2개인 구조가 정답 기준입니다).",265,cbt,2024_3,0,
-685,ipe_industrial,2,2024_3,"다음 C언어 프로그램이 실행되었을 때의 결과는? #include <stdio.h> int main(int argc, char *argv[]) { int a[2][2] = {{11, 22}, {44, 55}}; int i, sum = 0; int *p; p = a[0]; for(i = 1; i < 4; i++) sum += *(p + i); printf(“%d”, sum); return 0; }",55,77,121,132,3,"p=a[0]은 배열 전체를 연속된 메모리로 볼 때 11,22,44,55 순서를 가리킵니다. i=1~3 동안 p[1]+p[2]+p[3] = 22+44+55 = 121이 sum에 더해집니다.",266,cbt,2024_3,0,
+684,ipe_industrial,2,2024_3,다음은 어떤 프로그램 구조를 나타낸다. 모듈 F에서의 fan-in과 fan-out의 수는 얼마인가?,"fan-in : 2, fan-out : 3","fan-in : 3, fan-out : 2","fan-in : 1, fan-out : 2","fan-in : 2, fan-out : 1",2,"fan-in은 해당 모듈을 호출하는 상위 모듈의 수, fan-out은 해당 모듈이 호출하는 하위 모듈의 수를 의미합니다(그림상 F를 부르는 모듈 3개, F가 부르는 모듈 2개인 구조가 정답 기준입니다).",265,cbt,2024_3,0,"digraph:A>B,A>C,A>D,B>E,B>F,C>F,D>F,F>G,F>H"
+685,ipe_industrial,2,2024_3,"다음 C언어 프로그램이 실행되었을 때의 결과는?
+
+```c
+#include <stdio.h>
+int main(int argc, char *argv[]) {
+    int a[2][2] = {{11, 22}, {44, 55}};
+    int i, sum = 0;
+    int *p;
+    p = a[0];
+    for(i = 1; i < 4; i++)
+        sum += *(p + i);
+    printf(""%d"", sum);
+    return 0;
+}
+```",55,77,121,132,3,"p=a[0]은 배열 전체를 연속된 메모리로 볼 때 11,22,44,55 순서를 가리킵니다. i=1~3 동안 p[1]+p[2]+p[3] = 22+44+55 = 121이 sum에 더해집니다.",266,cbt,2024_3,0,
 686,ipe_industrial,3,2024_3,"A, B, C, D의 순서로 정해진 입력 자료를 스택에 입력하였다가 출력한 결과가 될 수 없는 것은?(단, 왼쪽부터 먼저 출력된 순서대 로 나열하였다.)","A, D, C, B","A, B, C, D","D, C, B, A","B, D, A, C",4,"B를 첫 출력으로 내려면 A,B를 push한 직후 바로 B를 pop해야 합니다(스택엔 A만 남음). 두 번째 출력 D를 만들려면 C,D를 마저 push한 뒤 D를 pop합니다. 이 시점에 스택에는 A 아래에 C가 남아 있어, 다음에 꼭 나와야 할 세 번째 출력 A를 꺼내려면 그 위에 있는 C를 먼저 꺼내야만 합니다. 즉 C가 A보다 먼저 나올 수밖에 없어 'B,D,A,C' 순서는 만들어질 수 없습니다.",267,cbt,2024_3,0,
 687,ipe_industrial,3,2024_3,데이터베이스의 3층 스키마 중 모든 응용 시스템과 사용자들이 필요로 하는 데이터를 통합한 조직 전체의 데이터베이스 구조를 논리적으로 정의하는 스키마는?,내부 스키마,개념 스키마,외부 스키마,동적 스키마,2,"개념 스키마는 조직 전체의 데이터베이스를 통합해 논리적으로 정의하는, 데이터베이스 하나당 1개 존재하는 3층 스키마의 중심 스키마입니다.",268,cbt,2024_3,0,
 688,ipe_industrial,3,2024_3,"다음 트리를 Preorder로 운행한 결과는?
@@ -771,8 +1218,14 @@ main() {
 695,ipe_industrial,3,2024_3,"학생(STUDENT) 테이블에 전산과 학생이 50명, 전자과 학생이 100명, 기계과 학생이 50명 있다고 할 때, 다음 SQL문 ㉠, ㉡, ㉢의 실행 결과 튜플 수는 각각 얼마인가? (단, DEPT 필드는 학과명 을 의미한다.) ㉠ SELECT DEPT FROM STUDENT; ㉡ SELECT DISTINCT DEPT FROM STUDENT; ㉢ SELECT COUNT(DISTINCT DEPT) FROM STUDENT WHERE DEPT=‘전산과’;","㉠ 3, ㉡ 3, ㉢ 1","㉠ 200, ㉡ 3, ㉢ 1","㉠ 200, ㉡ 3, ㉢ 50","㉠ 200, ㉡ 200, ㉢ 50",2,"㉠ 전체 조회(DEPT)는 전체 튜플 수 50+100+50=200, ㉡ DISTINCT DEPT는 서로 다른 학과 수 3, ㉢ 전산과로 필터링 후 DISTINCT는 1입니다.",276,cbt,2024_3,0,
 696,ipe_industrial,1,2025_1,Non-preemptive형 프로세스 스케줄링 방식만으로 묶인 것은?,"SJF, SRT","SJF, FIFO","Round-Robin, SRT","Round-Robin, SJF",2,Non-preemptive(비선점)형 스케줄링에는 SJF와 FIFO(FCFS)가 있습니다. Round-Robin과 SRT는 선점형입니다.,277,cbt,2025_1,0,
 697,ipe_industrial,1,2025_1,블랙박스 테스트에 대한 설명으로 옳지 않은 것은?,블랙박스 테스트는 소프트웨어가 수행할 특정 기능을 알기 위 해서 각 기능이 완전히 작동되는 것을 입증하는 테스트이다.,블랙박스 테스트는 프로그램의 구조를 고려하지 않는다.,블랙박스 테스트는 소프트웨어 인터페이스에서 실시되는 테스 트이다.,"블랙박스 테스트의 종류에는 기초 경로 검사, 제어 구조 검사 등이 있다.",4,"블랙박스 테스트는 내부 구조를 보지 않고 기능만으로 검사하는 기법이며, 기초 경로 검사·제어 구조 검사는 화이트박스 테스트 기법입니다.",278,cbt,2025_1,0,
-698,ipe_industrial,1,2025_1,"디스크에서 헤드가 70 트랙을 처리하고 60 트랙으로 이동해 왔다. 디스크 스케줄링 기법으로 SCAN 방식을 사용할 때 다음 디스크 대기 큐에서 가장 먼저 처리되는 트랙은? 디스크 대기 큐 : 20, 50, 95, 100",20,50,95,100,2,SCAN 방식은 헤드가 진행하는 방향으로 가장 가까운 트랙부터 순서대로 서비스합니다. 헤드가 70에서 60으로 이동해 온(감소 방향) 상태이므로 계속 감소 방향으로 가장 가까운 50이 먼저 처리됩니다.,279,cbt,2025_1,0,
-699,ipe_industrial,1,2025_1,"디렉터리 구조 중 다음 설명에 해당하는 것은? ㆍ하나의 루트 디렉터리와 여러 개의 부디렉터리로 구성된다. ㆍUNIX, Windows 운영체제에서 채택하고 있는 구조이다. ㆍ디렉터리 탐색은 포인터에 의하여 계층적으로 이루어진다.",1단계 디렉터리 구조,트리 디렉터리 구조,2단계 디렉터리 구조,비순환 그래프 디렉터리 구조,2,"트리 디렉터리 구조는 하나의 루트 디렉터리 아래 여러 서브 디렉터리를 두고 포인터로 계층적 탐색을 하는 구조로, UNIX·Windows가 채택하고 있습니다.",280,cbt,2025_1,0,
+698,ipe_industrial,1,2025_1,"디스크에서 헤드가 70 트랙을 처리하고 60 트랙으로 이동해 왔다. 디스크 스케줄링 기법으로 SCAN 방식을 사용할 때 다음 디스크 대기 큐에서 가장 먼저 처리되는 트랙은?
+
+> 디스크 대기 큐 : 20, 50, 95, 100",20,50,95,100,2,SCAN 방식은 헤드가 진행하는 방향으로 가장 가까운 트랙부터 순서대로 서비스합니다. 헤드가 70에서 60으로 이동해 온(감소 방향) 상태이므로 계속 감소 방향으로 가장 가까운 50이 먼저 처리됩니다.,279,cbt,2025_1,0,
+699,ipe_industrial,1,2025_1,"디렉터리 구조 중 다음 설명에 해당하는 것은?
+
+- 하나의 루트 디렉터리와 여러 개의 부디렉터리로 구성된다.
+- UNIX, Windows 운영체제에서 채택하고 있는 구조이다.
+- 디렉터리 탐색은 포인터에 의하여 계층적으로 이루어진다.",1단계 디렉터리 구조,트리 디렉터리 구조,2단계 디렉터리 구조,비순환 그래프 디렉터리 구조,2,"트리 디렉터리 구조는 하나의 루트 디렉터리 아래 여러 서브 디렉터리를 두고 포인터로 계층적 탐색을 하는 구조로, UNIX·Windows가 채택하고 있습니다.",280,cbt,2025_1,0,
 700,ipe_industrial,1,2025_1,UML의 구성 요소 중 관계(Relationships) 대한 설명으로 옳지 않은 것은?,의존(Dependency) 관계 : 하나의 사물이 다른 사물에 포함되 어 있는 관계를 표현한다.,실체화(Realization) 관계 : 사물이 할 수 있거나 해야 하는 기능으로 서로를 그룹화 할 수 있는 관계를 표현한다.,연관(Association) 관계 : 2개 이상의 사물이 서로 관련되어 있음을 표현한다.,일반화(Generalization) 관계 : 하나의 사물이 다른 사물에 비 해 더 일반적인지 구체적인지를 표현한다.,1,"의존(Dependency) 관계는 한 사물의 변화가 다른 사물에 영향을 줄 수 있는, 짧은 시간만 유지되는 관계를 표현합니다. '포함되어 있는 관계'라는 설명은 의존 관계에 대한 정확한 설명이 아닙니다.",281,cbt,2025_1,0,
 701,ipe_industrial,1,2025_1,사용자 인터페이스의 기본 원칙에 대한 설명으로 옳지 않은 것은?,학습성 : 누구나 쉽게 배우고 익힐 수 있어야 한다.,유효성 : 사용자의 목적을 정확하고 완벽하게 달성해야 한다.,명확성 : 사용자가 개념적으로 쉽게 인지할 수 있도록 설계해야 한다.,직관성 : 누구나 쉽게 이해하고 사용할 수 있어야 한다.,3,"사용자 인터페이스 기본 원칙은 직관성·유효성·학습성·유연성 등이며, '명확성'은 이 4대 원칙의 정식 항목이 아닙니다(직관성으로 이미 표현되는 개념과 중복).",282,cbt,2025_1,0,
 702,ipe_industrial,1,2025_1,모듈화(Modularity)와 관련한 설명으로 틀린 것은?,"소프트웨어의 모듈은 프로그래밍 언어에서 Subroutine, Function 등으로 표현될 수 있다.","모듈의 수가 증가하면 상대적으로 각 모듈의 크기가 커지며, 모듈 사이의 상호 교류가 감소하여 과부하(Overload) 현상이 나타난다.","모듈화는 시스템을 지능적으로 관리할 수 있도록 해주며, 복잡 도 문제를 해결하는 데 도움을 준다.",모듈화는 시스템의 유지보수와 수정을 용이하게 한다.,2,"모듈 수가 증가하면 각 모듈의 크기는 오히려 작아지고, 모듈 간 상호 교류(호출)가 많아져 과부하가 발생할 수 있습니다. '모듈 크기가 커진다'는 설명이 틀렸습니다.",283,cbt,2025_1,0,
@@ -811,8 +1264,25 @@ main() {
 736,ipe_industrial,3,2025_2,다음 SQL문의 실행결과를 가장 올바르게 설명한 것은? DROP TABLE 인사 CASCADE;,인사 테이블을 제거한다.,인사 테이블을 참조하는 테이블과 인사 테이블을 제거한다.,인사 테이블이 참조중이면 제거하지 않는다.,인사 테이블을 제거할 지의 여부를 사용자에게 다시 질의한다.,2,CASCADE 옵션은 제거할 대상을 참조하고 있는 다른 모든 개체까지 함께 제거합니다.,315,cbt,2025_2,0,
 737,ipe_industrial,3,2025_2,다음 중 디버깅(Debugging)에 대한 설명으로 옳은 것은?,오류가 발생한 코드를 추적하여 수정하는 작업을 의미한다.,시스템에 어떤 일이 발생한 것을 의미한다.,절차형 SQL을 활용하여 특정 기능을 수행하는 것을 의미한다.,애플리케이션의 성능 관리를 위해 다양한 모니터링 기능을 제 공하는 도구를 의미한다.,1,디버깅(Debugging)은 테스트로 발견한 오류가 발생한 코드를 추적하여 수정하는 작업입니다.,316,cbt,2025_2,0,
 738,ipe_industrial,3,2025_2,데이터베이스 설계 단계 중 데이터베이스의 효율성 제고를 위해 파일 저장 구조 및 접근 경로 등을 설계하는 단계는?,개념적 설계 단계,논리적 설계 단계,물리적 설계 단계,데이터베이스 구현 단계,3,파일 저장 구조 및 접근 경로 등을 설계해 효율성을 높이는 단계는 물리적 설계 단계입니다.,317,cbt,2025_2,0,
-739,ipe_industrial,2,2025_3,"다음 JAVA 프로그램이 실행되었을 때, 실행 결과는? public class Main { public static void main(String[ ] args) { System.out.print((int) 2.9 + 1.7); } }",3.7,4.7,3,4.6,1,"(int)는 2.9에만 적용되는 형변환이라 (int)2.9 = 2가 되고, 이후 2 + 1.7 = 3.7(double)이 출력됩니다.",318,cbt,2025_3,0,
-740,ipe_industrial,2,2025_3,"다음 JAVA 프로그램이 실행되었을 때, 실행 결과는? public class Main { public static void main(String[] args) { System.out.print(""(a) "" + 10/4); System.out.print("", (b) "" + 10.0/4); } }","(a) 2, (b) 2.5","(a) 10/4, (b) 10.0/4","(a) 2.5, (b) 2.5","(a) 2.5, (b) 2",1,"(int)는 2.9에만 적용되는 형변환이라 (int)2.9 = 2가 되고, 이후 2 + 1.7 = 3.7(double)이 출력됩니다.",318,cbt,2025_3,0,
+739,ipe_industrial,2,2025_3,"다음 JAVA 프로그램이 실행되었을 때, 실행 결과는?
+
+```java
+public class Main {
+    public static void main(String[ ] args) {
+        System.out.print((int) 2.9 + 1.7);
+    }
+}
+```",3.7,4.7,3,4.6,1,"(int)는 2.9에만 적용되는 형변환이라 (int)2.9 = 2가 되고, 이후 2 + 1.7 = 3.7(double)이 출력됩니다.",318,cbt,2025_3,0,
+740,ipe_industrial,2,2025_3,"다음 JAVA 프로그램이 실행되었을 때, 실행 결과는?
+
+```java
+public class Main {
+    public static void main(String[] args) {
+        System.out.print(""(a) "" + 10/4);
+        System.out.print("", (b) "" + 10.0/4);
+    }
+}
+```","(a) 2, (b) 2.5","(a) 10/4, (b) 10.0/4","(a) 2.5, (b) 2.5","(a) 2.5, (b) 2",1,"(int)는 2.9에만 적용되는 형변환이라 (int)2.9 = 2가 되고, 이후 2 + 1.7 = 3.7(double)이 출력됩니다.",318,cbt,2025_3,0,
 741,ipe_industrial,2,2025_3,C 언어에서 실수형 변수로 선언한 것은?,float a;,short a;,int a;,string a;,1,float는 C언어에서 실수형(부동소수점)을 선언하는 자료형입니다.,319,cbt,2025_3,0,
 742,ipe_industrial,2,2025_3,다음 중 가장 강한 결합도는?,자료 결합도,스탬프 결합도,제어 결합도,내용 결합도,4,"결합도는 자료 < 스탬프 < 제어 < 외부 < 공통 < 내용 순으로 강해지며, 내용(Content) 결합도가 가장 강합니다.",320,cbt,2025_3,0,
 743,ipe_industrial,2,2025_3,"다음 Python 프로그램이 실행되었을 때, 실행 결과는? a = ""11"" b = '""11""' print(a * 2 + b)",2211,"112""11""",111111,"1111""11“",4,"a*2는 문자열 ""11""을 두 번 반복한 ""1111""이 되고, 여기에 b(따옴표 문자가 포함된 문자열 ""11"")를 이어 붙이면 1111""11""이 출력됩니다.",321,cbt,2025_3,0,
@@ -820,7 +1290,17 @@ main() {
 745,ipe_industrial,2,2025_3,응용 프로그램 개발 시 운영체제나 프로그래밍 언어 등에 있는 라이브러리를 이용할 수 있도록 함으로써 효율적인 소프트웨어 구현을 도와주는 인터페이스는?,IDE(Integrated Development Environment),통신 프로토콜(Communication Protocol),API(Application Programming Interface),USB(Universal Serial Bus),3,API(Application Programming Interface)는 운영체제나 언어가 제공하는 라이브러리 기능을 이용할 수 있게 해주는 인터페이스입니다.,323,cbt,2025_3,0,
 746,ipe_industrial,2,2025_3,프로그램의 정상적인 실행을 방해하는 조건이나 상태가 나타났을 때 해당 문제에 대비해 작성해 놓은 처리 루틴을 실행하도록 만드는 일련의 과정을 가리키는 용어는?,Exception Handling,Clean Code,Throw,Container,1,예외 처리(Exception Handling)는 실행을 방해하는 문제 상황에 대비해 미리 작성해 둔 처리 루틴을 실행하는 과정입니다.,324,cbt,2025_3,0,
 747,ipe_industrial,2,2025_3,"객체지향 기법 중 다음 설명이 의미하는 것은? • 객체의 성질을 분해하여 공통된 성질을 추출하여 슈퍼 클래스를 선정하는 것이다. 즉, 불필요한 부분을 생략하 고 객체의 속성 중 가장 중요한 것에만 중점을 두어 개 략화, 모델화 하는 것이다. • 예를 들면, ‘자동차’와 ‘비행기’란 클래스에서 ‘이동수단’ 이란 클래스를 만드는 것이다.",Inheritance,Abstraction,Polymorphism,Encapsulation,2,"추상화(Abstraction)는 공통된 성질만 추출해 개략화·모델화하는 개념으로, '자동차'와 '비행기'에서 공통 상위 개념 '이동수단'을 도출하는 것이 그 예입니다.",325,cbt,2025_3,0,
-748,ipe_industrial,2,2025_3,"다음 C 언어 프로그램이 실행되었을 때의 결과는? #include <stdio.h> main( ) { int a = 1; a <<= 3; printf(""a=0x%02X"", a); return 0; }",a=0x01,a=0x02,a=0x04,a=0x08,4,a=1에서 a<<=3은 a=1<<3=8과 같습니다. 8은 16진수로 0x08이므로 a=0x08이 출력됩니다.,326,cbt,2025_3,0,
+748,ipe_industrial,2,2025_3,"다음 C 언어 프로그램이 실행되었을 때의 결과는?
+
+```c
+#include <stdio.h>
+main( ) {
+    int a = 1;
+    a <<= 3;
+    printf(""a=0x%02X"", a);
+    return 0;
+}
+```",a=0x01,a=0x02,a=0x04,a=0x08,4,a=1에서 a<<=3은 a=1<<3=8과 같습니다. 8은 16진수로 0x08이므로 a=0x08이 출력됩니다.,326,cbt,2025_3,0,
 749,ipe_industrial,2,2025_3,UI 시스템에 대한 설명으로 옳지 않은 것은?,입력 데이터를 사전에 검증하는 역할을 수행한다.,잘못된 입력으로 발생하는 예외를 처리한다.,오류에 대한 구체적인 시스템 정보를 메시지로 제공한다.,"사용자에게 입력 창과 프롬프트, 도움말 등을 제공한다.",3,"UI 시스템은 입력 검증, 예외 처리, 입력 창·프롬프트·도움말 제공 등을 담당하지만, 보안상 시스템 내부 정보를 구체적으로 노출하는 오류 메시지를 제공해서는 안 됩니다.",327,cbt,2025_3,0,
 750,ipe_industrial,2,2025_3,"<p> 태그에 대해 안쪽 여백을 50, 외곽선의 종류를 점선, 외곽선의 색을 빨간색으로 지정하는 코드로 올바른 것은?",p { padding : 50; border-style : dotted; border-color : red },p { margin : 50; border-style : dotted; border-color : red },p { space : 50; border-style : dashed; border-color : red },p { blank : 50; border-style : ridge; border-color : red },1,"padding은 안쪽 여백, border-style은 외곽선 종류(dotted=점선), border-color는 외곽선 색을 지정하는 CSS 속성입니다.",328,cbt,2025_3,0,
 751,ipe_industrial,2,2025_3,"HTML5에서 메뉴, 목차, 인덱스와 같이 내부 페이지 및 외부 페이지 에 대한 탐색 링크들을 정의할 때 사용하는 태그는?",<lib>,<link>,<nav>,<index>,3,<nav> 태그는 HTML5에서 메뉴·목차 등 내비게이션(탐색) 링크 모음을 정의할 때 사용하는 태그입니다.,329,cbt,2025_3,0,
