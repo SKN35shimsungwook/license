@@ -463,6 +463,68 @@ def _render_digraphs_grid_svg(spec):
     return f'<svg width="{width}" height="{height}" viewBox="0 0 {width} {height}" xmlns="http://www.w3.org/2000/svg">{"".join(groups)}</svg>'
 
 
+def _esc_xml(s):
+    return (str(s).replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;")
+            .replace('"', "&quot;"))
+
+
+def _render_mindmap_svg(nodes, edges, weak_ids=None):
+    """개념(태그) 마인드맵: 원형 배치 + 곡선 무방향 연결선. 화살표 없음(개념 관계에는 방향이 없으므로),
+    각 연결선/노드에 <title>을 넣어 마우스를 올리면 이유/취약 여부가 브라우저 기본 툴팁으로 뜨게 한다."""
+    import math
+    weak_ids = weak_ids or set()
+    n = max(1, len(nodes))
+    radius = max(140, 34 * n / (2 * math.pi) + 60)
+    cx = cy = radius + 90
+    pos = {}
+    node_wh = {}
+    for i, node in enumerate(nodes):
+        angle = -math.pi / 2 + 2 * math.pi * i / n
+        pos[node["id"]] = (cx + radius * math.cos(angle), cy + radius * math.sin(angle))
+        w = max(64, len(node["label"]) * 13 + 20)
+        node_wh[node["id"]] = (w, 32)
+
+    parts = []
+    for e in edges:
+        if e["from"] not in pos or e["to"] not in pos:
+            continue
+        x1, y1 = pos[e["from"]]
+        x2, y2 = pos[e["to"]]
+        mx, my = (x1 + x2) / 2, (y1 + y2) / 2
+        ddx, ddy = x2 - x1, y2 - y1
+        dist = (ddx ** 2 + ddy ** 2) ** 0.5 or 1
+        px, py = -ddy / dist, ddx / dist
+        bulge = 22
+        cxp, cyp = mx + px * bulge, my + py * bulge
+        reason = _esc_xml(e.get("reason", ""))
+        parts.append(
+            f'<path d="M{x1},{y1} Q{cxp},{cyp} {x2},{y2}" fill="none" '
+            f'stroke="#93A3C7" stroke-width="2"><title>{reason}</title></path>'
+        )
+        if reason:
+            parts.append(
+                f'<text x="{cxp}" y="{cyp}" text-anchor="middle" font-size="10" '
+                f'font-family="sans-serif" fill="#5B6B8C">{reason}</text>'
+            )
+    for node in nodes:
+        nid = node["id"]
+        x, y = pos[nid]
+        w, h = node_wh[nid]
+        is_weak = nid in weak_ids
+        fill = "#FDECEC" if is_weak else "white"
+        stroke = "#D9534F" if is_weak else "#3E5C9A"
+        label = _esc_xml(node["label"])
+        tip = "자주 틀리는 개념" if is_weak else node["label"]
+        parts.append(
+            f'<g><rect x="{x - w / 2}" y="{y - h / 2}" width="{w}" height="{h}" rx="8" '
+            f'fill="{fill}" stroke="{stroke}" stroke-width="2"><title>{_esc_xml(tip)}</title></rect>'
+            f'<text x="{x}" y="{y + 5}" text-anchor="middle" font-size="13" '
+            f'font-family="sans-serif" fill="#1C2333">{label}</text></g>'
+        )
+    width = height = cx + radius + 90
+    return f'<svg width="{width}" height="{height}" viewBox="0 0 {width} {height}" xmlns="http://www.w3.org/2000/svg">{"".join(parts)}</svg>'
+
+
 def render_diagram(q):
     spec = (q.get("diagram") or "").strip()
     if not spec:
@@ -732,6 +794,8 @@ def view_quiz():
             st.markdown(f'<div class="result-bad">오답이에요. 정답: {"①②③④"[q["answer"]-1]} {ans_text}</div>',
                         unsafe_allow_html=True)
         st.write(q["explanation"])
+        if not is_correct:
+            _render_related_concepts_box(qid, q, choices)
         if st.button("다음 문제 ▶", key=f"quiz_next_{qid}"):
             ss.quiz_idx += 1
             ss.quiz_answered = False
@@ -912,6 +976,8 @@ def _cbt_practice():
             else:
                 st.markdown(f'<div class="result-bad">오답 · 정답: {choices[q["answer"]-1]}</div>', unsafe_allow_html=True)
             st.caption(q["explanation"])
+            if not ss[f"cbtp_result_{qid}"]:
+                _render_related_concepts_box(qid, q, choices)
         st.divider()
 
     if mode != "전체 풀기":
@@ -1251,7 +1317,7 @@ def _cbt_exam_result():
 # =====================================================================
 def view_concept():
     st.header("개념노트")
-    view = st.radio("보기 방식", ["카드", "노트", "OX 퀴즈"], key="concept_view", horizontal=True)
+    view = st.radio("보기 방식", ["카드", "노트", "OX 퀴즈", "마인드맵"], key="concept_view", horizontal=True)
     subj_pick = st.radio("과목", subject_choices(),
                           format_func=lambda s: "전체" if s == "전체" else subject_label(int(s)),
                           horizontal=True, key="concept_subject_radio")
@@ -1266,8 +1332,10 @@ def view_concept():
         _view_card(subjects)
     elif view == "노트":
         _view_note(subjects)
-    else:
+    elif view == "OX 퀴즈":
         _view_ox(subjects)
+    else:
+        _view_mindmap(subjects)
 
 
 def _view_card(subjects):
@@ -1493,6 +1561,98 @@ def _view_ox(subjects):
                     if st.button("다시 시도", key=f"wrongox_retry_{wqid}"):
                         del ss[key]
                         st.rerun()
+
+
+def _gather_mindmap_items(subject, limit=40):
+    """마인드맵 재료 수집. 이 앱엔 문제별 세부 개념 태그가 없어서(회차별 CBT는 tag가 회차명일 뿐)
+    core_id(같은 문제의 회차별 중복 묶음)당 대표 문제 하나씩을 뽑아 AI에게 넘긴다.
+    자주 틀린 문제를 우선하고, 너무 많으면 limit개로 자른다."""
+    ids_in_subject = [qid for qid in ALL_IDS if QUESTIONS[qid]["subject"] == subject]
+    by_core = {}
+    for qid in ids_in_subject:
+        by_core.setdefault(QUESTIONS[qid]["core_id"], []).append(qid)
+
+    per_q = db.get_per_question_stats(con, ss.user, ss.exam)
+    reps = []
+    for qids in by_core.values():
+        wrong_first = [qid for qid in qids if per_q.get(qid, {}).get("wrong", 0) > 0]
+        reps.append(wrong_first[0] if wrong_first else qids[0])
+    reps.sort(key=lambda qid: per_q.get(qid, {}).get("wrong", 0), reverse=True)
+    reps = reps[:limit]
+
+    items, idx_to_qid = [], {}
+    for i, qid in enumerate(reps):
+        q = QUESTIONS[qid]
+        snippet = " ".join(q["question"].split())[:70]
+        items.append({"idx": i, "question": snippet, "wrong": per_q.get(qid, {}).get("wrong", 0) > 0})
+        idx_to_qid[i] = qid
+    return items, idx_to_qid
+
+
+def _view_mindmap(subjects):
+    if len(subjects) != 1:
+        st.info("마인드맵은 과목을 하나 골랐을 때 볼 수 있어요. 위에서 과목을 하나 선택해주세요.")
+        return
+    subject = subjects[0]
+
+    client = _get_gemini_client()
+    if client is None:
+        st.warning("마인드맵은 AI 학습 코치 기능이라 Gemini API 키가 필요해요.")
+        st.caption("'AI 학습 코치' 메뉴에서 키를 먼저 등록하면 여기서도 바로 쓸 수 있어요.")
+        return
+
+    ss.setdefault("mindmap_cache", {})
+    cache_key = f"{ss.exam}_{subject}"
+    has_cached = cache_key in ss.mindmap_cache
+    if st.button("🔄 마인드맵 다시 생성" if has_cached else "🧠 마인드맵 생성", key=f"mindmap_gen_{subject}"):
+        items, idx_to_qid = _gather_mindmap_items(subject)
+        if len(items) < 3:
+            st.info("마인드맵을 만들기엔 이 과목 문제가 아직 너무 적어요.")
+        else:
+            with st.spinner("문제들을 개념 단위로 묶어서 마인드맵을 만들고 있어요..."):
+                try:
+                    result = ai_coach.generate_concept_mindmap(client, subject_label(subject), items)
+                    ss.mindmap_cache[cache_key] = {"result": result, "idx_to_qid": idx_to_qid}
+                    st.rerun()
+                except Exception as e:
+                    st.error(f"마인드맵을 만들지 못했어요: {e}")
+
+    cached = ss.mindmap_cache.get(cache_key)
+    if not cached:
+        st.caption("위 버튼을 누르면 이 과목의 문제(오답 위주)를 바탕으로 개념 마인드맵을 만들어줘요.")
+        return
+
+    result, idx_to_qid = cached["result"], cached["idx_to_qid"]
+    concepts = result.get("concepts", [])
+    edges = result.get("edges", [])
+    if not concepts:
+        st.info("마인드맵을 만들 만한 개념을 찾지 못했어요.")
+        return
+
+    per_q = db.get_per_question_stats(con, ss.user, ss.exam)
+    weak_ids = set()
+    for c in concepts:
+        for idx in c.get("covers", []):
+            qid = idx_to_qid.get(idx)
+            if qid and per_q.get(qid, {}).get("wrong", 0) > 0:
+                weak_ids.add(c["id"])
+                break
+
+    svg = _render_mindmap_svg(concepts, edges, weak_ids)
+    st.markdown(f'<div style="overflow-x:auto;">{svg}</div>', unsafe_allow_html=True)
+    st.caption("🔴 빨간 박스 = 오답이 있는 개념 · 선/박스에 마우스를 올리면 설명이 떠요.")
+
+    with st.expander("개념별 문제 목록 보기"):
+        for c in concepts:
+            qids = [idx_to_qid[i] for i in c.get("covers", []) if i in idx_to_qid]
+            if not qids:
+                continue
+            st.markdown(f"**{c['label']}** ({len(qids)}문제)")
+            for qid in qids:
+                q = QUESTIONS.get(qid)
+                if q:
+                    mark = "❌" if per_q.get(qid, {}).get("wrong", 0) > 0 else "·"
+                    st.caption(f"{mark} {' '.join(q['question'].split())[:60]}")
 
 
 # =====================================================================
@@ -1849,17 +2009,48 @@ def _render_coach_variant(client, qid, q, choices, correct_text):
                 st.caption(v["explanation"])
 
 
-def view_coach():
-    st.header("🤖 AI 학습 코치")
+def _get_gemini_client():
+    """AI 학습 코치와 마인드맵/관련개념 기능이 공유하는 Gemini 클라이언트 조회.
+    키가 없으면 None(호출부가 알아서 안내 문구를 보여줌)."""
     ss.setdefault("manual_gemini_key", "")
-
     try:
         secret_key = st.secrets.get("GEMINI_API_KEY", "")
     except Exception:
         secret_key = ""
-
     active_key = secret_key or ss.manual_gemini_key
-    client = ai_coach.get_client(active_key) if active_key else None
+    return ai_coach.get_client(active_key) if active_key else None
+
+
+def _render_related_concepts_box(qid, q, choices):
+    """오답 해설 밑에 붙는, AI가 그 자리에서 만들어주는 '헷갈리기 쉬운 인접 개념' 노트.
+    이 문제 하나만 교정받고 끝나서 같은 개념의 다른 갈래는 여전히 헷갈리는 걸 막기 위함.
+    같은 문제에 대해 반복 호출하지 않도록 세션에 캐시한다."""
+    ss.setdefault("related_concepts_cache", {})
+    cached = ss.related_concepts_cache.get(qid)
+    if cached:
+        st.info(f"🔗 **헷갈리기 쉬운 관련 개념**\n\n{cached}")
+        return
+    if st.button("🔗 헷갈리기 쉬운 관련 개념 보기", key=f"related_btn_{qid}"):
+        client = _get_gemini_client()
+        if client is None:
+            st.caption("Gemini API 키가 없어서 관련 개념을 못 불러와요. 'AI 학습 코치' 메뉴에서 키를 등록해보세요.")
+            return
+        correct_text = choices[q["answer"] - 1]
+        with st.spinner("관련 개념을 정리하고 있어요..."):
+            try:
+                text = ai_coach.generate_related_concepts(
+                    client, subject_label(q["subject"]), q["question"], choices, correct_text,
+                    q["explanation"], tag_label=tag_display(q.get("tag", "")),
+                )
+                ss.related_concepts_cache[qid] = text
+                st.rerun()
+            except Exception as e:
+                st.error(f"관련 개념을 가져오지 못했어요: {e}")
+
+
+def view_coach():
+    st.header("🤖 AI 학습 코치")
+    client = _get_gemini_client()
 
     if client is None:
         st.warning("Gemini API 키가 설정되지 않았어요.")
