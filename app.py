@@ -727,13 +727,77 @@ def _run_cbt_exam(pool_builder, exam_key):
         st.rerun()
 
 
+def _cbt_available_years():
+    rounds = db.get_cbt_rounds(con, ss.exam)
+    return sorted({r.split("_")[0] for r in rounds if r.split("_")[0].isdigit()})
+
+
+def _filter_ids_by_year_range(ids, year_range):
+    if not year_range:
+        return ids
+    lo, hi = year_range
+    out = []
+    for qid in ids:
+        year = QUESTIONS[qid]["tag"].split("_")[0]
+        if not year.isdigit() or (lo <= year <= hi):
+            out.append(qid)
+    return out
+
+
+def _build_subject_exam_pool(ids, picked_subject, year_range=None):
+    ids = _filter_ids_by_year_range(ids, year_range)
+    if picked_subject == "전체":
+        return logic.pick_cbt_exam_pool(QUESTIONS, ids, exam_cfg)
+    subj = int(picked_subject)
+    count = exam_cfg["exam_subject_counts"].get(subj, 20)
+    return logic.pick_cbt_pool(QUESTIONS, ids, [subj], limit=count)
+
+
+def _cbt_subject_year_viewmode_picker(key_prefix, with_year=True):
+    picked_subject = st.radio(
+        "과목", subject_choices(), format_func=lambda s: "전체" if s == "전체" else subject_label(int(s)),
+        horizontal=True, key=f"{key_prefix}_subject",
+    )
+    year_range = None
+    if with_year:
+        years = _cbt_available_years()
+        if years:
+            year_range = st.select_slider(
+                "연도 범위", options=years, value=(years[0], years[-1]), key=f"{key_prefix}_year_range",
+            )
+    view_mode = st.radio(
+        "보기 방식", ["전체 풀기", "1문제씩", "3~4문제씩"], key=f"{key_prefix}_viewmode", horizontal=True,
+    )
+    return picked_subject, year_range, view_mode
+
+
 def _cbt_exam_random():
-    _run_cbt_exam(lambda: logic.pick_cbt_exam_pool(QUESTIONS, CBT_IDS, exam_cfg), "random")
+    if not ss.cbt_pool:
+        picked_subject, year_range, view_mode = _cbt_subject_year_viewmode_picker("cbt_exam_random")
+        if st.button("실전 시작", key="cbt_exam_start_random"):
+            ss.cbt_pool = _build_subject_exam_pool(CBT_IDS, picked_subject, year_range)
+            ss.cbt_submitted = False
+            ss.cbt_view_mode = view_mode
+            ss.cbt_page = 0
+            ss.cbt_start_at = time.time()
+            st.rerun()
+        return
+    _run_cbt_exam(lambda: ss.cbt_pool, "random")
 
 
 def _cbt_exam_mixed():
     st.caption("실제 기출문제와 AI가 만든 신규 문제를 함께 섞어서, 더 폭넓게 연습하는 모드예요. (기존 실전/연습 모드는 기출문제만 그대로 사용해요)")
-    _run_cbt_exam(lambda: logic.pick_cbt_exam_pool(QUESTIONS, ALL_IDS, exam_cfg), "mixed")
+    if not ss.cbt_pool:
+        picked_subject, year_range, view_mode = _cbt_subject_year_viewmode_picker("cbt_exam_mixed")
+        if st.button("실전 시작", key="cbt_exam_start_mixed"):
+            ss.cbt_pool = _build_subject_exam_pool(ALL_IDS, picked_subject, year_range)
+            ss.cbt_submitted = False
+            ss.cbt_view_mode = view_mode
+            ss.cbt_page = 0
+            ss.cbt_start_at = time.time()
+            st.rerun()
+        return
+    _run_cbt_exam(lambda: ss.cbt_pool, "mixed")
 
 
 def _cbt_exam_round():
@@ -743,12 +807,19 @@ def _cbt_exam_round():
         return
     if not ss.cbt_pool:
         picked_round = st.selectbox("회차 선택", rounds, key="cbt_round_pick")
+        picked_subject = st.radio(
+            "과목", subject_choices(), format_func=lambda s: "전체" if s == "전체" else subject_label(int(s)),
+            horizontal=True, key="cbt_round_subject",
+        )
         view_mode = st.radio(
             "보기 방식", ["전체 풀기", "1문제씩", "3~4문제씩"],
             key="cbt_viewmode_round", horizontal=True,
         )
         if st.button("이 회차 실전 시작", key="cbt_round_start"):
-            ss.cbt_pool = logic.pick_cbt_round_pool(QUESTIONS, CBT_IDS, picked_round)
+            pool = logic.pick_cbt_round_pool(QUESTIONS, CBT_IDS, picked_round)
+            if picked_subject != "전체":
+                pool = [qid for qid in pool if QUESTIONS[qid]["subject"] == int(picked_subject)]
+            ss.cbt_pool = pool
             ss.cbt_submitted = False
             ss.cbt_view_mode = view_mode
             ss.cbt_page = 0
@@ -772,24 +843,38 @@ def _cbt_exam_result():
             d["correct"] += 1
             correct_n += 1
 
-    fail_subjects = [s for s, n in exam_cfg["exam_min_correct"].items()
-                      if per_subject.get(s, {"correct": 0})["correct"] < n]
+    covers_all_subjects = set(per_subject.keys()) == set(exam_cfg["exam_subject_counts"].keys())
+    fail_subjects = [s for s in per_subject if per_subject[s]["correct"] < exam_cfg["exam_min_correct"].get(s, 0)]
     total_score = correct_n * exam_cfg["points_per_q"]
-    overall_pass = (correct_n >= exam_cfg["exam_total_pass"]) and not fail_subjects
 
-    if overall_pass:
-        st.markdown(f'<div class="result-ok">합격 예상 · 총점 {total_score}점 · {correct_n}/{len(ss.cbt_pool)}문항 정답</div>',
-                     unsafe_allow_html=True)
+    if covers_all_subjects:
+        overall_pass = (correct_n >= exam_cfg["exam_total_pass"]) and not fail_subjects
+        if overall_pass:
+            st.markdown(
+                f'<div class="result-ok">합격 예상 · 총점 {total_score}점 · {correct_n}/{len(ss.cbt_pool)}문항 정답</div>',
+                unsafe_allow_html=True,
+            )
+        else:
+            reasons = []
+            if correct_n < exam_cfg["exam_total_pass"]:
+                reasons.append(f"총점 미달({total_score}점)")
+            if fail_subjects:
+                reasons.append("과락 과목: " + ", ".join(subject_label(s) for s in fail_subjects))
+            st.markdown(f'<div class="result-bad">불합격 예상 · {" / ".join(reasons)}</div>', unsafe_allow_html=True)
     else:
-        reasons = []
-        if correct_n < exam_cfg["exam_total_pass"]:
-            reasons.append(f"총점 미달({total_score}점)")
+        # 일부 과목만 푼 경우: 전체 합격 판정 대신 그 과목(들)의 과락 여부만 안내
+        st.write(f"**{correct_n}/{len(ss.cbt_pool)}문항 정답** (총점 {total_score}점)")
         if fail_subjects:
-            reasons.append("과락 과목: " + ", ".join(subject_label(s) for s in fail_subjects))
-        st.markdown(f'<div class="result-bad">불합격 예상 · {" / ".join(reasons)}</div>', unsafe_allow_html=True)
+            st.markdown(
+                '<div class="result-bad">과락 기준 미달 과목: ' + ", ".join(subject_label(s) for s in fail_subjects)
+                + '</div>', unsafe_allow_html=True,
+            )
+        else:
+            st.markdown('<div class="result-ok">선택한 과목은 과락 기준을 넘겼어요.</div>', unsafe_allow_html=True)
+        st.caption("전체 3과목을 다 풀지 않아서 종합 합격 판정은 표시하지 않아요.")
 
-    for s in sorted(exam_cfg["exam_subject_counts"].keys()):
-        d = per_subject.get(s, {"correct": 0, "total": exam_cfg["exam_subject_counts"][s]})
+    for s in sorted(per_subject.keys()):
+        d = per_subject[s]
         st.write(f"{subject_label(s)}: {d['correct']}/{d['total']}문항")
 
     if st.button("다시 시작", key="cbt_exam_restart"):
