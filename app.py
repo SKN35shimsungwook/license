@@ -48,25 +48,74 @@ st.markdown("""
 </style>
 """, unsafe_allow_html=True)
 
-# ---------- 비밀번호 게이트 (배포 후 무단 접근으로 인한 API 비용 방지) ----------
-# Streamlit Cloud의 Secrets에 APP_PASSWORD를 설정하면 활성화된다.
-# 로컬에서 secrets.toml에 값이 없으면(=미설정) 게이트 없이 그냥 통과한다.
+# ---------- 로그인 게이트 (배포 후 무단 접근으로 인한 API 비용 방지) ----------
+# Streamlit Cloud의 Secrets에 APP_PASSWORD 또는 APP_PATTERN을 설정하면 활성화된다.
+# 로컬에서 secrets.toml에 둘 다 값이 없으면(=미설정) 게이트 없이 그냥 통과한다.
+# APP_PATTERN은 5x5 표(1~25번 칸)를 순서대로 누르는 방식으로, "3,8,13,18,23" 처럼
+# 콤마로 구분된 칸 번호 순서로 지정한다.
 ss = st.session_state
 ss.setdefault("authed", False)
 try:
     _app_password = st.secrets.get("APP_PASSWORD", "")
 except Exception:
     _app_password = ""
+try:
+    _app_pattern_raw = st.secrets.get("APP_PATTERN", "")
+except Exception:
+    _app_pattern_raw = ""
+try:
+    _app_pattern = [int(x.strip()) for x in _app_pattern_raw.split(",") if x.strip()]
+except ValueError:
+    _app_pattern = []
 
-if _app_password and not ss.authed:
+if (_app_password or _app_pattern) and not ss.authed:
     st.title("📘 자격증 퀴즈")
-    pw = st.text_input("비밀번호", type="password", key="login_pw")
-    if st.button("입장", key="login_submit"):
-        if pw == _app_password:
-            ss.authed = True
+    ss.setdefault("pattern_seq", [])
+
+    if _app_password and _app_pattern:
+        method = st.radio("입장 방법", ["비밀번호", "패턴"], horizontal=True, key="login_method")
+    elif _app_password:
+        method = "비밀번호"
+    else:
+        method = "패턴"
+
+    if method == "비밀번호":
+        pw = st.text_input("비밀번호", type="password", key="login_pw")
+        if st.button("입장", key="login_submit"):
+            if pw == _app_password:
+                ss.authed = True
+                st.rerun()
+            else:
+                st.error("비밀번호가 틀렸어요.")
+    else:
+        st.caption("표의 칸을 정해진 순서대로 눌러주세요.")
+        clicked = None
+        for r in range(5):
+            row_cols = st.columns(5)
+            for c in range(5):
+                cell_no = r * 5 + c + 1
+                if cell_no in ss.pattern_seq:
+                    label = str(ss.pattern_seq.index(cell_no) + 1)
+                else:
+                    label = "・"
+                if row_cols[c].button(label, key=f"pattern_cell_{cell_no}"):
+                    clicked = cell_no
+        if clicked is not None:
+            if clicked not in ss.pattern_seq:
+                ss.pattern_seq.append(clicked)
             st.rerun()
-        else:
-            st.error("비밀번호가 틀렸어요.")
+
+        col_a, col_b = st.columns(2)
+        if col_a.button("다시 그리기", key="pattern_reset"):
+            ss.pattern_seq = []
+            st.rerun()
+        if col_b.button("확인", key="pattern_submit"):
+            if ss.pattern_seq == _app_pattern:
+                ss.authed = True
+                st.rerun()
+            else:
+                st.error("패턴이 틀렸어요.")
+                ss.pattern_seq = []
     st.stop()
 
 ss.setdefault("user", "")
