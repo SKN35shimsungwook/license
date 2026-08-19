@@ -1,10 +1,14 @@
 # -*- coding: utf-8 -*-
 """전체 문제 은행 구조적 오타/오염 점검. 결과를 파일로 저장(콘솔 mojibake 회피)."""
 import csv
+import os
 import re
 
-PATH = r"C:\Users\playdata2\Desktop\skn35 report\license_quiz\data\cbt_questions.csv"
-OUT = r"C:\Users\PLAYDA~1\AppData\Local\Temp\claude\C--Users-playdata2-Desktop-skn35-report\3de228d4-0842-49d7-9719-300b97c01a4f\scratchpad\audit_report.txt"
+BASE = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+PATH = os.path.join(BASE, "data", "cbt_questions.csv")
+OUT_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "_reports")
+os.makedirs(OUT_DIR, exist_ok=True)
+OUT = os.path.join(OUT_DIR, "audit_report.txt")
 
 with open(PATH, encoding="utf-8-sig") as f:
     rows = list(csv.DictReader(f))
@@ -45,6 +49,33 @@ for r in rows:
 
 # 5) 이상한 이중 띄어쓰기/붙어있는 단어 스플릿 패턴 힌트 (예: "감 소된다") - 단일 한글 사이 공백
 SPLIT_RE = re.compile(r"[가-힣] [가-힣](?=[다요임됨함])")
+
+# 6) 선택지가 전부 숫자인 문제: 정답으로 표시된 선택지의 값이 해설에 실제로 등장하는지
+#    (다른 문제의 해설이 잘못 복사된 경우 등을 잡아냄)
+NUM_RE = re.compile(r"^-?\d+(\.\d+)?$")
+for r in rows:
+    choices = [r["choice1"].strip(), r["choice2"].strip(), r["choice3"].strip(), r["choice4"].strip()]
+    if not all(NUM_RE.match(c) for c in choices):
+        continue
+    try:
+        ans_idx = int(r["answer"]) - 1
+    except ValueError:
+        continue
+    if not (0 <= ans_idx < 4):
+        continue
+    correct_val = choices[ans_idx]
+    explanation = r.get("explanation", "")
+    if correct_val not in explanation:
+        issues.append(("ANSWER_EXPLANATION_MISMATCH", r["id"], correct_val, explanation[:60]))
+
+# 7) 원본이 그림/도표에 의존하는데(예: "다음 그림에서") 해설도 구체적 근거 없이 얼버무리는 경우
+#    -> 텍스트만으로는 풀 수 없는 문제로 의심
+IMAGE_DEP_RE = re.compile(r"(다음|아래)\s*(그림|그래프|도표|다이어그램)")
+VAGUE_EXP_RE = re.compile(r"그림.{0,6}따라|그림.{0,6}의해|구체적\s*(값|수치)은")
+for r in rows:
+    text = r["question"]
+    if IMAGE_DEP_RE.search(text) and VAGUE_EXP_RE.search(r.get("explanation", "")):
+        issues.append(("IMAGE_DEPENDENT_VAGUE_EXPLANATION", r["id"], text[:60]))
 
 with open(OUT, "w", encoding="utf-8") as f:
     f.write(f"total rows: {len(rows)}\n")
