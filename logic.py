@@ -53,6 +53,8 @@ def pick_pool(questions, subjects, limit=None):
     random.shuffle(pool)
     if limit:
         pool = pool[:limit]
+    # 문제 선택은 무작위로 하되, 화면에는 과목 순서대로 묶어서 보여준다(안정정렬이라 과목 내 순서는 그대로 유지).
+    pool.sort(key=lambda qid: questions[qid]["subject"])
     return pool
 
 
@@ -72,6 +74,8 @@ def pick_cbt_pool(questions, cbt_ids, subjects, limit=None):
     random.shuffle(ids)
     if limit:
         ids = ids[:limit]
+    # 문제 선택은 무작위로 하되, 화면에는 과목 순서대로 묶어서 보여준다(안정정렬이라 과목 내 순서는 그대로 유지).
+    ids.sort(key=lambda qid: questions[qid]["subject"])
     return ids
 
 
