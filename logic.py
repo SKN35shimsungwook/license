@@ -90,10 +90,32 @@ def pick_cbt_exam_pool(questions, cbt_ids, exam_cfg):
 
 def pick_cbt_round_pool(questions, cbt_ids, round_name):
     """회차별 기출 모의고사: 무작위 조합이 아니라 실제 그 회차에 출제된 문제 그대로, 원래 순서로 반환.
-    과목 블록(1~20/21~40/41~60)이 원본과 같도록 과목 우선으로 정렬한다(과목 내부는 id 순)."""
+    과목 블록(1~20/21~40/41~60)이 원본과 같도록 과목 우선으로 정렬한다(과목 내부는 id 순).
+    단, 나중에 복구되어 id가 훨씬 큰 문제(qnum에 실제 원본 문제 번호가 기록된 경우)는
+    id 순서 대신 그 qnum이 가리키는 원래 위치에 끼워 넣는다."""
     ids = [qid for qid in cbt_ids if questions[qid].get("round") == round_name]
-    ids.sort(key=lambda qid: (questions[qid]["subject"], questions[qid]["id"]))
-    return ids
+    by_subject = {}
+    for qid in ids:
+        by_subject.setdefault(questions[qid]["subject"], []).append(qid)
+
+    result = []
+    for subject in sorted(by_subject):
+        group = by_subject[subject]
+        known, unknown = [], []
+        for qid in group:
+            qnum = (questions[qid].get("qnum") or "").strip()
+            if qnum.isdigit():
+                known.append((int(qnum), qid))
+            else:
+                unknown.append(qid)
+        unknown.sort(key=lambda qid: questions[qid]["id"])
+        known.sort()
+        subject_base = (subject - 1) * 20
+        for qnum, qid in known:
+            pos = max(0, min(qnum - subject_base - 1, len(unknown)))
+            unknown.insert(pos, qid)
+        result.extend(unknown)
+    return result
 
 
 def _normalize_answer(s):
