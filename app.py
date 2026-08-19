@@ -296,7 +296,7 @@ def _render_tree_svg(spec):
     return f'<svg width="{width}" height="{height}" viewBox="0 0 {width} {height}" xmlns="http://www.w3.org/2000/svg">{"".join(parts)}</svg>'
 
 
-def _render_grid_svg(spec):
+def _grid_parts(spec, unit, font_size=13):
     cells = []
     max_x = max_y = 0.0
     for part in spec.split(";"):
@@ -307,8 +307,6 @@ def _render_grid_svg(spec):
         label = vals[4] if len(vals) > 4 else ""
         cells.append((x, y, w, h, label))
         max_x, max_y = max(max_x, x + w), max(max_y, y + h)
-    unit = 90
-    width, height = max_x * unit, max_y * unit
     parts = []
     for x, y, w, h, label in cells:
         px_x, px_y, px_w, px_h = x * unit, y * unit, w * unit, h * unit
@@ -319,13 +317,46 @@ def _render_grid_svg(spec):
         if label:
             parts.append(
                 f'<text x="{px_x + px_w / 2}" y="{px_y + px_h / 2 + 5}" text-anchor="middle" '
-                f'font-size="13" font-family="sans-serif" fill="#1C2333">{label}</text>'
+                f'font-size="{font_size}" font-family="sans-serif" fill="#1C2333">{label}</text>'
             )
+    return parts, max_x * unit, max_y * unit
+
+
+def _render_grid_svg(spec):
+    parts, width, height = _grid_parts(spec, 90)
     return f'<svg width="{width}" height="{height}" viewBox="0 0 {width} {height}" xmlns="http://www.w3.org/2000/svg">{"".join(parts)}</svg>'
 
 
-def _digraph_parts(spec, cx, cy, radius, r, marker_id):
+def _render_grids_grid_svg(spec):
+    """선택지 여러 개가 각각 다른 레이아웃 그림인 문제용. spec은 '|'로 구분된 grid-spec 목록."""
+    specs = spec.split("|")
+    unit = 45
+    label_h = 22
+    panel_w = 2 * unit + 20
+    panel_h = 2 * unit + label_h + 10
+    cols = min(4, len(specs))
+    rows = (len(specs) + cols - 1) // cols
+    groups = []
+    for i, s in enumerate(specs):
+        col, row = i % cols, i // cols
+        tx, ty = col * panel_w, row * panel_h
+        parts, _, _ = _grid_parts(s, unit, font_size=10)
+        label = "①②③④⑤⑥"[i] if i < 6 else str(i + 1)
+        groups.append(
+            f'<g transform="translate({tx},{ty})">'
+            f'<text x="0" y="16" font-size="15" font-family="sans-serif" fill="#1C2333" font-weight="bold">{label}</text>'
+            f'<g transform="translate(24,{label_h})">{"".join(parts)}</g></g>'
+        )
+    width, height = panel_w * cols, panel_h * rows
+    return f'<svg width="{width}" height="{height}" viewBox="0 0 {width} {height}" xmlns="http://www.w3.org/2000/svg">{"".join(groups)}</svg>'
+
+
+def _digraph_parts(spec, cx, cy, radius, r, marker_id, loop_offset=None, loop_r=None):
     import math
+    if loop_offset is None:
+        loop_offset = max(20, radius * 0.4)
+    if loop_r is None:
+        loop_r = max(10, r * 0.8)
     edges = [tuple(e.split(">")) for e in spec.split(",") if e]
     nodes = []
     for a, b in edges:
@@ -349,9 +380,9 @@ def _digraph_parts(spec, cx, cy, radius, r, marker_id):
             dx, dy = x - cx, y - cy
             dist = (dx ** 2 + dy ** 2) ** 0.5 or 1
             ox, oy = dx / dist, dy / dist
-            lx, ly = x + ox * 40, y + oy * 40
+            lx, ly = x + ox * loop_offset, y + oy * loop_offset
             parts.append(
-                f'<circle cx="{lx}" cy="{ly}" r="16" fill="none" stroke="#3E5C9A" '
+                f'<circle cx="{lx}" cy="{ly}" r="{loop_r}" fill="none" stroke="#3E5C9A" '
                 f'stroke-width="2" marker-end="url(#{marker_id})"/>'
             )
             continue
@@ -381,24 +412,29 @@ def _digraph_parts(spec, cx, cy, radius, r, marker_id):
 
 
 def _render_digraph_svg(spec):
-    cx, cy, radius, r = 150, 130, 90, 20
-    parts = _digraph_parts(spec, cx, cy, radius, r, "arrow")
-    width, height = cx * 2, cy * 2 + 20
+    radius, r, loop_offset, loop_r = 90, 20, 35, 15
+    top_margin = radius + loop_offset + loop_r + 15
+    cx, cy = 150, top_margin
+    parts = _digraph_parts(spec, cx, cy, radius, r, "arrow", loop_offset, loop_r)
+    width, height = cx * 2, cy + radius + loop_offset + loop_r + 15
     return f'<svg width="{width}" height="{height}" viewBox="0 0 {width} {height}" xmlns="http://www.w3.org/2000/svg">{"".join(parts)}</svg>'
 
 
 def _render_digraphs_grid_svg(spec):
     """선택지 여러 개가 각각 다른 방향그래프인 문제용. spec은 '|'로 구분된 edge-list 목록."""
     specs = spec.split("|")
-    panel_w, panel_h = 160, 150
+    radius, r, loop_offset, loop_r = 40, 15, 24, 11
+    label_h = 24
+    panel_w = 190
+    panel_h = int(label_h + radius + loop_offset + loop_r + radius + loop_offset + loop_r + 10)
     cols = min(4, len(specs))
     rows = (len(specs) + cols - 1) // cols
-    cx, cy, radius, r = panel_w / 2, panel_h / 2 + 6, 45, 14
+    cx, cy = panel_w / 2, label_h + radius + loop_offset + loop_r
     groups = []
     for i, s in enumerate(specs):
         col, row = i % cols, i // cols
         tx, ty = col * panel_w, row * panel_h
-        parts = _digraph_parts(s, cx, cy, radius, r, f"arrow{i}")
+        parts = _digraph_parts(s, cx, cy, radius, r, f"arrow{i}", loop_offset, loop_r)
         label = "①②③④⑤⑥"[i] if i < 6 else str(i + 1)
         groups.append(
             f'<g transform="translate({tx},{ty})">'
@@ -422,6 +458,8 @@ def render_diagram(q):
             svg = _render_digraph_svg(spec[len("digraph:"):])
         elif spec.startswith("digraphs:"):
             svg = _render_digraphs_grid_svg(spec[len("digraphs:"):])
+        elif spec.startswith("grids:"):
+            svg = _render_grids_grid_svg(spec[len("grids:"):])
         else:
             return
         st.markdown(f'<div style="margin:6px 0 12px;">{svg}</div>', unsafe_allow_html=True)
