@@ -313,9 +313,11 @@ MINDMAP_SCHEMA = {
                     "label": {"type": "string"},
                     "category": {"type": "string"},
                     "summary": {"type": "string"},
+                    "theory": {"type": "string"},
+                    "parent_concept": {"type": "string"},
                     "covers": {"type": "array", "items": {"type": "integer"}},
                 },
-                "required": ["id", "label", "category", "summary", "covers"],
+                "required": ["id", "label", "category", "summary", "theory", "parent_concept", "covers"],
             },
         },
         "edges": {
@@ -335,44 +337,123 @@ MINDMAP_SCHEMA = {
 }
 
 
-def generate_concept_mindmap(client, subject_label, items):
-    """과목 하나에 속한 실제 문제들(items: [{"idx", "question", "wrong"}, ...])을 2단계 구조로
-    정리한다: 상위 카테고리(categories) -> 그 아래 세부 개념(concepts, 각자 category를 가리킴).
+def generate_concept_mindmap(client, subject_label, items, mode="overview"):
+    """과목 하나에 속한 실제 문제들(items: [{"idx", "question", "wrong"}, ...])을 3단계 구조로
+    정리한다: 상위 카테고리(categories) -> 1차 개념(concepts, parent_concept 없음, 기본 표시) ->
+    그 아래 파생/세부 개념(concepts, parent_concept로 부모를 가리킴, 부모를 클릭해야 펼쳐짐).
     이 앱에는 문제별 세부 개념 태그가 따로 없어서(회차별 CBT 데이터는 tag가 회차명일 뿐), 태그 대신
-    문제 본문을 보고 AI가 직접 계층을 만들고 이름을 붙이게 한다. 평평한 노드 나열보다 카테고리로
-    먼저 묶어야 "한눈에 구조가 보이는" 마인드맵이 된다. concepts[].covers는 그 개념에 해당하는
-    items의 idx 목록."""
-    lines = "\n".join(
-        f"{it['idx']}. {'[자주틀림] ' if it.get('wrong') else ''}{it['question']}" for it in items
-    )
-    prompt = f"""'{subject_label}' 과목의 아래 기출/연습 문제 목록을 보고, 학습자가 전체 구조를
-한눈에 파악할 수 있는 2단계 마인드맵을 만들어주세요: 큰 카테고리(상위 분류) 아래에 세부 개념들이
-속하는 구조입니다.
+    문제 본문을 보고 AI가 직접 계층을 만들고 이름을 붙이게 한다. concepts[].covers는 그 개념에
+    해당하는 items의 idx 목록. summary는 그래프에 항상 보이는 한 줄 요약, theory는 노드를 클릭했을
+    때 펼쳐 보여줄 좀 더 자세한 이론 설명이다.
+
+    mode="overview" (개념노트): items에 그 과목의 개념 카드 "전체"가 빠짐없이 들어온다. 오답 여부와
+    무관하게 전체 그림을 보여주는 것이 목적이라, 모든 문제가 반드시 어딘가의 covers에 포함되어야
+    하고 theory도 오답/헷갈림 얘기가 아니라 중립적인 정의+출제 포인트로 쓴다.
+    mode="weak" (AI 코치): items는 이미 실제로 틀린 문제만 걸러져 들어온다. "약점 지도"가 목적이라
+    theory는 시험에서 왜/어떻게 헷갈리는지에 초점을 맞춘다."""
+    n = len(items)
+    lines = "\n".join(f"{it['idx']}. {it['question']}" for it in items)
+
+    if mode == "weak":
+        intro = f"""'{subject_label}' 과목에서 학습자가 실제로 틀린 적 있는 문제 목록입니다. 이 문제들을
+바탕으로 학습자가 지금 어떤 개념에서 약한지 한눈에 파악할 수 있는 마인드맵을 만들어주세요."""
+        theory_rule = ("theory: 클릭했을 때 보여줄 조금 더 자세한 설명(2~3문장, 80자 이내) — "
+                        "\"무엇인지 + 시험에서 왜/어떻게 헷갈리는지\"를 담아서, 학습자가 이거 하나만 "
+                        "읽어도 감을 잡게 하세요.")
+        edge_rule = ("같은 카테고리에 안 속해도 정말 관련 있거나(시험에서 자주 헷갈리는/비교되는) "
+                     "경우에만 edges로 연결하세요")
+    else:
+        intro = f"""'{subject_label}' 과목의 개념 카드 전체 목록입니다({n}개, 오답 여부와 무관하게 이
+과목의 모든 카드가 포함되어 있습니다). 학습자가 이 과목의 전체 구조를 한눈에 파악할 수 있는
+마인드맵을 만들어주세요. 오답 위주로 편향시키지 말고, 목록에 있는 개념을 빠짐없이 담아 구조화하는
+것이 목표입니다."""
+        theory_rule = ("theory: 클릭했을 때 보여줄 조금 더 자세한 설명(2~3문장, 80자 이내) — 오답이나 "
+                        "헷갈림 얘기가 아니라 \"이 개념이 정확히 무엇인지 + 시험에서 어떤 형태로 자주 "
+                        "출제되는지\"를 중립적으로 설명하세요.")
+        edge_rule = ("같은 카테고리에 안 속해도 원리를 공유하거나 함께 이해하면 좋은 개념끼리만 "
+                     "(예: 같은 상위 개념에서 파생됐거나, 서로 비교하며 배우는 짝 개념) edges로 연결하세요. "
+                     "오답/헷갈림과는 무관하게, 순수하게 개념 구조상 관련성만 보고 판단하세요")
+
+    prompt = f"""{intro}
 
 문제 목록 (번호. 문제 요약):
 {lines}
 
+세부 개념은 처음엔 숨겨져 있다가 1차 개념을 클릭하면 펼쳐지는 구조라, 화면이 복잡해질 걱정 없이
+깊이 있게 만들어도 됩니다.
+
 작업 순서:
-1. 먼저 이 과목을 3~6개의 큰 카테고리(상위 분류)로 나누세요. 예: "프로세스 관리", "네트워크",
+1. 먼저 이 과목을 3~8개의 큰 카테고리(상위 분류)로 나누세요. 예: "프로세스 관리", "네트워크",
    "소프트웨어 설계", "테스트/품질" 처럼 교과서 목차 수준의 큰 갈래여야 합니다. 카테고리명은
    10자 이내로 짧게.
-2. 각 문제를 가장 관련 있는 세부 개념 노드 하나(또는 소수)의 covers에 포함시키세요. 비슷한 문제는
-   같은 개념으로 묶어 개념 노드는 전체 8~14개를 넘기지 마세요. 문제 문구를 그대로 쓰지 말고
-   "결합도 종류", "정규화 단계"처럼 간결한 개념명(12자 이내)을 새로 지으세요.
-3. 각 개념 노드는 반드시 1단계에서 만든 카테고리 중 하나(category)에 속해야 합니다. 카테고리가
-   비어있으면 안 됩니다.
-4. 각 개념에는 한 문장(25자 이내)짜리 summary를 붙이세요 — 그 개념이 무엇인지 학습자가 그래프만
-   보고도 감을 잡을 수 있는 핵심 설명.
-5. 세부 개념 노드끼리, 같은 카테고리에 안 속해도 정말 관련 있거나(시험에서 자주 헷갈리는/비교되는)
-   경우에만 edges로 연결하세요. 애매하면 연결하지 마세요 — 선이 많을수록 오히려 안 읽힙니다.
-   연결선 개수는 개념 노드 수를 넘기지 마세요.
-6. 각 연결의 이유(reason)는 8자 이내로 아주 짧게 (예: "강도 비교"). 그래프 위에 작게 표시됩니다.
-7. [자주틀림] 표시가 붙은 문제가 많이 속한 개념일수록 학습자에게 중요하니 summary를 더 구체적으로
-   쓰세요."""
+2. 각 카테고리 아래에 1차 개념(parent_concept를 빈 문자열로)을 만드세요. 문제 문구를 그대로 쓰지
+   말고 "결합도 종류", "정규화 단계"처럼 간결한 개념명(12자 이내)을 새로 지으세요. 개수는 카테고리당
+   3~8개 정도로, 목록에 있는 문제 수({n}개)에 맞춰 필요한 만큼 유연하게 늘리세요 — 문제 수가 많으면
+   1차 개념도 그만큼 많아야 합니다.
+3. 각 1차 개념 아래에 세부/파생 개념(parent_concept에 그 1차 개념의 id를 지정)을 만드세요. 원칙은
+   목록의 문제 하나당 세부 개념 하나이되, 내용이 사실상 같거나 아주 밀접한 문제끼리는 세부 개념
+   하나에 covers로 함께 묶어도 됩니다. 예: 1차 개념 "결합도 종류" 아래에 "내용 결합도", "공통 결합도",
+   "스탬프 결합도"처럼.
+   **가장 중요한 원칙: 문제 목록의 모든 번호(0~{n - 1})가 반드시 어딘가의 개념(1차 또는 세부)의
+   covers에 최소 한 번은 포함되어야 합니다. 하나도 빠뜨리지 마세요.** 세부 개념이 있다면 가능한 한
+   세부 개념 쪽에, 없으면 1차 개념에 covers를 넣으세요.
+4. 각 개념 노드는 반드시 1단계에서 만든 카테고리 중 하나(category)에 속해야 합니다(세부 개념은
+   부모와 같은 카테고리). 카테고리가 비어있으면 안 됩니다.
+5. 각 개념에 두 가지 텍스트를 쓰세요:
+   - summary: 그래프에 항상 보이는 한 줄 요약(20자 이내)
+   - {theory_rule}
+6. 개념 노드끼리, {edge_rule}. 애매하면 연결하지 마세요. 연결선은 1차 개념 수준에서만 만들고
+   (세부 개념끼리는 굳이 연결하지 않아도 됩니다 — 부모-자식 관계로 이미 묶여 있으니까요), 개수는
+   1차 개념 수를 넘기지 마세요.
+7. 각 연결의 이유(reason)는 8자 이내로 아주 짧게 (예: "강도 비교"). 그래프 위에 작게 표시됩니다."""
     config = types.GenerateContentConfig(
         response_mime_type="application/json",
         response_json_schema=MINDMAP_SCHEMA,
         temperature=0.4,
+        max_output_tokens=32768 if mode == "overview" else 8192,
     )
     resp = client.models.generate_content(model=MODEL_ACCURATE, contents=prompt, config=config)
     return json.loads(resp.text)
+
+
+def generate_custom_mindmap_seed(client, exam_label, topic):
+    """'나만의 마인드맵'의 초기 뼈대. 문제 목록이 아니라 학습자가 직접 입력한 주제(topic)만 가지고
+    AI가 카테고리/개념 초안을 제안하면, 그 위에 학습자가 직접 가지(개념)와 맨션(이론 메모)을
+    추가/수정해 나간다. covers는 쓸 데가 없으니 항상 빈 배열."""
+    prompt = f"""'{exam_label}' 시험을 준비하는 학습자가 '{topic}'라는 주제로 직접 마인드맵을
+만들려고 합니다. 학습자가 그대로 써도 되고 고쳐도 되는 초안을 만들어주세요.
+
+작업 순서:
+1. 이 주제를 3~5개의 카테고리(상위 분류)로 나누세요. 카테고리명은 10자 이내로 짧게.
+2. 각 카테고리 아래에 1차 개념(parent_concept를 빈 문자열로)을 3~6개씩 만드세요. 개념명은
+   12자 이내로 짧게.
+3. 필요하면 1차 개념 중 일부에 세부/파생 개념(parent_concept로 부모 id를 가리킴)을 1~3개씩
+   추가하세요. 전체 개념(1차+세부) 수는 20개를 넘기지 마세요.
+4. 각 개념 노드는 반드시 하나의 카테고리(category)에 속해야 합니다.
+5. 각 개념에 summary(20자 이내 한 줄 요약)와 theory(클릭하면 보이는 2~3문장·80자 이내 이론
+   설명 초안)를 쓰세요. 학습자가 나중에 자유롭게 고칠 초안이니 너무 완벽하지 않아도 됩니다.
+6. 원리를 공유하거나 함께 이해하면 좋은, 정말 관련 있는 개념끼리만 edges로 연결하세요
+   (reason은 8자 이내로 짧게).
+7. concepts[].covers는 항상 빈 배열([])로 두세요(이 마인드맵은 특정 문제와 연결되지 않습니다)."""
+    config = types.GenerateContentConfig(
+        response_mime_type="application/json",
+        response_json_schema=MINDMAP_SCHEMA,
+        temperature=0.5,
+    )
+    resp = client.models.generate_content(model=MODEL_ACCURATE, contents=prompt, config=config)
+    return json.loads(resp.text)
+
+
+def generate_mindmap_insight(client, subject_label, weak_concepts):
+    """약점 지도(오답 마인드맵)를 만든 다음, 그 아래에 붙이는 짧은 총평. 그래프만 보고 끝내지 않고
+    "지금 뭘 헷갈리고 있는지"를 말로 한 번 더 짚어준다. weak_concepts: [{"label","summary"}, ...]."""
+    lines = "\n".join(f"- {c['label']}: {c.get('summary', '')}" for c in weak_concepts)
+    prompt = f"""'{subject_label}' 과목에서 학습자가 자주 틀리는 개념들입니다:
+{lines}
+
+이 목록을 보고, 학습자가 지금 어떤 부분에서 취약하고 무엇과 무엇을 헷갈리고 있는지 3~5문장으로
+분석해주세요. 개념명을 구체적으로 언급하면서, 왜 그 개념들이 서로 헷갈리기 쉬운지도 짚어주세요.
+"더 공부하세요" 같은 뭉뚱그린 조언 말고, 이 데이터에서만 나올 수 있는 구체적인 분석으로 써주세요."""
+    config = types.GenerateContentConfig(temperature=0.4)
+    resp = client.models.generate_content(model=MODEL_CHEAP, contents=prompt, config=config)
+    return resp.text
