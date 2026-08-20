@@ -118,20 +118,46 @@ def pick_cbt_round_pool(questions, cbt_ids, round_name):
     return result
 
 
+_TRAILING_PUNCT_RE = re.compile(r"[.,!?~;:。，！？]+$")
+
+
 def _normalize_answer(s):
-    return re.sub(r"\s+", "", s.strip().lower())
+    s = _TRAILING_PUNCT_RE.sub("", s.strip())
+    return re.sub(r"\s+", "", s.lower())
+
+
+def _answer_keyword_variants(correct_text):
+    """정답 문자열에서 비교 후보(키워드) 집합을 뽑는다.
+    "프록시(Proxy) 패턴"처럼 괄호가 문장 끝이 아니라 중간에 있어도 괄호 안/밖을 각각 후보로 잡고,
+    "핵심어 + 범주어(패턴/기법/방식/구조 등)" 형태면 핵심어 하나만 입력해도 인정되도록 첫 단어도 후보에 넣는다."""
+    variants = {correct_text}
+    paren_stripped = re.sub(r"\s*\([^)]*\)", "", correct_text).strip()
+    if paren_stripped:
+        variants.add(paren_stripped)
+    for m in re.finditer(r"\(([^)]+)\)", correct_text):
+        inner = m.group(1).strip()
+        if inner:
+            variants.add(inner)
+    words = paren_stripped.split()
+    if len(words) >= 2:
+        variants.add(words[0])
+        variants.add("".join(words[:-1]))
+    return {v for v in variants if v}
 
 
 def answer_matches(user_input, correct_text):
     if not user_input or not user_input.strip():
         return False
-    variants = {correct_text}
-    m = re.match(r"^(.*?)\s*\(([^)]+)\)\s*$", correct_text)
-    if m:
-        variants.add(m.group(1).strip())
-        variants.add(m.group(2).strip())
     u = _normalize_answer(user_input)
-    return any(u == _normalize_answer(v) for v in variants if v)
+    if not u:
+        return False
+    norm_variants = {_normalize_answer(v) for v in _answer_keyword_variants(correct_text)}
+    norm_variants.discard("")
+    if u in norm_variants:
+        return True
+    # 키워드 포함 매칭: 완전히 같지 않아도 핵심 키워드를 포함하면(또는 그 반대면) 정답으로 인정한다.
+    # 너무 짧은 키워드(1자)로 우연히 맞는 걸 막기 위해 최소 길이를 둔다.
+    return any(len(v) >= 2 and (v in u or u in v) for v in norm_variants)
 
 
 def make_blank_sentence(explanation, answer_text):
