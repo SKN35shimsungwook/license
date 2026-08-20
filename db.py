@@ -2,6 +2,7 @@
 """SQLite 데이터 접근 계층. app.py는 이 모듈을 통해서만 DB에 접근한다.
 여러 시험(exam)을 한 DB에서 다루므로, 사용자 기록 조회는 대부분 exam으로 스코프한다."""
 import datetime
+import json
 import os
 import sqlite3
 
@@ -300,3 +301,106 @@ def get_today_solved_count(con, user, exam):
         (user, exam, today),
     ).fetchone()
     return row["c"] or 0
+
+
+# =====================================================================
+# 마인드맵: 과목 전체(concept) / 약점(weak) 지도는 (user,exam,subject,kind)당 하나,
+# 나만의 마인드맵(custom)은 title로 여러 개를 구분한다. 그래프(카테고리/노드/엣지)는
+# JSON 하나로 저장한다.
+# =====================================================================
+def save_mindmap_board(con, user, exam, subject, kind, title, data):
+    ts = datetime.datetime.now().isoformat()
+    payload = json.dumps(data, ensure_ascii=False)
+    con.execute(
+        """INSERT INTO mindmap_board(user, exam, subject, kind, title, data, ts)
+           VALUES (?,?,?,?,?,?,?)
+           ON CONFLICT(user, exam, subject, kind, title)
+           DO UPDATE SET data=excluded.data, ts=excluded.ts""",
+        (user, exam, subject, kind, title, payload, ts),
+    )
+    con.commit()
+    return get_mindmap_board(con, user, exam, subject, kind, title)
+
+
+def save_mindmap_board_data(con, board_id, data):
+    """이미 있는 보드의 그래프 내용만 갱신한다(가지 추가, 취약점 분석 캐시 등 부분 수정용).
+    user/exam/subject/kind/title 키를 다시 몰라도 board_id만으로 바로 갱신할 수 있다."""
+    con.execute(
+        "UPDATE mindmap_board SET data=?, ts=? WHERE id=?",
+        (json.dumps(data, ensure_ascii=False), datetime.datetime.now().isoformat(), board_id),
+    )
+    con.commit()
+
+
+def get_mindmap_board(con, user, exam, subject, kind, title=""):
+    row = con.execute(
+        """SELECT id, data, ts FROM mindmap_board
+           WHERE user=? AND exam=? AND subject=? AND kind=? AND title=?""",
+        (user, exam, subject, kind, title),
+    ).fetchone()
+    if row is None:
+        return None
+    return {"id": row["id"], "data": json.loads(row["data"]), "ts": row["ts"]}
+
+
+def get_mindmap_board_by_id(con, board_id):
+    row = con.execute("SELECT id, data, ts FROM mindmap_board WHERE id=?", (board_id,)).fetchone()
+    if row is None:
+        return None
+    return {"id": row["id"], "data": json.loads(row["data"]), "ts": row["ts"]}
+
+
+def list_custom_boards(con, user, exam):
+    rows = con.execute(
+        """SELECT id, title, ts FROM mindmap_board
+           WHERE user=? AND exam=? AND kind='custom' ORDER BY ts DESC""",
+        (user, exam),
+    ).fetchall()
+    return [{"id": r["id"], "title": r["title"], "ts": r["ts"]} for r in rows]
+
+
+def delete_mindmap_board(con, board_id):
+    con.execute("DELETE FROM mindmap_comment WHERE board_id=?", (board_id,))
+    con.execute("DELETE FROM mindmap_board WHERE id=?", (board_id,))
+    con.commit()
+
+
+def add_mindmap_comment(con, board_id, node_key, user, text):
+    con.execute(
+        "INSERT INTO mindmap_comment(board_id, node_key, user, text, ts) VALUES (?,?,?,?,?)",
+        (board_id, node_key, user, text, datetime.datetime.now().isoformat()),
+    )
+    con.commit()
+
+
+def get_mindmap_comments(con, board_id, node_key):
+    rows = con.execute(
+        "SELECT id, text, ts FROM mindmap_comment WHERE board_id=? AND node_key=? ORDER BY ts ASC",
+        (board_id, node_key),
+    ).fetchall()
+    return [{"id": r["id"], "text": r["text"], "ts": r["ts"]} for r in rows]
+
+
+def get_mindmap_comment_counts(con, board_id):
+    rows = con.execute(
+        "SELECT node_key, COUNT(*) AS c FROM mindmap_comment WHERE board_id=? GROUP BY node_key",
+        (board_id,),
+    ).fetchall()
+    return {r["node_key"]: r["c"] for r in rows}
+
+
+def delete_mindmap_comment(con, comment_id):
+    con.execute("DELETE FROM mindmap_comment WHERE id=?", (comment_id,))
+    con.commit()
+
+
+def delete_mindmap_comments_for_nodes(con, board_id, node_keys):
+    """가지(개념 노드)를 삭제할 때 그 노드와 하위 노드들에 달린 맨션(댓글)도 같이 정리한다."""
+    if not node_keys:
+        return
+    placeholders = ",".join("?" for _ in node_keys)
+    con.execute(
+        f"DELETE FROM mindmap_comment WHERE board_id=? AND node_key IN ({placeholders})",
+        (board_id, *node_keys),
+    )
+    con.commit()
