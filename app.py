@@ -463,66 +463,103 @@ def _render_digraphs_grid_svg(spec):
     return f'<svg width="{width}" height="{height}" viewBox="0 0 {width} {height}" xmlns="http://www.w3.org/2000/svg">{"".join(groups)}</svg>'
 
 
-def _esc_xml(s):
-    return (str(s).replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;")
-            .replace('"', "&quot;"))
-
-
-def _render_mindmap_svg(nodes, edges, weak_ids=None):
-    """개념(태그) 마인드맵: 원형 배치 + 곡선 무방향 연결선. 화살표 없음(개념 관계에는 방향이 없으므로),
-    각 연결선/노드에 <title>을 넣어 마우스를 올리면 이유/취약 여부가 브라우저 기본 툴팁으로 뜨게 한다."""
-    import math
+def _render_mindmap_interactive(categories, concepts, edges, weak_ids=None, height=560):
+    """옵시디언 그래프 뷰처럼 확대/이동/드래그가 되는 실제 인터랙티브 마인드맵.
+    카테고리(상위 분류) -> 개념(세부) 2단계 구조라 물리 시뮬레이션이 자연스럽게 클러스터로
+    묶어줘서 "한눈에 구조가 보이는" 그래프가 된다. vis-network를 CDN에서 불러와 렌더링한다."""
+    import json
     weak_ids = weak_ids or set()
-    n = max(1, len(nodes))
-    radius = max(140, 34 * n / (2 * math.pi) + 60)
-    cx = cy = radius + 90
-    pos = {}
-    node_wh = {}
-    for i, node in enumerate(nodes):
-        angle = -math.pi / 2 + 2 * math.pi * i / n
-        pos[node["id"]] = (cx + radius * math.cos(angle), cy + radius * math.sin(angle))
-        w = max(64, len(node["label"]) * 13 + 20)
-        node_wh[node["id"]] = (w, 32)
+    concept_ids = {c["id"] for c in concepts}
+    category_ids = {c["id"] for c in categories}
 
-    parts = []
+    vis_nodes = []
+    for cat in categories:
+        vis_nodes.append({
+            "id": cat["id"],
+            "label": cat["label"],
+            "title": cat["label"],
+            "shape": "ellipse",
+            "color": {"background": "#3E5C9A", "border": "#2C4374",
+                      "highlight": {"background": "#4A6BB0", "border": "#2C4374"}},
+            "font": {"color": "white", "size": 16, "face": "sans-serif", "bold": True},
+            "borderWidth": 2,
+            "mass": 3,
+        })
+    for c in concepts:
+        is_weak = c["id"] in weak_ids
+        tip = c.get("summary", c["label"])
+        if is_weak:
+            tip += " (자주 틀리는 개념)"
+        vis_nodes.append({
+            "id": c["id"],
+            "label": c["label"],
+            "title": tip,
+            "shape": "box",
+            "margin": 8,
+            "color": {"background": "#FDECEC" if is_weak else "#F5F7FC",
+                      "border": "#D9534F" if is_weak else "#7C8BB5",
+                      "highlight": {"background": "#FDECEC" if is_weak else "#E8EEFC",
+                                    "border": "#D9534F" if is_weak else "#3E5C9A"}},
+            "font": {"color": "#1C2333", "size": 13, "face": "sans-serif"},
+            "borderWidth": is_weak and 2.5 or 1.5,
+        })
+
+    vis_edges = []
+    for c in concepts:
+        if c.get("category") in category_ids:
+            vis_edges.append({
+                "from": c["category"], "to": c["id"], "hierarchical": True,
+                "color": {"color": "#C6CEE2", "opacity": 0.9}, "width": 1.5,
+                "length": 130, "smooth": False,
+            })
     for e in edges:
-        if e["from"] not in pos or e["to"] not in pos:
+        if e["from"] not in concept_ids or e["to"] not in concept_ids:
             continue
-        x1, y1 = pos[e["from"]]
-        x2, y2 = pos[e["to"]]
-        mx, my = (x1 + x2) / 2, (y1 + y2) / 2
-        ddx, ddy = x2 - x1, y2 - y1
-        dist = (ddx ** 2 + ddy ** 2) ** 0.5 or 1
-        px, py = -ddy / dist, ddx / dist
-        bulge = 22
-        cxp, cyp = mx + px * bulge, my + py * bulge
-        reason = _esc_xml(e.get("reason", ""))
-        parts.append(
-            f'<path d="M{x1},{y1} Q{cxp},{cyp} {x2},{y2}" fill="none" '
-            f'stroke="#93A3C7" stroke-width="2"><title>{reason}</title></path>'
-        )
-        if reason:
-            parts.append(
-                f'<text x="{cxp}" y="{cyp}" text-anchor="middle" font-size="10" '
-                f'font-family="sans-serif" fill="#5B6B8C">{reason}</text>'
-            )
-    for node in nodes:
-        nid = node["id"]
-        x, y = pos[nid]
-        w, h = node_wh[nid]
-        is_weak = nid in weak_ids
-        fill = "#FDECEC" if is_weak else "white"
-        stroke = "#D9534F" if is_weak else "#3E5C9A"
-        label = _esc_xml(node["label"])
-        tip = "자주 틀리는 개념" if is_weak else node["label"]
-        parts.append(
-            f'<g><rect x="{x - w / 2}" y="{y - h / 2}" width="{w}" height="{h}" rx="8" '
-            f'fill="{fill}" stroke="{stroke}" stroke-width="2"><title>{_esc_xml(tip)}</title></rect>'
-            f'<text x="{x}" y="{y + 5}" text-anchor="middle" font-size="13" '
-            f'font-family="sans-serif" fill="#1C2333">{label}</text></g>'
-        )
-    width = height = cx + radius + 90
-    return f'<svg width="{width}" height="{height}" viewBox="0 0 {width} {height}" xmlns="http://www.w3.org/2000/svg">{"".join(parts)}</svg>'
+        reason = e.get("reason", "")
+        vis_edges.append({
+            "from": e["from"], "to": e["to"], "hierarchical": False,
+            "label": reason, "title": reason,
+            "color": {"color": "#B7A6D9", "opacity": 0.8}, "width": 1.5,
+            "dashes": True, "length": 220,
+            "font": {"size": 10, "color": "#8A6BB5", "strokeWidth": 4, "strokeColor": "#ffffff", "align": "middle"},
+            "smooth": {"type": "curvedCW", "roundness": 0.15},
+        })
+
+    payload = json.dumps({"nodes": vis_nodes, "edges": vis_edges}, ensure_ascii=False)
+    legend = (
+        '<div style="display:flex; gap:16px; font-size:12px; color:#5B6B8C; margin-bottom:6px; flex-wrap:wrap;">'
+        '<span>🔵 카테고리(상위 분류)</span>'
+        '<span>⬜ 세부 개념</span>'
+        '<span>🔴 자주 틀리는 개념</span>'
+        '<span>· · · 점선 = 개념끼리 헷갈리는 관계</span>'
+        '</div>'
+    )
+    html = f"""
+    {legend}
+    <div id="mindmap-net" style="width:100%; height:{height}px; border:1px solid #E2E6F0; border-radius:10px; background:#FBFCFE;"></div>
+    <script src="https://unpkg.com/vis-network@9.1.9/standalone/umd/vis-network.min.js"></script>
+    <script>
+        (function() {{
+            const container = document.getElementById('mindmap-net');
+            const payload = {payload};
+            const nodes = new vis.DataSet(payload.nodes);
+            const edges = new vis.DataSet(payload.edges);
+            const data = {{ nodes: nodes, edges: edges }};
+            const options = {{
+                physics: {{
+                    solver: 'forceAtlas2Based',
+                    forceAtlas2Based: {{ gravitationalConstant: -80, springLength: 140, springConstant: 0.05, avoidOverlap: 0.6 }},
+                    stabilization: {{ iterations: 200 }},
+                }},
+                interaction: {{ hover: true, zoomView: true, dragView: true, dragNodes: true, tooltipDelay: 150 }},
+                edges: {{ selectionWidth: 2 }},
+            }};
+            const network = new vis.Network(container, data, options);
+            network.once('stabilizationIterationsDone', function() {{ network.fit({{ animation: true }}); }});
+        }})();
+    </script>
+    """
+    components.html(html, height=height + 40, scrolling=False)
 
 
 def render_diagram(q):
@@ -1623,6 +1660,7 @@ def _view_mindmap(subjects):
         return
 
     result, idx_to_qid = cached["result"], cached["idx_to_qid"]
+    categories = result.get("categories", [])
     concepts = result.get("concepts", [])
     edges = result.get("edges", [])
     if not concepts:
@@ -1638,9 +1676,8 @@ def _view_mindmap(subjects):
                 weak_ids.add(c["id"])
                 break
 
-    svg = _render_mindmap_svg(concepts, edges, weak_ids)
-    st.markdown(f'<div style="overflow-x:auto;">{svg}</div>', unsafe_allow_html=True)
-    st.caption("🔴 빨간 박스 = 오답이 있는 개념 · 선/박스에 마우스를 올리면 설명이 떠요.")
+    _render_mindmap_interactive(categories, concepts, edges, weak_ids)
+    st.caption("마우스 휠로 확대/축소, 드래그로 이동·노드 재배치가 돼요. 노드에 마우스를 올리면 설명이 떠요.")
 
     with st.expander("개념별 문제 목록 보기"):
         for c in concepts:
@@ -2210,9 +2247,22 @@ def _inject_keyboard_shortcuts(enabled):
                 "        return Array.from(document.querySelectorAll('button'))",
                 '            .find(function(b) { return b.textContent.indexOf(word) !== -1 && !b.disabled; });',
                 '    }',
+                '    function findConfirmButton() {',
+                "        return Array.from(document.querySelectorAll('button')).find(function(b) {",
+                '            var t = b.textContent.trim();',
+                "            return (t === '확인' || t === '정답 확인') && !b.disabled;",
+                '        });',
+                '    }',
                 "    document.addEventListener('keydown', function(e) {",
                 '        if (!document.__cbtKbdModeOn) return;',
                 '        var active = document.activeElement;',
+                "        if (e.key === 'Enter') {",
+                "            var isMultilineField = active && (active.tagName === 'TEXTAREA' || active.isContentEditable);",
+                '            if (isMultilineField) return;',
+                '            var confirmBtn = findConfirmButton();',
+                '            if (confirmBtn) { confirmBtn.click(); e.preventDefault(); }',
+                '            return;',
+                '        }',
                 '        var isTypingField = active && (',
                 "            active.tagName === 'TEXTAREA' ||",
                 '            active.isContentEditable ||',
