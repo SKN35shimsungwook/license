@@ -137,6 +137,7 @@ ss.setdefault("cbt_mode", "연습")
 ss.setdefault("cbt_subject", "전체")
 ss.setdefault("cbt_pool", [])
 ss.setdefault("cbt_submitted", False)
+ss.setdefault("cbt_answers_store", {})
 ss.setdefault("cbt_view_mode", "전체 풀기")
 ss.setdefault("cbt_page", 0)
 ss.setdefault("cbt_batch_size", 4)
@@ -1093,13 +1094,13 @@ def _exam_choice_labels(qid):
 
 
 def _exam_is_answered(qid):
-    return ss.get(f"cbte_radio_{qid}") is not None
+    return ss.cbt_answers_store.get(qid) is not None
 
 
 def _exam_collect_answers(pool):
     answers = {}
     for qid in pool:
-        picked = ss.get(f"cbte_radio_{qid}")
+        picked = ss.cbt_answers_store.get(qid)
         if picked is not None:
             answers[qid] = _exam_choice_labels(qid).index(picked)
     return answers
@@ -1160,6 +1161,7 @@ def _run_cbt_exam(pool_builder, exam_key):
             ss.cbt_view_mode = view_mode
             ss.cbt_page = 0
             ss.cbt_start_at = time.time()
+            ss.cbt_answers_store = {}
             st.rerun()
         return
 
@@ -1191,8 +1193,6 @@ def _run_cbt_exam(pool_builder, exam_key):
     total = len(pool)
     mode = ss.cbt_view_mode
 
-    _exam_render_navigator(pool)
-
     if mode == "전체 풀기":
         render_indices = list(range(total))
     elif mode == "1문제씩":
@@ -1200,6 +1200,17 @@ def _run_cbt_exam(pool_builder, exam_key):
     else:
         start = ss.cbt_page * ss.cbt_batch_size
         render_indices = list(range(start, min(start + ss.cbt_batch_size, total)))
+
+    # 이번 rerun에서 방금 답을 고른 문제가 있으면(같은 페이지에서 라디오를 막 클릭한 경우),
+    # 아직 store에 반영되기 전이라 네비게이터가 답한 문항 수를 하나 늦게 보여줄 수 있다.
+    # 렌더링 루프 전에 미리 한 번 동기화해서 네비게이터도 즉시 정확한 숫자를 보여주게 한다.
+    for i in render_indices:
+        _qid = pool[i]
+        _raw = ss.get(f"cbte_radio_{_qid}")
+        if _raw is not None:
+            ss.cbt_answers_store[_qid] = _raw
+
+    _exam_render_navigator(pool)
 
     for i in render_indices:
         qid = pool[i]
@@ -1215,7 +1226,16 @@ def _run_cbt_exam(pool_builder, exam_key):
         st.write(q["question"])
         render_diagram(q)
         labels = [f"{'①②③④'[j]} {c}" for j, c in enumerate(choices)]
-        st.radio("보기", labels, key=f"cbte_radio_{qid}", index=None, label_visibility="collapsed")
+        # 위젯이 렌더링 안 된 페이지(1문제씩/3~4문제씩)로 넘어가면 Streamlit이 그 위젯의
+        # session_state를 지워버려서, 매번 렌더링될 때마다 별도 dict(cbt_answers_store)에
+        # 값을 옮겨 담아 페이지를 오가도 답이 안 사라지게 한다.
+        stored = ss.cbt_answers_store.get(qid)
+        picked = st.radio(
+            "보기", labels, key=f"cbte_radio_{qid}",
+            index=labels.index(stored) if stored in labels else None,
+            label_visibility="collapsed",
+        )
+        ss.cbt_answers_store[qid] = picked
         st.divider()
 
     if mode != "전체 풀기":
@@ -1304,6 +1324,7 @@ def _cbt_exam_random():
             ss.cbt_view_mode = view_mode
             ss.cbt_page = 0
             ss.cbt_start_at = time.time()
+            ss.cbt_answers_store = {}
             st.rerun()
         return
     _run_cbt_exam(lambda: ss.cbt_pool, "random")
@@ -1319,6 +1340,7 @@ def _cbt_exam_mixed():
             ss.cbt_view_mode = view_mode
             ss.cbt_page = 0
             ss.cbt_start_at = time.time()
+            ss.cbt_answers_store = {}
             st.rerun()
         return
     _run_cbt_exam(lambda: ss.cbt_pool, "mixed")
@@ -1345,6 +1367,7 @@ def _cbt_exam_round():
             ss.cbt_view_mode = view_mode
             ss.cbt_page = 0
             ss.cbt_start_at = time.time()
+            ss.cbt_answers_store = {}
             st.rerun()
         return
     _run_cbt_exam(lambda: ss.cbt_pool, "round")
@@ -1408,6 +1431,7 @@ def _cbt_exam_result():
         if st.button("다시 시작", key="cbt_exam_restart"):
             ss.cbt_pool = []
             ss.cbt_submitted = False
+            ss.cbt_answers_store = {}
             st.rerun()
     with c2:
         if st.button(f"🔁 틀린 문제만 다시 풀기 ({len(wrong_qids)}개)", key="cbt_exam_retry_wrong",
@@ -1415,6 +1439,7 @@ def _cbt_exam_result():
             ss.cbt_pool = wrong_qids
             ss.cbt_submitted = False
             ss["_cbt_answers"] = {}
+            ss.cbt_answers_store = {}
             ss.cbt_page = 0
             ss.cbt_start_at = time.time()
             st.rerun()
