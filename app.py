@@ -162,6 +162,8 @@ ss.setdefault("coach_variant_qid", None)
 ss.setdefault("coach_variant", None)
 ss.setdefault("coach_variant_result", None)
 ss.setdefault("coach_variant_wrong_counts", {})
+ss.setdefault("coach_batch_variants", {})
+ss.setdefault("coach_batch_results", {})
 ss.setdefault("coach_strategy", "")
 
 ss.setdefault("input_mode", "마우스")
@@ -185,7 +187,8 @@ def goto(nav_target):
     st.rerun()
 
 
-NAV_ITEMS = ["홈", "퀴즈", "CBT 모드", "개념노트", "오답노트", "자주 틀리는 개념", "즐겨찾기", "AI 학습 코치"]
+NAV_ITEMS = ["홈", "퀴즈", "CBT 모드", "개념노트", "오답노트", "자주 틀리는 개념", "즐겨찾기",
+             "AI 학습 코치", "나만의 마인드맵"]
 
 with st.sidebar:
     st.title("📘 자격증 퀴즈")
@@ -463,14 +466,30 @@ def _render_digraphs_grid_svg(spec):
     return f'<svg width="{width}" height="{height}" viewBox="0 0 {width} {height}" xmlns="http://www.w3.org/2000/svg">{"".join(groups)}</svg>'
 
 
-def _render_mindmap_interactive(categories, concepts, edges, weak_ids=None, height=560):
+def _render_mindmap_interactive(categories, concepts, edges, weak_ids=None, expanded_ids=None,
+                                 bridge_label="__mindmap_bridge__", height=560, show_weak=True):
     """옵시디언 그래프 뷰처럼 확대/이동/드래그가 되는 실제 인터랙티브 마인드맵.
-    카테고리(상위 분류) -> 개념(세부) 2단계 구조라 물리 시뮬레이션이 자연스럽게 클러스터로
-    묶어줘서 "한눈에 구조가 보이는" 그래프가 된다. vis-network를 CDN에서 불러와 렌더링한다."""
+    카테고리(상위 분류) -> 1차 개념 -> (펼치면 나오는) 세부 개념의 3단계 구조. parent_concept가
+    있는 세부 개념은 그 부모가 expanded_ids에 있을 때만 그려서, 처음엔 안 복잡하다가 클릭한
+    개념만 펼쳐지게 한다. vis-network를 CDN에서 불러와 렌더링하고, 노드를 클릭하면 그 id를
+    숨은 텍스트 입력창(bridge_label)에 써 넣어서 파이썬 쪽에서 st.rerun 없이도 다음 rerun 때
+    읽을 수 있게 한다.
+
+    show_weak: AI 코치의 약점 지도에서만 True. 개념노트(전체 개념 지도)는 오답 여부와 무관한
+    구조 정리가 목적이라, False로 넘어오면 자주 틀리는 개념 빨간 표시/범례를 아예 안 보여준다."""
     import json
-    weak_ids = weak_ids or set()
-    concept_ids = {c["id"] for c in concepts}
+    weak_ids = (weak_ids or set()) if show_weak else set()
+    expanded_ids = expanded_ids or set()
     category_ids = {c["id"] for c in categories}
+    children_by_parent = {}
+    for c in concepts:
+        parent = c.get("parent_concept") or ""
+        if parent:
+            children_by_parent.setdefault(parent, []).append(c["id"])
+
+    visible_concepts = [c for c in concepts if not c.get("parent_concept")
+                         or c["parent_concept"] in expanded_ids]
+    visible_ids = {c["id"] for c in visible_concepts}
 
     vis_nodes = []
     for cat in categories:
@@ -485,54 +504,72 @@ def _render_mindmap_interactive(categories, concepts, edges, weak_ids=None, heig
             "borderWidth": 2,
             "mass": 3,
         })
-    for c in concepts:
+    for c in visible_concepts:
         is_weak = c["id"] in weak_ids
+        n_children = len(children_by_parent.get(c["id"], []))
+        is_expanded = c["id"] in expanded_ids
+        label = c["label"]
+        if n_children and not is_expanded:
+            label += f" (+{n_children})"
         tip = c.get("summary", c["label"])
         if is_weak:
-            tip += " (자주 틀리는 개념)"
+            tip += " · 자주 틀리는 개념"
+        if n_children:
+            tip += " · 클릭하면 세부 개념이 펼쳐져요" if not is_expanded else " · 클릭하면 접혀요"
+        else:
+            tip += " · 클릭하면 이론 설명이 아래에 떠요"
+        is_child = bool(c.get("parent_concept"))
         vis_nodes.append({
             "id": c["id"],
-            "label": c["label"],
+            "label": label,
             "title": tip,
             "shape": "box",
             "margin": 8,
-            "color": {"background": "#FDECEC" if is_weak else "#F5F7FC",
-                      "border": "#D9534F" if is_weak else "#7C8BB5",
+            "color": {"background": "#FDECEC" if is_weak else ("#EFF3FB" if is_child else "#F5F7FC"),
+                      "border": "#D9534F" if is_weak else ("#9DACD1" if is_child else "#7C8BB5"),
                       "highlight": {"background": "#FDECEC" if is_weak else "#E8EEFC",
                                     "border": "#D9534F" if is_weak else "#3E5C9A"}},
-            "font": {"color": "#1C2333", "size": 13, "face": "sans-serif"},
-            "borderWidth": is_weak and 2.5 or 1.5,
+            "font": {"color": "#1C2333", "size": 12 if is_child else 13, "face": "sans-serif"},
+            "borderWidth": (2.5 if is_weak else 1.5) + (n_children and not is_expanded and 1 or 0),
         })
 
     vis_edges = []
-    for c in concepts:
-        if c.get("category") in category_ids:
+    for c in visible_concepts:
+        if c.get("parent_concept") in visible_ids:
+            vis_edges.append({
+                "from": c["parent_concept"], "to": c["id"], "hierarchical": True,
+                "color": {"color": "#B7A6D9", "opacity": 0.9}, "width": 1.3,
+                "length": 90, "smooth": False, "dashes": [2, 3],
+            })
+        elif c.get("category") in category_ids:
             vis_edges.append({
                 "from": c["category"], "to": c["id"], "hierarchical": True,
                 "color": {"color": "#C6CEE2", "opacity": 0.9}, "width": 1.5,
                 "length": 130, "smooth": False,
             })
     for e in edges:
-        if e["from"] not in concept_ids or e["to"] not in concept_ids:
+        if e["from"] not in visible_ids or e["to"] not in visible_ids:
             continue
         reason = e.get("reason", "")
         vis_edges.append({
             "from": e["from"], "to": e["to"], "hierarchical": False,
             "label": reason, "title": reason,
-            "color": {"color": "#B7A6D9", "opacity": 0.8}, "width": 1.5,
+            "color": {"color": "#8A93A6", "opacity": 0.7}, "width": 1.3,
             "dashes": True, "length": 220,
-            "font": {"size": 10, "color": "#8A6BB5", "strokeWidth": 4, "strokeColor": "#ffffff", "align": "middle"},
+            "font": {"size": 10, "color": "#5B6B8C", "strokeWidth": 4, "strokeColor": "#ffffff", "align": "middle"},
             "smooth": {"type": "curvedCW", "roundness": 0.15},
         })
 
     payload = json.dumps({"nodes": vis_nodes, "edges": vis_edges}, ensure_ascii=False)
+    bridge_label_js = json.dumps(bridge_label)
+    legend_items = ['<span>🔵 카테고리</span>', '<span>⬜ 1차 개념</span>',
+                    '<span style="opacity:.85">⬜ 세부 개념</span>']
+    if show_weak:
+        legend_items.append('<span>🔴 자주 틀리는 개념</span>')
+    legend_items.append('<span>(+N) = 클릭하면 세부 개념 펼치기</span>')
     legend = (
-        '<div style="display:flex; gap:16px; font-size:12px; color:#5B6B8C; margin-bottom:6px; flex-wrap:wrap;">'
-        '<span>🔵 카테고리(상위 분류)</span>'
-        '<span>⬜ 세부 개념</span>'
-        '<span>🔴 자주 틀리는 개념</span>'
-        '<span>· · · 점선 = 개념끼리 헷갈리는 관계</span>'
-        '</div>'
+        '<div style="display:flex; gap:14px; font-size:12px; color:#5B6B8C; margin-bottom:6px; flex-wrap:wrap;">'
+        + "".join(legend_items) + '</div>'
     )
     html = f"""
     {legend}
@@ -556,6 +593,17 @@ def _render_mindmap_interactive(categories, concepts, edges, weak_ids=None, heig
             }};
             const network = new vis.Network(container, data, options);
             network.once('stabilizationIterationsDone', function() {{ network.fit({{ animation: true }}); }});
+            network.on('click', function(params) {{
+                if (params.nodes.length === 0) return;
+                var nodeId = params.nodes[0];
+                try {{
+                    var bridge = window.parent.document.querySelector('input[aria-label=' + JSON.stringify({bridge_label_js}) + ']');
+                    if (!bridge) return;
+                    var setter = Object.getOwnPropertyDescriptor(window.HTMLInputElement.prototype, 'value').set;
+                    setter.call(bridge, nodeId);
+                    bridge.dispatchEvent(new Event('input', {{ bubbles: true }}));
+                }} catch (err) {{ /* 클릭 브리지 실패해도 그래프 자체는 정상 동작 */ }}
+            }});
         }})();
     </script>
     """
@@ -655,7 +703,7 @@ def source_picker_gate(state_key, counts_by_source):
     보이는 걸 막기 위한 게이트. subject_picker_gate와 같은 패턴(과목 선택보다 먼저 거친다)."""
     picked = ss.get(state_key)
     if picked is None:
-        st.caption("퀴즈에서 틀린 문제인지, CBT 모드에서 틀린 문제인지 먼저 골라주세요.")
+        st.caption("퀴즈 문제인지, CBT 모드 문제인지 먼저 골라주세요.")
         for src in ("concept", "cbt"):
             n = counts_by_source.get(src, 0)
             if st.button(f"{SOURCE_FILTER_LABELS[src]} — {n}개", key=f"{state_key}_pick_{src}",
@@ -1600,15 +1648,20 @@ def _view_ox(subjects):
                         st.rerun()
 
 
-def _gather_mindmap_items(subject, limit=50, wrong_only=False):
+def _gather_mindmap_items(subject, limit=None, wrong_only=False):
     """마인드맵 재료 수집. 이 앱엔 문제별 세부 개념 태그가 없어서(회차별 CBT는 tag가 회차명일 뿐)
     core_id(같은 문제의 회차별 중복 묶음)당 대표 문제 하나씩을 뽑아 AI에게 넘긴다.
 
-    wrong_only=False (개념노트용): 오답 여부와 상관없이 과목 전체를 고르게 훑어서, 그 과목의
-    "전체 개념 지도"가 되도록 한다 — 오답 위주로 편향시키지 않는다. 너무 많으면 골고루 등간격
-    샘플링해서 limit개로 줄인다.
-    wrong_only=True (AI 코치용): 실제로 틀린 적 있는 문제만 골라서, "약점 지도"를 만든다."""
-    ids_in_subject = [qid for qid in ALL_IDS if QUESTIONS[qid]["subject"] == subject]
+    wrong_only=False (개념노트용): 오답 여부와 상관없이, 개념노트 "카드"와 정확히 같은 모집단
+    (source=="concept", logic.pick_pool과 동일한 기준)을 하나도 빠짐없이 넘긴다 — 카드 개수(예:
+    1과목 192개)와 마인드맵에 들어가는 개념 수가 어긋나지 않게 하기 위함. limit을 명시로 주지
+    않으면 샘플링하지 않는다.
+    wrong_only=True (AI 코치용): 소스(개념/CBT 기출) 구분 없이 실제로 틀린 적 있는 문제만 골라서
+    "약점 지도"를 만든다."""
+    ids_in_subject = [
+        qid for qid in ALL_IDS
+        if QUESTIONS[qid]["subject"] == subject and (wrong_only or QUESTIONS[qid]["source"] == "concept")
+    ]
     by_core = {}
     for qid in ids_in_subject:
         by_core.setdefault(QUESTIONS[qid]["core_id"], []).append(qid)
@@ -1621,8 +1674,8 @@ def _gather_mindmap_items(subject, limit=50, wrong_only=False):
 
     if wrong_only:
         reps = [qid for qid in reps if per_q.get(qid, {}).get("wrong", 0) > 0]
-        reps = reps[:limit]
-    elif len(reps) > limit:
+        reps = reps[:limit] if limit else reps
+    elif limit and len(reps) > limit:
         step = len(reps) / limit
         reps = [reps[int(i * step)] for i in range(limit)]
 
@@ -1635,67 +1688,230 @@ def _gather_mindmap_items(subject, limit=50, wrong_only=False):
     return items, idx_to_qid
 
 
+def _mindmap_new_node_id(concepts):
+    n = sum(1 for c in concepts if str(c.get("id", "")).startswith("user_"))
+    while True:
+        n += 1
+        cid = f"user_{n}"
+        if not any(c["id"] == cid for c in concepts):
+            return cid
+
+
+def _mindmap_collect_descendants(concepts, node_id):
+    """node_id 자신 + 그 아래 모든 하위 개념(세부의 세부까지)의 id 집합. 가지를 지울 때 고아 노드가
+    안 남게 통째로 걷어내기 위함."""
+    ids = {node_id}
+    changed = True
+    while changed:
+        changed = False
+        for c in concepts:
+            if c.get("parent_concept") in ids and c["id"] not in ids:
+                ids.add(c["id"])
+                changed = True
+    return ids
+
+
+def _render_mindmap_board(board_id, data, per_q=None, show_insight=False, subject_lbl=""):
+    """DB에 저장된 보드 하나(카테고리/개념/엣지 + 사용자가 추가한 가지)를 그래프로 그리고,
+    클릭한 개념의 이론·맨션(댓글)·가지 추가 UI까지 한 화면에서 다룬다. board_id가 있으면
+    (AI 생성 보드) 클릭/댓글/가지추가가 전부 DB에 영구 저장된다."""
+    categories = data.get("categories", [])
+    concepts = data.get("concepts", [])
+    edges = data.get("edges", [])
+    if not concepts:
+        st.info("마인드맵을 만들 만한 개념을 찾지 못했어요.")
+        return
+
+    per_q = per_q or {}
+    weak_ids = {c["id"] for c in concepts
+                if any(per_q.get(qid, {}).get("wrong", 0) > 0 for qid in c.get("covers", []))}
+
+    if show_insight:
+        if data.get("insight"):
+            st.info(f"🔎 **이 마인드맵으로 보는 취약점 분석**\n\n{data['insight']}")
+        elif weak_ids and st.button("🔎 이 마인드맵 취약점 분석 보기", key=f"mm_insight_{board_id}"):
+            client = _get_gemini_client()
+            if client:
+                weak_list = [{"label": c["label"], "summary": c.get("summary", "")}
+                             for c in concepts if c["id"] in weak_ids]
+                with st.spinner("취약점을 분석하고 있어요..."):
+                    try:
+                        insight = ai_coach.generate_mindmap_insight(client, subject_lbl, weak_list)
+                        data["insight"] = insight
+                        db.save_mindmap_board_data(con, board_id, data)
+                        st.rerun()
+                    except Exception as e:
+                        st.error(f"분석을 가져오지 못했어요: {e}")
+
+    ss.setdefault("mindmap_expanded", {})
+    expanded = ss.mindmap_expanded.setdefault(board_id, set())
+    bridge_label = f"__mmclick_{board_id}__"
+    st.markdown(
+        f'<style>div[data-testid="stTextInput"]:has(input[aria-label="{bridge_label}"]) {{ display:none; }}</style>',
+        unsafe_allow_html=True,
+    )
+    clicked = st.text_input(bridge_label, key=f"mmbridge_{board_id}", label_visibility="collapsed")
+
+    _render_mindmap_interactive(categories, concepts, edges, weak_ids, expanded, bridge_label,
+                                 show_weak=show_insight)
+    st.caption("마우스 휠로 확대/축소, 드래그로 이동·노드 재배치가 돼요. 세부 개념이 있는 박스를 클릭하면 펼쳐지고, "
+               "그렇지 않은 박스를 클릭하면 아래에 이론 설명이 떠요.")
+
+    by_id = {c["id"]: c for c in concepts}
+    ss.setdefault("mindmap_selected", {})
+    if clicked and clicked in by_id:
+        ss[f"mmbridge_{board_id}"] = ""  # 다음 클릭이 같은 노드여도 다시 반응하도록 리셋
+        has_children = any(c.get("parent_concept") == clicked for c in concepts)
+        if has_children:
+            if clicked in expanded:
+                expanded.discard(clicked)
+            else:
+                expanded.add(clicked)
+        ss.mindmap_selected[board_id] = clicked
+        st.rerun()
+
+    selected_id = ss.mindmap_selected.get(board_id)
+    node_labels = {c["id"]: c["label"] for c in concepts}
+    pick_options = ["(선택 안 함)"] + [c["id"] for c in concepts]
+    pick_default = pick_options.index(selected_id) if selected_id in pick_options else 0
+    picked = st.selectbox(
+        "🔍 개념 선택해서 자세히 보기 (그래프 클릭이 안 먹히는 환경이면 여기서 골라도 똑같이 돼요)",
+        pick_options, index=pick_default, format_func=lambda cid: node_labels.get(cid, cid),
+        key=f"mmpick_{board_id}",
+    )
+    if picked != "(선택 안 함)":
+        selected_id = picked
+        ss.mindmap_selected[board_id] = picked
+
+    if selected_id and selected_id in by_id:
+        c = by_id[selected_id]
+        with st.container(border=True):
+            st.markdown(f"**{c['label']}**" + (" 🔴" if show_insight and selected_id in weak_ids else ""))
+            if c.get("summary"):
+                st.caption(c["summary"])
+            if c.get("theory"):
+                st.write(c["theory"])
+            qids = [qid for qid in c.get("covers", []) if qid in QUESTIONS]
+            if qids:
+                with st.expander(f"관련 문제 {len(qids)}개"):
+                    for qid in qids:
+                        mark = "❌" if per_q.get(qid, {}).get("wrong", 0) > 0 else "·"
+                        st.caption(f"{mark} {' '.join(QUESTIONS[qid]['question'].split())[:60]}")
+
+            if board_id:
+                comments = db.get_mindmap_comments(con, board_id, selected_id)
+                if comments:
+                    st.markdown("💬 **맨션(내가 남긴 메모)**")
+                    for cm in comments:
+                        st.caption(f"· {cm['text']}")
+                new_comment = st.text_area("맨션 추가하기 (이론 정리, 추가 메모 등)",
+                                            key=f"mmcomment_{board_id}_{selected_id}", height=70)
+                if st.button("💬 맨션 남기기", key=f"mmcomment_btn_{board_id}_{selected_id}"):
+                    if new_comment.strip():
+                        db.add_mindmap_comment(con, board_id, selected_id, ss.user, new_comment.strip())
+                        st.rerun()
+
+                with st.expander("🗑️ 이 가지 삭제하기"):
+                    to_remove = _mindmap_collect_descendants(concepts, selected_id)
+                    n_children = len(to_remove) - 1
+                    if n_children:
+                        st.caption(f"이 개념 아래 하위 개념 {n_children}개도 함께 삭제돼요. 되돌릴 수 없어요.")
+                    else:
+                        st.caption("삭제하면 되돌릴 수 없어요.")
+                    confirm_del = st.checkbox("정말 삭제할게요", key=f"mmdel_confirm_{board_id}_{selected_id}")
+                    if st.button("🗑️ 삭제", key=f"mmdel_btn_{board_id}_{selected_id}", disabled=not confirm_del):
+                        data["concepts"] = [c for c in concepts if c["id"] not in to_remove]
+                        data["edges"] = [e for e in edges
+                                          if e["from"] not in to_remove and e["to"] not in to_remove]
+                        db.delete_mindmap_comments_for_nodes(con, board_id, list(to_remove))
+                        db.save_mindmap_board_data(con, board_id, data)
+                        expanded.discard(selected_id)
+                        ss.mindmap_selected[board_id] = None
+                        st.rerun()
+
+    if board_id:
+        with st.expander("➕ 가지 추가하기 (내가 직접 개념 추가)"):
+            new_label = st.text_input("개념 이름", key=f"mmnew_label_{board_id}")
+            new_summary = st.text_input("한 줄 요약", key=f"mmnew_summary_{board_id}")
+            new_theory = st.text_area("이론 설명(선택)", key=f"mmnew_theory_{board_id}", height=70)
+            parent_options = ["(카테고리 바로 아래)"] + [c["id"] for c in concepts]
+            parent_pick = st.selectbox(
+                "어디에 붙일까요?", parent_options,
+                format_func=lambda cid: "(카테고리 바로 아래)" if cid == "(카테고리 바로 아래)" else node_labels.get(cid, cid),
+                key=f"mmnew_parent_{board_id}",
+            )
+            cat_options = [cat["id"] for cat in categories]
+            if parent_pick == "(카테고리 바로 아래)" and cat_options:
+                cat_pick = st.selectbox("카테고리", cat_options,
+                                         format_func=lambda cid: next((cc["label"] for cc in categories if cc["id"] == cid), cid),
+                                         key=f"mmnew_cat_{board_id}")
+            else:
+                cat_pick = by_id.get(parent_pick, {}).get("category", cat_options[0] if cat_options else "")
+            if st.button("➕ 가지 추가", key=f"mmnew_add_{board_id}", disabled=not new_label.strip()):
+                new_id = _mindmap_new_node_id(concepts)
+                concepts.append({
+                    "id": new_id, "label": new_label.strip(), "category": cat_pick,
+                    "summary": new_summary.strip(), "theory": new_theory.strip(),
+                    "parent_concept": "" if parent_pick == "(카테고리 바로 아래)" else parent_pick,
+                    "covers": [], "source": "user",
+                })
+                data["concepts"] = concepts
+                db.save_mindmap_board_data(con, board_id, data)
+                if parent_pick != "(카테고리 바로 아래)":
+                    expanded.add(parent_pick)
+                ss.mindmap_selected[board_id] = new_id
+                st.rerun()
+
+
 def _render_mindmap_section(subject, wrong_only, cache_ns, empty_caption, spinner_text, empty_data_caption):
-    """개념노트(전체 개념 지도)와 AI 코치(오답/약점 지도)가 공유하는 마인드맵 생성·표시 로직.
-    cache_ns로 두 용도의 캐시를 분리해서, 같은 과목이어도 서로 다른 그래프를 따로 기억한다."""
+    """개념노트(전체 개념 지도)와 AI 코치(오답/약점 지도)가 공유하는 마인드맵 생성 로직.
+    cache_ns로 두 용도를 DB에서 분리해서, 같은 과목이어도 서로 다른 그래프를 따로 저장·기억한다."""
     client = _get_gemini_client()
     if client is None:
         st.warning("마인드맵은 AI 학습 코치 기능이라 Gemini API 키가 필요해요.")
         st.caption("'AI 학습 코치' 메뉴에서 키를 먼저 등록하면 여기서도 바로 쓸 수 있어요.")
         return
 
-    ss.setdefault("mindmap_cache", {})
-    cache_key = f"{cache_ns}_{ss.exam}_{subject}"
-    has_cached = cache_key in ss.mindmap_cache
-    if st.button("🔄 마인드맵 다시 생성" if has_cached else "🧠 마인드맵 생성", key=f"mindmap_gen_{cache_key}"):
+    board = db.get_mindmap_board(con, ss.user, ss.exam, subject, cache_ns)
+    if st.button("🔄 마인드맵 다시 생성" if board else "🧠 마인드맵 생성", key=f"mindmap_gen_{cache_ns}_{subject}"):
         items, idx_to_qid = _gather_mindmap_items(subject, wrong_only=wrong_only)
         if len(items) < 3:
             st.info(empty_data_caption)
         else:
             with st.spinner(spinner_text):
                 try:
-                    result = ai_coach.generate_concept_mindmap(client, subject_label(subject), items)
-                    ss.mindmap_cache[cache_key] = {"result": result, "idx_to_qid": idx_to_qid}
+                    mode = "weak" if wrong_only else "overview"
+                    result = ai_coach.generate_concept_mindmap(client, subject_label(subject), items, mode=mode)
+                    concepts = result.setdefault("concepts", [])
+                    covered = {i for c in concepts for i in c.get("covers", [])}
+                    missing = [it["idx"] for it in items if it["idx"] not in covered]
+                    if missing:
+                        # AI가 누락시킨 카드가 있어도 유실 없이 "기타" 노드로 흡수한다(빠짐없이
+                        # 정리해야 한다는 개념노트 마인드맵의 원칙을 코드로 강제).
+                        categories = result.setdefault("categories", [])
+                        fallback_cat = categories[0]["id"] if categories else "cat_etc"
+                        if not categories:
+                            categories.append({"id": fallback_cat, "label": "기타"})
+                        concepts.append({
+                            "id": "_uncovered", "label": "기타(분류 보류)", "category": fallback_cat,
+                            "summary": "아직 세부 분류되지 않은 개념", "theory": "",
+                            "parent_concept": "", "covers": missing,
+                        })
+                    for c in concepts:
+                        c["covers"] = [idx_to_qid[i] for i in c.get("covers", []) if i in idx_to_qid]
+                        c["source"] = "ai"
+                    saved = db.save_mindmap_board(con, ss.user, ss.exam, subject, cache_ns, "", result)
+                    ss.setdefault("mindmap_expanded", {})[saved["id"]] = set()
                     st.rerun()
                 except Exception as e:
                     st.error(f"마인드맵을 만들지 못했어요: {e}")
 
-    cached = ss.mindmap_cache.get(cache_key)
-    if not cached:
+    if not board:
         st.caption(empty_caption)
         return
 
-    result, idx_to_qid = cached["result"], cached["idx_to_qid"]
-    categories = result.get("categories", [])
-    concepts = result.get("concepts", [])
-    edges = result.get("edges", [])
-    if not concepts:
-        st.info("마인드맵을 만들 만한 개념을 찾지 못했어요.")
-        return
-
     per_q = db.get_per_question_stats(con, ss.user, ss.exam)
-    weak_ids = set()
-    for c in concepts:
-        for idx in c.get("covers", []):
-            qid = idx_to_qid.get(idx)
-            if qid and per_q.get(qid, {}).get("wrong", 0) > 0:
-                weak_ids.add(c["id"])
-                break
-
-    _render_mindmap_interactive(categories, concepts, edges, weak_ids)
-    st.caption("마우스 휠로 확대/축소, 드래그로 이동·노드 재배치가 돼요. 노드에 마우스를 올리면 설명이 떠요.")
-
-    with st.expander("개념별 문제 목록 보기"):
-        for c in concepts:
-            qids = [idx_to_qid[i] for i in c.get("covers", []) if i in idx_to_qid]
-            if not qids:
-                continue
-            st.markdown(f"**{c['label']}** ({len(qids)}문제)")
-            for qid in qids:
-                q = QUESTIONS.get(qid)
-                if q:
-                    mark = "❌" if per_q.get(qid, {}).get("wrong", 0) > 0 else "·"
-                    st.caption(f"{mark} {' '.join(q['question'].split())[:60]}")
+    _render_mindmap_board(board["id"], board["data"], per_q, show_insight=wrong_only, subject_lbl=subject_label(subject))
 
 
 def _view_mindmap(subjects):
@@ -1710,6 +1926,63 @@ def _view_mindmap(subjects):
         spinner_text="이 과목의 개념을 전체적으로 정리하고 있어요...",
         empty_data_caption="마인드맵을 만들기엔 이 과목 문제가 아직 너무 적어요.",
     )
+
+
+# =====================================================================
+# 나만의 마인드맵 (백지에서 시작, AI가 초안 제안 -> 사용자가 가지/맨션 추가)
+# =====================================================================
+def view_custom_mindmap():
+    st.header("🗺️ 나만의 마인드맵")
+    st.caption("주제를 입력하면 AI가 기본 틀을 제안해요. 그 위에 가지(개념)를 추가하고, 각 개념에 맨션(메모)을 남기면서 내 방식대로 정리해보세요.")
+
+    boards = db.list_custom_boards(con, ss.user, ss.exam)
+    ss.setdefault("custom_mindmap_active", None)
+
+    with st.expander("➕ 새 마인드맵 만들기", expanded=not boards):
+        topic = st.text_input("주제 (예: 프로세스 스케줄링, SQL 정규화, 3과목 전체 등)", key="custom_mm_topic")
+        if st.button("🧠 AI 초안으로 시작", key="custom_mm_start", disabled=not topic.strip()):
+            if any(b["title"] == topic.strip() for b in boards):
+                st.error("같은 이름의 마인드맵이 이미 있어요. 다른 이름을 써주세요.")
+            else:
+                client = _get_gemini_client()
+                if client is None:
+                    st.warning("Gemini API 키가 필요해요. 'AI 학습 코치' 메뉴에서 먼저 등록해주세요.")
+                else:
+                    with st.spinner("초안을 만들고 있어요..."):
+                        try:
+                            result = ai_coach.generate_custom_mindmap_seed(client, exam_cfg["label"], topic.strip())
+                            for c in result.get("concepts", []):
+                                c["source"] = "ai"
+                            saved = db.save_mindmap_board(con, ss.user, ss.exam, 0, "custom", topic.strip(), result)
+                            ss.custom_mindmap_active = saved["id"]
+                            st.rerun()
+                        except Exception as e:
+                            st.error(f"초안을 만들지 못했어요: {e}")
+
+    if not boards:
+        st.info("아직 만든 마인드맵이 없어요. 위에서 주제를 입력해 시작해보세요.")
+        return
+
+    board_by_id = {b["id"]: b for b in boards}
+    if ss.custom_mindmap_active not in board_by_id:
+        ss.custom_mindmap_active = boards[0]["id"]
+
+    labels = {b["id"]: b["title"] for b in boards}
+    active = st.radio("내 마인드맵 목록", list(labels.keys()), format_func=lambda bid: labels[bid],
+                       key="custom_mm_picker", horizontal=True,
+                       index=list(labels.keys()).index(ss.custom_mindmap_active))
+    ss.custom_mindmap_active = active
+
+    if st.button("🗑️ 이 마인드맵 삭제", key=f"custom_mm_delete_{active}"):
+        db.delete_mindmap_board(con, active)
+        ss.custom_mindmap_active = None
+        st.rerun()
+
+    board = db.get_mindmap_board_by_id(con, active)
+    if board is None:
+        return
+    per_q = db.get_per_question_stats(con, ss.user, ss.exam)
+    _render_mindmap_board(active, board["data"], per_q)
 
 
 # =====================================================================
@@ -2066,6 +2339,35 @@ def _render_coach_variant(client, qid, q, choices, correct_text):
                 st.caption(v["explanation"])
 
 
+def _render_coach_batch_variant(qid):
+    """체크박스로 여러 문제를 한 번에 골라 만든 변형 문제 표시. 기존 _render_coach_variant(문제 하나씩
+    누르는 버튼)와는 별도의 세션 상태(coach_batch_variants/coach_batch_results)를 써서, 두 방식이 서로
+    간섭하지 않고 같이 쓸 수 있게 한다."""
+    v = ss.coach_batch_variants.get(qid)
+    if not v:
+        return
+    with st.container(border=True):
+        st.caption("✏️ AI가 지금 이 학습자 상황에 맞춰 만든 변형 문제 (일괄 생성)")
+        st.write(v["question"])
+        v_labels = [f"{'①②③④'[i]} {c}" for i, c in enumerate(v["choices"])]
+        picked = st.radio("보기", v_labels, key=f"coach_batch_radio_{qid}", index=None,
+                           label_visibility="collapsed")
+        if st.button("확인", key=f"coach_batch_check_{qid}", disabled=picked is None):
+            ss.coach_batch_results[qid] = (v_labels.index(picked) + 1) == v["answer"]
+            if not ss.coach_batch_results[qid]:
+                ss.coach_variant_wrong_counts[qid] = ss.coach_variant_wrong_counts.get(qid, 0) + 1
+        result = ss.coach_batch_results.get(qid)
+        if result is not None:
+            if result:
+                st.markdown('<div class="result-ok">정답이에요!</div>', unsafe_allow_html=True)
+            else:
+                st.markdown(
+                    f'<div class="result-bad">오답 · 정답: {v["choices"][v["answer"] - 1]}</div>',
+                    unsafe_allow_html=True,
+                )
+            st.caption(v["explanation"])
+
+
 def _get_gemini_client():
     """AI 학습 코치와 마인드맵/관련개념 기능이 공유하는 Gemini 클라이언트 조회.
     키가 없으면 None(호출부가 알아서 안내 문구를 보여줌)."""
@@ -2214,8 +2516,43 @@ def view_coach():
     if subj is None:
         return
     repeated = [(qid, s) for qid, s in repeated if QUESTIONS[qid]["subject"] == subj]
+    shown = repeated[:15]
 
-    for qid, s in repeated[:15]:
+    st.caption("문제마다 '🔀 변형 문제 만들기'를 따로 눌러도 되고, 아래에서 여러 개를 체크한 뒤 "
+               "한 번에 만들어도 돼요(API 호출을 아낄 수 있어요).")
+    if st.button("🔀 체크한 문제 한 번에 변형 문제 만들기", key="coach_batch_gen_btn"):
+        picked_qids = [qid for qid, _ in shown if ss.get(f"coach_batch_pick_{qid}")]
+        if not picked_qids:
+            st.warning("체크한 문제가 없어요. 아래 목록에서 먼저 체크해주세요.")
+        else:
+            subj_stats_raw = db.get_subject_stats(con, ss.user, ss.exam)
+            strategy_block = _build_strategy_block()
+            ok, failed = 0, 0
+            with st.spinner(f"{len(picked_qids)}개 문제의 변형 문제를 만들고 있어요..."):
+                for qid in picked_qids:
+                    q = QUESTIONS[qid]
+                    choices = [q["choice1"], q["choice2"], q["choice3"], q["choice4"]]
+                    correct_text = choices[q["answer"] - 1]
+                    try:
+                        real_wrong_n = len(db.get_wrong_attempt_history(con, ss.user, qid))
+                        variant_wrong_n = ss.coach_variant_wrong_counts.get(qid, 0)
+                        stat = next((st_ for st_ in subj_stats_raw if st_["subject"] == q["subject"]), None)
+                        subject_status = ai_coach.subject_status_text(exam_cfg, q["subject"], stat)
+                        variant = ai_coach.generate_variant_question(
+                            client, subject_label(q["subject"]), q["question"], choices, correct_text,
+                            q["explanation"], wrong_count=max(real_wrong_n + variant_wrong_n, 1),
+                            subject_status=subject_status, strategy_block=strategy_block,
+                        )
+                        ss.coach_batch_variants[qid] = variant
+                        ss.coach_batch_results[qid] = None
+                        ok += 1
+                    except Exception:
+                        failed += 1
+            if failed:
+                st.error(f"{ok}개는 만들었고, {failed}개는 실패했어요.")
+            st.rerun()
+
+    for qid, s in shown:
         q = QUESTIONS[qid]
         choices = [q["choice1"], q["choice2"], q["choice3"], q["choice4"]]
         correct_text = choices[q["answer"] - 1]
@@ -2226,6 +2563,7 @@ def view_coach():
             )
             st.write(f"**{q['question']}**")
             st.caption(f"{s['wrong']}번 틀림 · 정답: {correct_text}")
+            st.checkbox("☑️ 한 번에 만들기 대상으로 선택", key=f"coach_batch_pick_{qid}")
             c1, c2 = st.columns(2)
             with c1:
                 if st.button("💬 AI 선생님에게 질문하기", key=f"coach_ask_{qid}"):
@@ -2233,6 +2571,7 @@ def view_coach():
                     st.rerun()
             with c2:
                 _render_coach_variant(client, qid, q, choices, correct_text)
+            _render_coach_batch_variant(qid)
 
 
 # =====================================================================
@@ -2282,10 +2621,21 @@ def _inject_keyboard_shortcuts(enabled):
                 '            .find(function(b) { return b.textContent.indexOf(word) !== -1 && !b.disabled; });',
                 '    }',
                 '    function findConfirmButton() {',
-                "        return Array.from(document.querySelectorAll('button')).find(function(b) {",
+                "        var btns = Array.from(document.querySelectorAll('button')).filter(function(b) {",
                 '            var t = b.textContent.trim();',
                 "            return (t === '확인' || t === '정답 확인') && !b.disabled;",
                 '        });',
+                '        if (btns.length === 0) return null;',
+                '        if (btns.length === 1) return btns[0];',
+                '        var vh = window.innerHeight;',
+                '        var best = btns[0], bestDist = Infinity;',
+                '        btns.forEach(function(b) {',
+                '            var r = b.getBoundingClientRect();',
+                '            if (r.bottom < 0 || r.top > vh) return;',
+                '            var dist = Math.abs((r.top + r.bottom) / 2 - vh / 2);',
+                '            if (dist < bestDist) { bestDist = dist; best = b; }',
+                '        });',
+                '        return best;',
                 '    }',
                 "    document.addEventListener('keydown', function(e) {",
                 '        if (!document.__cbtKbdModeOn) return;',
@@ -2294,7 +2644,7 @@ def _inject_keyboard_shortcuts(enabled):
                 "            var isMultilineField = active && (active.tagName === 'TEXTAREA' || active.isContentEditable);",
                 '            if (isMultilineField) return;',
                 '            var confirmBtn = findConfirmButton();',
-                '            if (confirmBtn) { confirmBtn.click(); e.preventDefault(); }',
+                '            if (confirmBtn) { confirmBtn.click(); e.preventDefault(); e.stopPropagation(); }',
                 '            return;',
                 '        }',
                 '        var isTypingField = active && (',
@@ -2305,7 +2655,7 @@ def _inject_keyboard_shortcuts(enabled):
                 '        if (isTypingField) return;',
                 "        if (e.key === 'ArrowRight' || e.key === 'ArrowLeft') {",
                 "            var btn = findNavButton(e.key === 'ArrowRight' ? '다음' : '이전');",
-                '            if (btn) { btn.click(); e.preventDefault(); }',
+                '            if (btn) { btn.click(); e.preventDefault(); e.stopPropagation(); }',
                 '            return;',
                 '        }',
                 '        var idx = choiceKey[e.key];',
@@ -2318,8 +2668,9 @@ def _inject_keyboard_shortcuts(enabled):
                 '            inputs[idx].click();',
                 '            inputs[idx].blur();',
                 '            e.preventDefault();',
+                '            e.stopPropagation();',
                 '        }',
-                '    });',
+                '    }, true);',
                 '})();',
             ].join('\\n');
             doc.body.appendChild(s);
@@ -2349,5 +2700,7 @@ elif ss.nav == "자주 틀리는 개념":
     view_tagstats()
 elif ss.nav == "즐겨찾기":
     view_bookmarks()
+elif ss.nav == "나만의 마인드맵":
+    view_custom_mindmap()
 else:
     view_coach()

@@ -148,6 +148,37 @@ def main():
         )
     """)
 
+    # 마인드맵 보드: 과목 전체/약점 지도는 (user,exam,subject,kind)당 하나, 나만의 마인드맵은
+    # title로 여러 개를 구분한다. 노드/카테고리/엣지는 JSON 하나로 통째로 저장(그래프 구조라 관계형
+    # 테이블보다 다루기 쉬움) — 다시 들어와도 그대로 남아있어야 해서(재생성 전까지) 세션이 아니라 DB에 둔다.
+    cur.execute("""
+        CREATE TABLE IF NOT EXISTS mindmap_board (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            user TEXT NOT NULL,
+            exam TEXT NOT NULL,
+            subject INTEGER NOT NULL DEFAULT 0,
+            kind TEXT NOT NULL,
+            title TEXT NOT NULL DEFAULT '',
+            data TEXT NOT NULL,
+            ts TEXT NOT NULL,
+            UNIQUE(user, exam, subject, kind, title)
+        )
+    """)
+
+    # 마인드맵 노드(풍선)에 달린 맨션(댓글) — 이론 정리나 추가 메모용. 보드가 재생성돼도
+    # node_key가 같으면 댓글은 그대로 남는다.
+    cur.execute("""
+        CREATE TABLE IF NOT EXISTS mindmap_comment (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            board_id INTEGER NOT NULL REFERENCES mindmap_board(id),
+            node_key TEXT NOT NULL,
+            user TEXT NOT NULL,
+            text TEXT NOT NULL,
+            ts TEXT NOT NULL
+        )
+    """)
+    cur.execute("CREATE INDEX IF NOT EXISTS idx_mindmap_comment_board_node ON mindmap_comment(board_id, node_key)")
+
     con.commit()
     n_q = cur.execute("SELECT COUNT(*) FROM questions").fetchone()[0]
     n_a = cur.execute("SELECT COUNT(*) FROM attempts").fetchone()[0]
