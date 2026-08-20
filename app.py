@@ -1600,10 +1600,14 @@ def _view_ox(subjects):
                         st.rerun()
 
 
-def _gather_mindmap_items(subject, limit=40):
+def _gather_mindmap_items(subject, limit=50, wrong_only=False):
     """마인드맵 재료 수집. 이 앱엔 문제별 세부 개념 태그가 없어서(회차별 CBT는 tag가 회차명일 뿐)
     core_id(같은 문제의 회차별 중복 묶음)당 대표 문제 하나씩을 뽑아 AI에게 넘긴다.
-    자주 틀린 문제를 우선하고, 너무 많으면 limit개로 자른다."""
+
+    wrong_only=False (개념노트용): 오답 여부와 상관없이 과목 전체를 고르게 훑어서, 그 과목의
+    "전체 개념 지도"가 되도록 한다 — 오답 위주로 편향시키지 않는다. 너무 많으면 골고루 등간격
+    샘플링해서 limit개로 줄인다.
+    wrong_only=True (AI 코치용): 실제로 틀린 적 있는 문제만 골라서, "약점 지도"를 만든다."""
     ids_in_subject = [qid for qid in ALL_IDS if QUESTIONS[qid]["subject"] == subject]
     by_core = {}
     for qid in ids_in_subject:
@@ -1611,11 +1615,16 @@ def _gather_mindmap_items(subject, limit=40):
 
     per_q = db.get_per_question_stats(con, ss.user, ss.exam)
     reps = []
-    for qids in by_core.values():
+    for qids in sorted(by_core.values(), key=lambda qids: qids[0]):
         wrong_first = [qid for qid in qids if per_q.get(qid, {}).get("wrong", 0) > 0]
         reps.append(wrong_first[0] if wrong_first else qids[0])
-    reps.sort(key=lambda qid: per_q.get(qid, {}).get("wrong", 0), reverse=True)
-    reps = reps[:limit]
+
+    if wrong_only:
+        reps = [qid for qid in reps if per_q.get(qid, {}).get("wrong", 0) > 0]
+        reps = reps[:limit]
+    elif len(reps) > limit:
+        step = len(reps) / limit
+        reps = [reps[int(i * step)] for i in range(limit)]
 
     items, idx_to_qid = [], {}
     for i, qid in enumerate(reps):
@@ -1626,12 +1635,9 @@ def _gather_mindmap_items(subject, limit=40):
     return items, idx_to_qid
 
 
-def _view_mindmap(subjects):
-    if len(subjects) != 1:
-        st.info("마인드맵은 과목을 하나 골랐을 때 볼 수 있어요. 위에서 과목을 하나 선택해주세요.")
-        return
-    subject = subjects[0]
-
+def _render_mindmap_section(subject, wrong_only, cache_ns, empty_caption, spinner_text, empty_data_caption):
+    """개념노트(전체 개념 지도)와 AI 코치(오답/약점 지도)가 공유하는 마인드맵 생성·표시 로직.
+    cache_ns로 두 용도의 캐시를 분리해서, 같은 과목이어도 서로 다른 그래프를 따로 기억한다."""
     client = _get_gemini_client()
     if client is None:
         st.warning("마인드맵은 AI 학습 코치 기능이라 Gemini API 키가 필요해요.")
@@ -1639,14 +1645,14 @@ def _view_mindmap(subjects):
         return
 
     ss.setdefault("mindmap_cache", {})
-    cache_key = f"{ss.exam}_{subject}"
+    cache_key = f"{cache_ns}_{ss.exam}_{subject}"
     has_cached = cache_key in ss.mindmap_cache
-    if st.button("🔄 마인드맵 다시 생성" if has_cached else "🧠 마인드맵 생성", key=f"mindmap_gen_{subject}"):
-        items, idx_to_qid = _gather_mindmap_items(subject)
+    if st.button("🔄 마인드맵 다시 생성" if has_cached else "🧠 마인드맵 생성", key=f"mindmap_gen_{cache_key}"):
+        items, idx_to_qid = _gather_mindmap_items(subject, wrong_only=wrong_only)
         if len(items) < 3:
-            st.info("마인드맵을 만들기엔 이 과목 문제가 아직 너무 적어요.")
+            st.info(empty_data_caption)
         else:
-            with st.spinner("문제들을 개념 단위로 묶어서 마인드맵을 만들고 있어요..."):
+            with st.spinner(spinner_text):
                 try:
                     result = ai_coach.generate_concept_mindmap(client, subject_label(subject), items)
                     ss.mindmap_cache[cache_key] = {"result": result, "idx_to_qid": idx_to_qid}
@@ -1656,7 +1662,7 @@ def _view_mindmap(subjects):
 
     cached = ss.mindmap_cache.get(cache_key)
     if not cached:
-        st.caption("위 버튼을 누르면 이 과목의 문제(오답 위주)를 바탕으로 개념 마인드맵을 만들어줘요.")
+        st.caption(empty_caption)
         return
 
     result, idx_to_qid = cached["result"], cached["idx_to_qid"]
@@ -1690,6 +1696,20 @@ def _view_mindmap(subjects):
                 if q:
                     mark = "❌" if per_q.get(qid, {}).get("wrong", 0) > 0 else "·"
                     st.caption(f"{mark} {' '.join(q['question'].split())[:60]}")
+
+
+def _view_mindmap(subjects):
+    """개념노트의 마인드맵: 오답 여부와 상관없이 그 과목의 개념 전체를 한눈에 정리하는 용도."""
+    if len(subjects) != 1:
+        st.info("마인드맵은 과목을 하나 골랐을 때 볼 수 있어요. 위에서 과목을 하나 선택해주세요.")
+        return
+    subject = subjects[0]
+    _render_mindmap_section(
+        subject, wrong_only=False, cache_ns="concept",
+        empty_caption="위 버튼을 누르면 이 과목의 개념 전체를 한눈에 정리한 마인드맵을 만들어줘요.",
+        spinner_text="이 과목의 개념을 전체적으로 정리하고 있어요...",
+        empty_data_caption="마인드맵을 만들기엔 이 과목 문제가 아직 너무 적어요.",
+    )
 
 
 # =====================================================================
@@ -2160,6 +2180,20 @@ def view_coach():
                 st.error(f"학습 계획을 받아오지 못했어요: {e}")
     if ss.coach_plan_text:
         st.info(ss.coach_plan_text)
+
+    st.divider()
+    st.subheader("🧠 오답·약점 마인드맵")
+    st.caption("오답노트·자주 틀리는 개념 데이터를 개념 단위로 묶어서, 내가 어떤 부분에서 왜 헷갈리는지 한눈에 볼 수 있어요.")
+    ss.setdefault("coach_mindmap_subject", ALL_SUBJECTS[0])
+    coach_mm_subject = st.radio(
+        "과목", ALL_SUBJECTS, format_func=subject_label, horizontal=True, key="coach_mindmap_subject",
+    )
+    _render_mindmap_section(
+        coach_mm_subject, wrong_only=True, cache_ns="weak",
+        empty_caption="위 버튼을 누르면 이 과목에서 지금까지 틀린 문제들을 개념 단위로 묶어 약점 지도를 만들어줘요.",
+        spinner_text="오답과 자주 틀리는 개념을 분석해서 약점 지도를 만들고 있어요...",
+        empty_data_caption="이 과목은 아직 틀린 문제가 3개 미만이라 약점 지도를 만들기엔 데이터가 부족해요.",
+    )
 
     st.divider()
     st.subheader("🔁 반복해서 틀리는 문제")
