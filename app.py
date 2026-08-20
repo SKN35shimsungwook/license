@@ -1258,20 +1258,30 @@ def _filter_ids_by_year_range(ids, year_range):
     return out
 
 
-def _build_subject_exam_pool(ids, picked_subject, year_range=None):
+def _subject_multiselect(key_prefix):
+    """실전 모드용 과목 선택: 1개만, 2개만, 3개 다 등 자유롭게 조합할 수 있게 다중 선택으로 받는다.
+    과락 판정은 _cbt_exam_result에서 여기 골라진 과목 각각에 대해 그 과목 자신의 과락 기준으로
+    채점하므로, 몇 과목을 고르든 상관없이 항상 과락 여부를 보여줄 수 있다."""
+    return sorted(st.multiselect(
+        "과목 (여러 개 선택 가능)", ALL_SUBJECTS, default=ALL_SUBJECTS,
+        format_func=subject_label, key=f"{key_prefix}_subjects",
+    ))
+
+
+def _build_subject_exam_pool(ids, picked_subjects, year_range=None):
     ids = _filter_ids_by_year_range(ids, year_range)
-    if picked_subject == "전체":
+    if set(picked_subjects) == set(exam_cfg["exam_subject_counts"].keys()):
         return logic.pick_cbt_exam_pool(QUESTIONS, ids, exam_cfg)
-    subj = int(picked_subject)
-    count = exam_cfg["exam_subject_counts"].get(subj, 20)
-    return logic.pick_cbt_pool(QUESTIONS, ids, [subj], limit=count)
+    pool = []
+    for subj in picked_subjects:
+        count = exam_cfg["exam_subject_counts"].get(subj, 20)
+        pool.extend(logic.pick_cbt_pool(QUESTIONS, ids, [subj], limit=count))
+    pool.sort(key=lambda qid: QUESTIONS[qid]["subject"])
+    return pool
 
 
 def _cbt_subject_year_viewmode_picker(key_prefix, with_year=True):
-    picked_subject = st.radio(
-        "과목", subject_choices(), format_func=lambda s: "전체" if s == "전체" else subject_label(int(s)),
-        horizontal=True, key=f"{key_prefix}_subject",
-    )
+    picked_subjects = _subject_multiselect(key_prefix)
     year_range = None
     if with_year:
         years = _cbt_available_years()
@@ -1282,14 +1292,14 @@ def _cbt_subject_year_viewmode_picker(key_prefix, with_year=True):
     view_mode = st.radio(
         "보기 방식", ["전체 풀기", "1문제씩", "3~4문제씩"], key=f"{key_prefix}_viewmode", horizontal=True,
     )
-    return picked_subject, year_range, view_mode
+    return picked_subjects, year_range, view_mode
 
 
 def _cbt_exam_random():
     if not ss.cbt_pool:
-        picked_subject, year_range, view_mode = _cbt_subject_year_viewmode_picker("cbt_exam_random")
-        if st.button("실전 시작", key="cbt_exam_start_random"):
-            ss.cbt_pool = _build_subject_exam_pool(CBT_IDS, picked_subject, year_range)
+        picked_subjects, year_range, view_mode = _cbt_subject_year_viewmode_picker("cbt_exam_random")
+        if st.button("실전 시작", key="cbt_exam_start_random", disabled=not picked_subjects):
+            ss.cbt_pool = _build_subject_exam_pool(CBT_IDS, picked_subjects, year_range)
             ss.cbt_submitted = False
             ss.cbt_view_mode = view_mode
             ss.cbt_page = 0
@@ -1302,9 +1312,9 @@ def _cbt_exam_random():
 def _cbt_exam_mixed():
     st.caption("실제 기출문제와 AI가 만든 신규 문제를 함께 섞어서, 더 폭넓게 연습하는 모드예요. (기존 실전/연습 모드는 기출문제만 그대로 사용해요)")
     if not ss.cbt_pool:
-        picked_subject, year_range, view_mode = _cbt_subject_year_viewmode_picker("cbt_exam_mixed")
-        if st.button("실전 시작", key="cbt_exam_start_mixed"):
-            ss.cbt_pool = _build_subject_exam_pool(ALL_IDS, picked_subject, year_range)
+        picked_subjects, year_range, view_mode = _cbt_subject_year_viewmode_picker("cbt_exam_mixed")
+        if st.button("실전 시작", key="cbt_exam_start_mixed", disabled=not picked_subjects):
+            ss.cbt_pool = _build_subject_exam_pool(ALL_IDS, picked_subjects, year_range)
             ss.cbt_submitted = False
             ss.cbt_view_mode = view_mode
             ss.cbt_page = 0
@@ -1321,18 +1331,15 @@ def _cbt_exam_round():
         return
     if not ss.cbt_pool:
         picked_round = st.selectbox("회차 선택", rounds, key="cbt_round_pick")
-        picked_subject = st.radio(
-            "과목", subject_choices(), format_func=lambda s: "전체" if s == "전체" else subject_label(int(s)),
-            horizontal=True, key="cbt_round_subject",
-        )
+        picked_subjects = _subject_multiselect("cbt_round")
         view_mode = st.radio(
             "보기 방식", ["전체 풀기", "1문제씩", "3~4문제씩"],
             key="cbt_viewmode_round", horizontal=True,
         )
-        if st.button("이 회차 실전 시작", key="cbt_round_start"):
+        if st.button("이 회차 실전 시작", key="cbt_round_start", disabled=not picked_subjects):
             pool = logic.pick_cbt_round_pool(QUESTIONS, CBT_IDS, picked_round)
-            if picked_subject != "전체":
-                pool = [qid for qid in pool if QUESTIONS[qid]["subject"] == int(picked_subject)]
+            if set(picked_subjects) != set(exam_cfg["exam_subject_counts"].keys()):
+                pool = [qid for qid in pool if QUESTIONS[qid]["subject"] in picked_subjects]
             ss.cbt_pool = pool
             ss.cbt_submitted = False
             ss.cbt_view_mode = view_mode
@@ -1391,10 +1398,44 @@ def _cbt_exam_result():
         d = per_subject[s]
         st.write(f"{subject_label(s)}: {d['correct']}/{d['total']}문항")
 
-    if st.button("다시 시작", key="cbt_exam_restart"):
-        ss.cbt_pool = []
-        ss.cbt_submitted = False
-        st.rerun()
+    wrong_qids = [
+        qid for qid in ss.cbt_pool
+        if answers.get(qid) is None or (answers.get(qid) + 1) != QUESTIONS[qid]["answer"]
+    ]
+
+    c1, c2 = st.columns(2)
+    with c1:
+        if st.button("다시 시작", key="cbt_exam_restart"):
+            ss.cbt_pool = []
+            ss.cbt_submitted = False
+            st.rerun()
+    with c2:
+        if st.button(f"🔁 틀린 문제만 다시 풀기 ({len(wrong_qids)}개)", key="cbt_exam_retry_wrong",
+                      disabled=not wrong_qids):
+            ss.cbt_pool = wrong_qids
+            ss.cbt_submitted = False
+            ss["_cbt_answers"] = {}
+            ss.cbt_page = 0
+            ss.cbt_start_at = time.time()
+            st.rerun()
+
+    if wrong_qids:
+        with st.expander(f"❌ 틀린 문제 목록 ({len(wrong_qids)}개)"):
+            for qid in wrong_qids:
+                q = QUESTIONS[qid]
+                choices = [q["choice1"], q["choice2"], q["choice3"], q["choice4"]]
+                correct_text = choices[q["answer"] - 1]
+                chosen = answers.get(qid)
+                chosen_text = choices[chosen] if chosen is not None else "(안 풂)"
+                st.markdown(
+                    f'<span class="pill">{subject_label(q["subject"])}</span>'
+                    f'<span class="pill pill-sub">{source_badge_text(q)}</span>', unsafe_allow_html=True,
+                )
+                st.write(f"**{q['question']}**")
+                st.markdown(f'<div class="result-bad">선택: {chosen_text} · 정답: {correct_text}</div>',
+                            unsafe_allow_html=True)
+                st.caption(q["explanation"])
+                st.divider()
 
 
 # =====================================================================
