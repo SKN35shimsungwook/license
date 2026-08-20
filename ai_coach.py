@@ -293,6 +293,17 @@ def generate_related_concepts(client, subject_label, question, choices, correct_
 MINDMAP_SCHEMA = {
     "type": "object",
     "properties": {
+        "categories": {
+            "type": "array",
+            "items": {
+                "type": "object",
+                "properties": {
+                    "id": {"type": "string"},
+                    "label": {"type": "string"},
+                },
+                "required": ["id", "label"],
+            },
+        },
         "concepts": {
             "type": "array",
             "items": {
@@ -300,9 +311,11 @@ MINDMAP_SCHEMA = {
                 "properties": {
                     "id": {"type": "string"},
                     "label": {"type": "string"},
+                    "category": {"type": "string"},
+                    "summary": {"type": "string"},
                     "covers": {"type": "array", "items": {"type": "integer"}},
                 },
-                "required": ["id", "label", "covers"],
+                "required": ["id", "label", "category", "summary", "covers"],
             },
         },
         "edges": {
@@ -318,35 +331,44 @@ MINDMAP_SCHEMA = {
             },
         },
     },
-    "required": ["concepts", "edges"],
+    "required": ["categories", "concepts", "edges"],
 }
 
 
 def generate_concept_mindmap(client, subject_label, items):
-    """과목 하나에 속한 실제 문제들(items: [{"idx", "question", "wrong"}, ...])을 의미 단위 개념으로
-    묶고, 개념 사이의 관계를 마인드맵용 그래프로 정리한다. 이 앱에는 문제별 세부 개념 태그가 따로
-    없어서(회차별 CBT 데이터는 tag가 회차명일 뿐), 태그 대신 문제 본문을 보고 AI가 직접 개념을
-    클러스터링하고 이름을 붙이게 한다. concepts[].covers는 그 개념에 해당하는 items의 idx 목록."""
+    """과목 하나에 속한 실제 문제들(items: [{"idx", "question", "wrong"}, ...])을 2단계 구조로
+    정리한다: 상위 카테고리(categories) -> 그 아래 세부 개념(concepts, 각자 category를 가리킴).
+    이 앱에는 문제별 세부 개념 태그가 따로 없어서(회차별 CBT 데이터는 tag가 회차명일 뿐), 태그 대신
+    문제 본문을 보고 AI가 직접 계층을 만들고 이름을 붙이게 한다. 평평한 노드 나열보다 카테고리로
+    먼저 묶어야 "한눈에 구조가 보이는" 마인드맵이 된다. concepts[].covers는 그 개념에 해당하는
+    items의 idx 목록."""
     lines = "\n".join(
         f"{it['idx']}. {'[자주틀림] ' if it.get('wrong') else ''}{it['question']}" for it in items
     )
-    prompt = f"""'{subject_label}' 과목의 아래 기출/연습 문제 목록을 보고, 이 문제들이 다루는 세부
-개념 단위로 클러스터링해서 마인드맵을 만들어주세요.
+    prompt = f"""'{subject_label}' 과목의 아래 기출/연습 문제 목록을 보고, 학습자가 전체 구조를
+한눈에 파악할 수 있는 2단계 마인드맵을 만들어주세요: 큰 카테고리(상위 분류) 아래에 세부 개념들이
+속하는 구조입니다.
 
 문제 목록 (번호. 문제 요약):
 {lines}
 
-규칙:
-- 각 문제(idx)를 가장 관련 있는 개념 노드 하나(또는 소수)의 covers에 포함시키세요. 문제 문구를
-  그대로 개념명으로 쓰지 말고, "결합도 종류", "정규화 단계"처럼 간결한 개념명을 새로 지어서 붙이세요.
-- 비슷한 문제는 같은 개념 노드로 묶어서 노드 수를 줄이세요(문제 수보다 훨씬 적은 8~15개 개념 노드가
-  적당합니다).
-- 개념 노드끼리는 의미적으로 관련 있거나(같은 상위 범주), 시험에서 자주 헷갈리는(비교/대조되는)
-  개념 쌍만 연결하세요. 모든 노드를 다 연결할 필요는 없습니다.
-- 연결선 개수는 개념 노드 수의 1.5배를 넘기지 마세요.
-- 각 연결에는 왜 연결했는지 8자 이내의 아주 짧은 이유를 붙이세요 (예: "결합도 강도 비교").
-- [자주틀림] 표시가 붙은 문제가 많이 속한 개념일수록 학습자에게 중요하니 개념명을 더 구체적으로
-  지어주세요."""
+작업 순서:
+1. 먼저 이 과목을 3~6개의 큰 카테고리(상위 분류)로 나누세요. 예: "프로세스 관리", "네트워크",
+   "소프트웨어 설계", "테스트/품질" 처럼 교과서 목차 수준의 큰 갈래여야 합니다. 카테고리명은
+   10자 이내로 짧게.
+2. 각 문제를 가장 관련 있는 세부 개념 노드 하나(또는 소수)의 covers에 포함시키세요. 비슷한 문제는
+   같은 개념으로 묶어 개념 노드는 전체 8~14개를 넘기지 마세요. 문제 문구를 그대로 쓰지 말고
+   "결합도 종류", "정규화 단계"처럼 간결한 개념명(12자 이내)을 새로 지으세요.
+3. 각 개념 노드는 반드시 1단계에서 만든 카테고리 중 하나(category)에 속해야 합니다. 카테고리가
+   비어있으면 안 됩니다.
+4. 각 개념에는 한 문장(25자 이내)짜리 summary를 붙이세요 — 그 개념이 무엇인지 학습자가 그래프만
+   보고도 감을 잡을 수 있는 핵심 설명.
+5. 세부 개념 노드끼리, 같은 카테고리에 안 속해도 정말 관련 있거나(시험에서 자주 헷갈리는/비교되는)
+   경우에만 edges로 연결하세요. 애매하면 연결하지 마세요 — 선이 많을수록 오히려 안 읽힙니다.
+   연결선 개수는 개념 노드 수를 넘기지 마세요.
+6. 각 연결의 이유(reason)는 8자 이내로 아주 짧게 (예: "강도 비교"). 그래프 위에 작게 표시됩니다.
+7. [자주틀림] 표시가 붙은 문제가 많이 속한 개념일수록 학습자에게 중요하니 summary를 더 구체적으로
+   쓰세요."""
     config = types.GenerateContentConfig(
         response_mime_type="application/json",
         response_json_schema=MINDMAP_SCHEMA,
