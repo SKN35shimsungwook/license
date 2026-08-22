@@ -611,6 +611,32 @@ def _render_mindmap_interactive(categories, concepts, edges, weak_ids=None, expa
     components.html(html, height=height + 40, scrolling=False)
 
 
+def _render_dialog_svg(spec):
+    """브라우저 alert/prompt 대화상자 목업. spec 형식: '메시지|기본값' (기본값 없으면 alert 스타일).
+    사용 예: dialog:title|default"""
+    parts = spec.split("|")
+    message = parts[0] if len(parts) > 0 else ""
+    default = parts[1] if len(parts) > 1 else None
+    width = 320
+    height = 150 if default is not None else 120
+    input_box = ""
+    if default is not None:
+        input_box = (
+            f'<rect x="14" y="58" width="{width - 28}" height="26" rx="3" fill="#F5F7FC" stroke="#9DACD1"/>'
+            f'<text x="22" y="76" font-size="13" font-family="sans-serif" fill="#1C2333">{default}</text>'
+        )
+    return f'''<svg width="{width}" height="{height}" viewBox="0 0 {width} {height}" xmlns="http://www.w3.org/2000/svg">
+        <rect x="0" y="0" width="{width}" height="{height}" rx="6" fill="white" stroke="#9DACD1" stroke-width="1.5"/>
+        <text x="14" y="26" font-size="13" font-family="sans-serif" fill="#1C2333">이 페이지 내용:</text>
+        <text x="14" y="46" font-size="13" font-family="sans-serif" fill="#1C2333">{message}</text>
+        {input_box}
+        <rect x="{width - 172}" y="{height - 42}" width="70" height="28" rx="3" fill="#3E5C9A"/>
+        <text x="{width - 137}" y="{height - 23}" text-anchor="middle" font-size="12" font-family="sans-serif" fill="white">확인</text>
+        <rect x="{width - 96}" y="{height - 42}" width="70" height="28" rx="3" fill="#EFF3FB" stroke="#9DACD1"/>
+        <text x="{width - 61}" y="{height - 23}" text-anchor="middle" font-size="12" font-family="sans-serif" fill="#1C2333">취소</text>
+    </svg>'''
+
+
 def render_diagram(q):
     spec = (q.get("diagram") or "").strip()
     if not spec:
@@ -626,6 +652,8 @@ def render_diagram(q):
             svg = _render_digraphs_grid_svg(spec[len("digraphs:"):])
         elif spec.startswith("grids:"):
             svg = _render_grids_grid_svg(spec[len("grids:"):])
+        elif spec.startswith("dialog:"):
+            svg = _render_dialog_svg(spec[len("dialog:"):])
         else:
             return
         st.markdown(f'<div style="margin:6px 0 12px;">{svg}</div>', unsafe_allow_html=True)
@@ -985,6 +1013,15 @@ def _cbt_practice_pool_builder(variant, picked_subject, picked_round, picked_yea
     return logic.pick_cbt_pool(QUESTIONS, ids, subjects, limit=limit)
 
 
+def _clear_cbt_practice_results():
+    """연습모드 채점 상태(cbtp_result_*, cbtp_radio_*)는 qid별로 세션 전체에 걸쳐 남아있어서,
+    새 문제 세트를 뽑았을 때 예전에 다른 세트에서 풀었던 문항과 같은 qid가 무작위로 다시 뽑히면
+    이번엔 안 풀었는데도 '이미 푼 문제'로 잘못 표시된다. 새 세트를 시작할 때마다 통째로 지워서
+    이전 세트의 결과가 절대 새 세트로 새어 들어오지 않게 한다."""
+    for key in [k for k in ss.keys() if k.startswith("cbtp_result_") or k.startswith("cbtp_radio_")]:
+        del ss[key]
+
+
 def _cbt_practice():
     if not ss.cbt_pool:
         variant = st.radio("방식", ["무작위 조합", "회차별 기출"], key="cbt_practice_variant", horizontal=True)
@@ -1016,6 +1053,7 @@ def _cbt_practice():
             ss.cbt_view_mode = view_mode
             ss.cbt_page = 0
             ss.cbtp_start_at = time.time()
+            _clear_cbt_practice_results()
             st.rerun()
         return
 
