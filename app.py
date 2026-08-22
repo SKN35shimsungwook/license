@@ -138,6 +138,7 @@ ss.setdefault("cbt_subject", "전체")
 ss.setdefault("cbt_pool", [])
 ss.setdefault("cbt_submitted", False)
 ss.setdefault("cbt_answers_store", {})
+ss.setdefault("cbtp_choice_store", {})
 ss.setdefault("cbt_view_mode", "전체 풀기")
 ss.setdefault("cbt_page", 0)
 ss.setdefault("cbt_batch_size", 4)
@@ -1020,6 +1021,7 @@ def _clear_cbt_practice_results():
     이전 세트의 결과가 절대 새 세트로 새어 들어오지 않게 한다."""
     for key in [k for k in ss.keys() if k.startswith("cbtp_result_") or k.startswith("cbtp_radio_")]:
         del ss[key]
+    ss.cbtp_choice_store = {}
 
 
 def _cbt_practice():
@@ -1063,8 +1065,6 @@ def _cbt_practice():
     total = len(pool)
     mode = ss.cbt_view_mode
 
-    _practice_render_navigator(pool)
-
     if mode == "전체 풀기":
         render_indices = list(range(total))
     elif mode == "1문제씩":
@@ -1072,6 +1072,16 @@ def _cbt_practice():
     else:
         start = ss.cbt_page * ss.cbt_batch_size
         render_indices = list(range(start, min(start + ss.cbt_batch_size, total)))
+
+    # 방금 이 페이지에서 답을 고른 문제가 있으면 store에 아직 안 옮겨진 상태라 네비게이터가
+    # 하나 늦게 표시될 수 있다. 렌더링 전에 미리 동기화해서 즉시 정확한 숫자를 보여준다.
+    for i in render_indices:
+        _pqid = pool[i]
+        _praw = ss.get(f"cbtp_radio_{_pqid}")
+        if _praw is not None:
+            ss.cbtp_choice_store[_pqid] = _praw
+
+    _practice_render_navigator(pool)
 
     for i in render_indices:
         qid = pool[i]
@@ -1092,13 +1102,21 @@ def _cbt_practice():
         # 채점 후에도 라디오를 계속 바꿀 수 있으면, 화면엔 새로 고른 보기가 표시되는데 정답/오답
         # 배너는 처음 "정답 확인"을 눌렀을 때 값 그대로 남아 서로 안 맞는 것처럼 보인다.
         # 한 번 채점되면 그 문제의 라디오는 잠가서 이 불일치가 아예 생기지 않게 한다.
-        picked = st.radio("보기", labels, key=f"cbtp_radio_{qid}", index=None,
+        # 1문제씩/3~4문제씩 모드에서 페이지를 오가면 Streamlit이 화면에 안 그려진 라디오의
+        # session_state를 지워버리므로(cbt_answers_store와 같은 문제), 고른 보기를 별도
+        # store에도 옮겨 담아서 다시 그 페이지로 돌아와도 체크 표시가 남아있게 한다.
+        stored_choice = ss.cbtp_choice_store.get(qid)
+        picked = st.radio("보기", labels, key=f"cbtp_radio_{qid}",
+                           index=labels.index(stored_choice) if stored_choice in labels else None,
                            label_visibility="collapsed", disabled=already_checked)
+        if picked is not None:
+            ss.cbtp_choice_store[qid] = picked
         if st.button("정답 확인", key=f"cbtp_check_{qid}", disabled=picked is None):
             chosen = labels.index(picked)
             is_correct = (chosen + 1) == q["answer"]
             db.record_attempt(con, ss.user, qid, chosen + 1, is_correct)
             ss[f"cbtp_result_{qid}"] = is_correct
+            ss.cbtp_choice_store[qid] = picked
             st.rerun()
         if f"cbtp_result_{qid}" in ss:
             if ss[f"cbtp_result_{qid}"]:
