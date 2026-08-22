@@ -857,7 +857,8 @@ def view_quiz():
     bookmark_toggle(qid)
 
     choice_labels = [f"{'①②③④'[i]} {c}" for i, c in enumerate(choices)]
-    picked = st.radio("보기", choice_labels, key=f"quiz_radio_{qid}", index=None, label_visibility="collapsed")
+    picked = st.radio("보기", choice_labels, key=f"quiz_radio_{qid}", index=None,
+                       label_visibility="collapsed", disabled=ss.quiz_answered)
 
     if not ss.quiz_answered:
         if st.button("확인", key=f"quiz_check_{qid}", disabled=picked is None):
@@ -1049,7 +1050,12 @@ def _cbt_practice():
         render_diagram(q)
         bookmark_toggle(qid)
         labels = [f"{'①②③④'[j]} {c}" for j, c in enumerate(choices)]
-        picked = st.radio("보기", labels, key=f"cbtp_radio_{qid}", index=None, label_visibility="collapsed")
+        already_checked = f"cbtp_result_{qid}" in ss
+        # 채점 후에도 라디오를 계속 바꿀 수 있으면, 화면엔 새로 고른 보기가 표시되는데 정답/오답
+        # 배너는 처음 "정답 확인"을 눌렀을 때 값 그대로 남아 서로 안 맞는 것처럼 보인다.
+        # 한 번 채점되면 그 문제의 라디오는 잠가서 이 불일치가 아예 생기지 않게 한다.
+        picked = st.radio("보기", labels, key=f"cbtp_radio_{qid}", index=None,
+                           label_visibility="collapsed", disabled=already_checked)
         if st.button("정답 확인", key=f"cbtp_check_{qid}", disabled=picked is None):
             chosen = labels.index(picked)
             is_correct = (chosen + 1) == q["answer"]
@@ -1534,9 +1540,10 @@ def _view_card(subjects):
             )
             st.caption(choices_hint)
 
-        user_input = st.text_input("정답 입력", key=f"card_input_{qid}_{card_mode}")
+        user_input = st.text_input("정답 입력", key=f"card_input_{qid}_{card_mode}",
+                                    disabled=qid in ss.card_results)
         c1, c2 = st.columns(2)
-        if c1.button("확인", key=f"card_check_{qid}_{card_mode}"):
+        if c1.button("확인", key=f"card_check_{qid}_{card_mode}", disabled=qid in ss.card_results):
             ok = logic.answer_matches(user_input, answer_text)
             ss.card_results[qid] = ok
             if ok:
@@ -2389,7 +2396,7 @@ def _render_coach_variant(client, qid, q, choices, correct_text):
             st.write(v["question"])
             v_labels = [f"{'①②③④'[i]} {c}" for i, c in enumerate(v["choices"])]
             picked = st.radio("보기", v_labels, key=f"coach_variant_radio_{qid}", index=None,
-                               label_visibility="collapsed")
+                               label_visibility="collapsed", disabled=ss.coach_variant_result is not None)
             if st.button("확인", key=f"coach_variant_check_{qid}", disabled=picked is None):
                 ss.coach_variant_result = (v_labels.index(picked) + 1) == v["answer"]
                 if not ss.coach_variant_result:
@@ -2417,7 +2424,7 @@ def _render_coach_batch_variant(qid):
         st.write(v["question"])
         v_labels = [f"{'①②③④'[i]} {c}" for i, c in enumerate(v["choices"])]
         picked = st.radio("보기", v_labels, key=f"coach_batch_radio_{qid}", index=None,
-                           label_visibility="collapsed")
+                           label_visibility="collapsed", disabled=ss.coach_batch_results.get(qid) is not None)
         if st.button("확인", key=f"coach_batch_check_{qid}", disabled=picked is None):
             ss.coach_batch_results[qid] = (v_labels.index(picked) + 1) == v["answer"]
             if not ss.coach_batch_results[qid]:
