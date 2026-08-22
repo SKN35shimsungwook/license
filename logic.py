@@ -69,8 +69,21 @@ def pick_exam_pool(questions, exam_cfg):
     return ids
 
 
+def _dedupe_by_core(questions, ids):
+    """같은 문제가 회차마다 반복 출제되면 core_id가 같다(예: 2022_1/2023_3/2025_1에 똑같이 나온
+    '에러 검출 및 교정 코드' 문제). 이걸 그대로 두면 무작위 조합에서 우연히 같은 문제가 여러 번
+    뽑혀서 한 세트 안에 똑같은 문제가 중복으로 나올 수 있다. source가 다르면 core_id가 우연히
+    같아도 완전히 다른 문제일 수 있으므로 (source, core_id)로 묶어서 하나씩만 남긴다."""
+    groups = {}
+    for qid in ids:
+        key = (questions[qid]["source"], questions[qid]["core_id"])
+        groups.setdefault(key, []).append(qid)
+    return [random.choice(qids) for qids in groups.values()]
+
+
 def pick_cbt_pool(questions, cbt_ids, subjects, limit=None):
     ids = [qid for qid in cbt_ids if questions[qid]["subject"] in subjects]
+    ids = _dedupe_by_core(questions, ids)
     random.shuffle(ids)
     if limit:
         ids = ids[:limit]
@@ -83,6 +96,7 @@ def pick_cbt_exam_pool(questions, cbt_ids, exam_cfg):
     ids = []
     for s, n in exam_cfg["exam_subject_counts"].items():
         subj_ids = [qid for qid in cbt_ids if questions[qid]["subject"] == s]
+        subj_ids = _dedupe_by_core(questions, subj_ids)
         random.shuffle(subj_ids)
         ids.extend(subj_ids[:n])
     return ids
