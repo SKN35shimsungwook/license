@@ -1,5 +1,7 @@
 # 📘 정보처리산업기사 필기 퀴즈
 
+**🔗 바로 실행해 보기:** https://license-7guh2krcygcdeejjosxxit.streamlit.app
+
 **정보처리산업기사 필기시험** 기출문제를 풀면서 공부하는 Streamlit 퀴즈 앱이에요.
 회차별 기출(2022~2025년 다수 회차)과 CBT 문제은행을 SQLite DB로 관리하고, 필요하면
 Gemini AI가 오답에 대해 추가 설명도 해줘요.
